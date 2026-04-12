@@ -468,6 +468,81 @@ The role of $\delta$ should therefore be understood consistently throughout
 the paper as that of an auxiliary regularization length, not as an intrinsic
 fracture parameter.
 
+\section{Problem statement}
+\label{sec:problem}
+
+We consider a two-dimensional body in plane strain containing a predefined
+two-leg crack path that serves as the basis for studying mixed-mode crack
+kinking under quasi-static loading conditions. The problem setup, geometry,
+local frames, and representative traction--separation law are summarized in
+Fig.~\ref{fig:statement}.
+
+The body, shown in Fig.~\ref{fig:stmt:a}, is a rectangular domain subjected
+to uniform tensile tractions on its top and bottom edges, while the vertical
+sides remain free of external loads. The internal discontinuity consists of
+two consecutive legs forming a polyline. The first leg (Leg~1) represents the
+existing physical crack of prescribed length and orientation, whereas the
+second leg (Leg~2) is a short fictitious continuation introduced to realize a
+cohesive interface on which kinking may occur. We denote by
+$\Gamma_{\mathrm{cr}}$ the boundary of the physical crack (Leg~1), and by
+$\Gamma_{\mathrm{cz}}$ the boundary of the cohesive extension (Leg~2). The
+kink originates at the common junction point of the two legs, referred to
+here as the knee, and terminates at the trial cohesive tip. The orientation
+of Leg~2 relative to Leg~1 defines the kink angle. The material is assumed
+homogeneous and isotropic, and plane-strain conditions are imposed
+throughout.
+
+A closer view of the two-leg configuration is presented in
+Fig.~\ref{fig:stmt:b}. The physical crack, Leg~1, is traction-free, whereas
+Leg~2 carries cohesive tractions acting on its two opposing faces. These
+tractions depend on the local relative displacements between the upper and
+lower faces and are expressed in a local coordinate system rigidly attached
+to Leg~2. The local frame consists of a tangential direction aligned with the
+cohesive segment and a normal direction pointing from the lower to the upper
+face. The corresponding tractions therefore form a pair of equal and opposite
+vectors acting on the two sides of the cohesive zone.
+
+The distribution of openings and tractions along the cohesive continuation is
+sketched in Fig.~\ref{fig:stmt:c}. Along Leg~2, the normal opening and the
+tangential sliding evolve according to the adopted traction--separation law.
+The active cohesive region is bounded by the physical crack tip and the trial
+cohesive tip, whereas the remaining crack faces are traction-free. The local
+coordinates $(s,r)$ are used to describe variations of the opening and the
+traction along and across the interface.
+
+\paragraph{Choice of the auxiliary cohesive-leg length \texorpdfstring{$\delta$}{delta}.}
+The cohesive-leg length $\delta$ defines the available extent over which the
+finite fracture-process zone may develop along the trial continuation. Within
+the present formulation, $\delta$ is not a material parameter but an
+auxiliary numerical length introduced to regularize the singular elastic
+near-tip field by replacing it with a finite cohesive zone. For this
+regularization to be meaningful, $\delta$ must be sufficiently long to
+contain the full active cohesive zone. Choosing $\delta$ too short
+artificially truncates the process zone and may leave a residual stress
+concentration at the cohesive tip. Once the active cohesive part remains well
+contained within the trial segment, however, $\delta$ no longer plays a
+constitutive role and the predicted response becomes insensitive to its
+precise value.
+
+For trapezoidal cohesive laws, including the piecewise-smooth law adopted in
+this work, a practical estimate of the required scale can be obtained from
+the Dugdale model, for which the process-zone length $\ell_p$ scales with the
+crack size $a$ as
+\[
+\ell_p = 2\pi a
+\left(\frac{\sigma_{\mathrm{cr}}^{\mathrm{LEFM}}}{\sigma_n^{\max}}\right)^2.
+\]
+This estimate is used here as a practical guideline for selecting the
+auxiliary cohesive length. In the baseline benchmark calculations reported in
+Sections~\ref{sec:results} and~\ref{sec:LEFM-comparison}, a representative
+fixed value $\delta/a=0.06$ is employed. In the sensitivity study of
+Section~\ref{sec:scope_limitations}, by contrast, $\delta$ is chosen
+adaptively from a calibrated LEFM-based predictor so that the active-zone
+fraction $\beta/\delta$ remains controlled as the material parameters vary.
+The role of $\delta$ should therefore be understood throughout the paper as
+that of an auxiliary regularization length, not as an intrinsic fracture
+parameter.
+
 Figure~\ref{fig:stmt:d} shows the mode-wise traction--separation laws used in
 the cohesive formulation. In each pure mode, the traction increases from zero
 to the cohesive strength and then decays smoothly to zero at complete
@@ -482,13 +557,48 @@ maximum value smoothly, provides a finite-stress closure of the cohesive
 zone, and allows the active cohesive length to emerge as part of the
 solution rather than being prescribed in advance.
 
-The main objective of the analysis is to determine the steady-state
-direction of crack advance, or equivalently the kink angle, that develops in
-response to the applied mixed-mode loading by evaluating competing trial
-orientations of Leg~2 through the cohesive formulation. The subsequent
-sections formulate the governing equations, define the mixed-mode cohesive
-law quantitatively, and describe the finite-element construction used to
-compute the corresponding critical states.
+\begin{figure}[h!]
+	\centering
+	% Row 1: global geometry + local frame
+	\begin{subfigure}[t]{0.32\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{Fig1a}
+		\caption{Geometry \& loading}
+		\label{fig:stmt:a}
+	\end{subfigure}\hspace{0.05\textwidth}
+	\begin{subfigure}[t]{0.25\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{Fig1b}
+		\caption{Local cohesive frame}
+		\label{fig:stmt:b}
+	\end{subfigure}
+	
+	\vspace{0.6em}
+	
+	% Row 2: mode-I cohesive geometry + 1D TSL curve
+	\begin{subfigure}[t]{0.25\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{Fig1c}
+		\caption{Mode-I cohesive geometry}
+		\label{fig:stmt:c}
+	\end{subfigure}\hspace{0.05\textwidth}
+	\begin{subfigure}[t]{0.25\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{Fig1d}
+		\caption{Normalized 1D TSL}
+		\label{fig:stmt:d}
+	\end{subfigure}
+	
+	\caption{Two-leg crack. (a) Global geometry and uniform loading. (b) Leg--2 local frame and interface variables. (c) Pure mode-I cohesive geometry along Leg~2 with active length $\beta\le\delta$ and opening $d_n(s)$. (d) Normalized traction–separation law $\bar\sigma$ vs.\ $\bar d$ with thresholds $a_1,a_2$.}
+	\label{fig:statement}
+\end{figure}
+
+The objective of the analysis is to determine the preferred direction of
+incipient crack advance, or equivalently the kink angle, by evaluating
+competing trial orientations of Leg~2 through the cohesive formulation. The
+subsequent sections formulate the governing equations, define the mixed-mode
+cohesive law quantitatively, and describe the finite-element construction
+used to compute the corresponding critical states.
 
 
 \section{Governing equations}
