@@ -730,53 +730,144 @@ the intact state to complete separation.
 \label{sec:tsl}
 
 The cohesive behavior along $\Gamma_{\mathrm{cz}}$ is governed by a
-potential-based TSL. Local quantities are expressed
-in the Leg--2 frame $\QQ=[\bt^\top;\bn^\top]$ introduced in
+potential-based traction--separation law. Local quantities are expressed in
+the Leg--2 frame $\QQ=[\bt^\top;\bn^\top]$ introduced in
 Section~\ref{sec:problem}. The face-to-face displacement jump resolves as
-$\bd=(d_t,d_n)^\top=\QQ\,\jump{\uu}$, with normalized openings
-$\bar d_t=|d_t|/d_t^{\max}$ and $\bar d_n=d_n/d_n^{\max}$.
-Cohesive strengths are $\sigma_t^{\max}$ and $\sigma_n^{\max}$.
-\chg{R2C3}{
-	Together with the fracture energies $\phi_\alpha$
-	($\alpha\in\{n,t\}$), the cohesive strengths $\sigma_\alpha^{\max}$
-	constitute the independent fracture parameters.
-	The critical openings $d_\alpha^{\max}$ are introduced as characteristic
-	length scales and are determined from the fracture--energy condition
-}
-\begin{equation*}
-	\mathcolor{Blue}{
-		\phi_\alpha
-		= \sigma_\alpha^{\max} d_\alpha^{\max} \, c_\alpha,
-		\qquad
-		c_\alpha = F_\alpha(1),
-		\qquad
-		F_\alpha(\xi)=\int_0^\xi t_\alpha(s)\,\mathrm{d}s .
-	}
-\end{equation*}
-\chg{R2C3}{
-	We further introduce the energetic prefactors
-	\(
-	\chi_\alpha := \sigma_\alpha^{\max} d_\alpha^{\max},
-	\)
-	which set the mode-wise energy scale of the cohesive potential.
-	These quantities are not independent material parameters but follow
-	directly from $(\sigma_\alpha^{\max},\phi_\alpha)$ and the chosen TSL shape.
-}
-\chg{R2C3}{
-	Here $t_\alpha(\xi)$ denotes the normalized traction--separation law,
-	$F_\alpha(\xi)$ the associated dimensionless potential, and
-	$c_\alpha$ a dimensionless shape parameter that depends solely on the
-	chosen TSL form and its parameters.
-	For notational brevity, once the pure-mode traction--separation laws have
-	been specified, we subsequently write $F(\cdot)$ and $t(\cdot)$ for the
-	mode-dependent functions, with the active mode $\alpha$ uniquely determined
-	by the argument and the associated parameter set
-	$(\sigma_\alpha^{\max},\phi_\alpha,$ and the TSL shape parameters).
-	No additional functional assumptions are implied by this notation.
-}
+\[
+\bd=(d_t,d_n)^\top=\QQ\,\jump{\uu},
+\]
+with normalized openings
+\[
+\bar d_t=\frac{|d_t|}{d_t^{\max}},
+\qquad
+\bar d_n=\frac{d_n}{d_n^{\max}}.
+\]
+The cohesive strengths are denoted by $\sigma_t^{\max}$ and
+$\sigma_n^{\max}$. Together with the mode-I and mode-II fracture energies
+$\phi_\alpha$ (\(\alpha\in\{n,t\}\)), these strengths constitute the
+independent fracture parameters of the model.
 
+The critical openings \(d_\alpha^{\max}\) are introduced as characteristic
+length scales and are determined from the fracture-energy condition
+\[
+\phi_\alpha
+=
+\sigma_\alpha^{\max} d_\alpha^{\max} c_\alpha,
+\qquad
+c_\alpha=F_\alpha(1),
+\qquad
+F_\alpha(\xi)=\int_0^\xi t_\alpha(s)\,\dd s .
+\]
+Here \(t_\alpha(\xi)\) is the normalized traction--separation law in pure
+mode \(\alpha\), \(F_\alpha(\xi)\) is the associated dimensionless
+potential, and \(c_\alpha\) is the corresponding dimensionless area under
+the normalized traction curve. It is convenient to introduce the energetic
+prefactors
+\[
+\chi_\alpha:=\sigma_\alpha^{\max}d_\alpha^{\max}
+=\frac{\phi_\alpha}{c_\alpha},
+\]
+which set the mode-wise energy scales of the cohesive potential. These
+quantities are not additional material parameters; they follow directly from
+\((\sigma_\alpha^{\max},\phi_\alpha)\) and the chosen shape of the
+traction--separation law.
 
+For notational brevity, once the pure-mode laws have been specified, we
+write \(t(\cdot)\) and \(F(\cdot)\) for the corresponding mode-dependent
+functions, with the active mode understood from the argument and the
+associated parameter set.
 
+\paragraph{Mode-wise (one-dimensional) law.}
+The purpose of the strengthening branch has already been discussed in
+Section~\ref{sec:problem}; here we specify the particular smooth law used in
+the computations. In each pure mode, the normalized traction consists of a
+strengthening branch, a plateau, and a softening branch. The parameters
+\(0<a_1<a_2<1\) define the end of the strengthening interval and the onset
+of softening, respectively. In applications, these parameters may be chosen
+separately for the normal and tangential modes; the mode index is omitted
+here for compactness.
+
+For the normal mode, compression is regularized by a linear penalty branch.
+The normalized traction \(t\), its derivative \(g=t'\), and the associated
+potential \(F\) are written in the compact form
+\[
+(F,t,g)(\xi)=
+\begin{cases}
+	\left(\dfrac{\kappa}{2}\xi^2,\ \kappa\xi,\ \kappa\right),
+	& \xi\le 0,\\[8pt]
+	\left(
+	\dfrac{\xi^2}{a_1}\Bigl(1-\dfrac{\xi}{3a_1}\Bigr),\
+	\dfrac{\xi}{a_1}\Bigl(2-\dfrac{\xi}{a_1}\Bigr),\
+	\dfrac{2}{a_1}\Bigl(1-\dfrac{\xi}{a_1}\Bigr)
+	\right),
+	& 0<\xi<a_1,\\[10pt]
+	\left(\xi-\dfrac{a_1}{3},\ 1,\ 0\right),
+	& a_1\le \xi<a_2,\\[10pt]
+	\left(
+	c-\displaystyle\int_\xi^1 t(s)\,\dd s,\
+	\dfrac{(1+2\xi-3a_2)(1-\xi)^2}{(1-a_2)^3},\
+	-\dfrac{6(1-\xi)(\xi-a_2)}{(1-a_2)^3}
+	\right),
+	& a_2\le \xi\le 1,\\[12pt]
+	(c,\ 0,\ 0),
+	& \xi>1.
+\end{cases}
+\]
+Here
+\[
+c=\frac16\,(3-2a_1+3a_2)
+\]
+is the dimensionless area under the normalized traction--separation law.
+Choosing \(\kappa=2/a_1\) gives
+\[
+t(0^-)=t(0^+)=0,
+\qquad
+g(0^-)=g(0^+)=\frac{2}{a_1},
+\]
+so the contact--opening transition is \(C^1\)-smooth.
+
+The dimensional pure-mode laws are expressed in terms of the normalized
+openings \(\bar d_n\) and \(\bar d_t\). For the normal mode we use
+\[
+\sigma_n(d_n)=
+\begin{cases}
+	\sigma_n^{\max}\,t(\bar d_n), & d_n\ge 0,\\[3pt]
+	k_c\,d_n, & d_n<0,
+\end{cases}
+\qquad
+k_c=\kappa\,\frac{\sigma_n^{\max}}{d_n^{\max}}.
+\]
+For the tangential mode we define the shear magnitude and the signed
+traction as
+\[
+|\sigma_t|(d_t)=\sigma_t^{\max}\,t(\bar d_t),
+\qquad
+\sigma_t(d_t)=|\sigma_t|(d_t)\,\operatorname{sgn}_0(d_t),
+\]
+where \(\operatorname{sgn}_0(0)=0\).
+
+The corresponding one-dimensional tangents are
+\[
+\frac{\dd \sigma_n}{\dd d_n}=
+\begin{cases}
+	\dfrac{\sigma_n^{\max}}{d_n^{\max}}\,g(\bar d_n), & d_n>0,\\[6pt]
+	k_c, & d_n<0,
+\end{cases}
+\qquad
+\frac{\dd |\sigma_t|}{\dd |d_t|}
+=
+\frac{\sigma_t^{\max}}{d_t^{\max}}\,g(\bar d_t).
+\]
+The pure-mode cohesive potentials are then
+\[
+\Psi_\alpha(d_\alpha)
+=
+\chi_\alpha\,F(\bar d_\alpha)
+=
+\frac{\phi_\alpha}{c_\alpha}\,F(\bar d_\alpha),
+\qquad
+\alpha\in\{n,t\}.
+\]
 
 \paragraph{Mode-wise (one-dimensional) law.}
 The shape of the one-dimensional cohesive traction--separation response has a
