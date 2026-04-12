@@ -2649,105 +2649,76 @@ comparing directional predictions across a family of cohesive parameters.
 \section{Conclusions}
 \label{sec:conclusions}
 
-This work developed and analysed a fully implicit cohesive-zone framework for
-mixed-mode crack kinking.
- The formulation augments a pre-existing
-crack by a short, zero-thickness cohesive extension, which enables a systematic
-and well-posed evaluation of the critical state associated with any prescribed
-trial kink orientation. Central to the approach is a potential-based mixed-mode
-traction--separation law (TSL), which guarantees energetic consistency, a
-symmetric algorithmic tangent, and robust quadratic convergence of the Newton
-iterations. By combining this constitutive structure with a channel-collapse
-meshing strategy, the framework provides a controlled numerical setting for
-assessing mixed-mode kinking without invoking enrichment techniques,
-geometry-specific assumptions, or explicit mesh surgery, and allows a direct
-comparison between cohesive and elastic predictions.
+This work developed and analyzed a fully implicit cohesive-zone framework
+for mixed-mode crack kinking. The formulation augments a pre-existing crack
+by a short, zero-thickness cohesive continuation, which makes it possible to
+evaluate the critical state associated with any prescribed trial kink
+orientation in a systematic and well-posed way. A potential-based mixed-mode
+traction--separation law is combined with a channel-collapse meshing
+strategy, so that the cohesive response is energetically consistent, the
+local tangent is symmetric, and the interface can be resolved without
+enrichment techniques or explicit mesh surgery.
 
-\chg{R3C4}{
-	The cohesive-zone model employed in this study is not introduced as a competing
-	fracture theory nor as a material-specific law. Instead, it is used as a
-	regularized and energetically consistent framework for assessing the robustness
-	of classical LEFM-based kinking predictions in the presence of a finite but
-	small fracture process zone. Within this scope, LEFM is interpreted as the
-	asymptotic limit corresponding to vanishing cohesive-zone length, and the
-	present analysis is conducted deliberately in a near-LEFM regime that permits
-	controlled and meaningful comparison.
-}
+The study was carried out deliberately in a near-LEFM regime, so that the
+relationship between cohesive and elastic predictions could be assessed in a
+controlled way. Within this setting, three main conclusions emerge.
 
-A comparison with classical LEFM-based kinking criteria leads to four main
-observations.
+First, the kink direction remains governed predominantly by the mixed-mode
+elastic field. Across the loading configurations considered here, the
+cohesive predictions of the deflection angle remain close to the classical
+LEFM maximum-tangential-stress predictor. This does not represent a new
+physical crack-deflection mechanism; rather, it shows that the present
+cohesive formulation recovers the expected near-LEFM directional behavior in
+a numerically robust and energetically consistent manner.
 
-\begin{enumerate}
-	\item \emph{Kink direction is essentially an elastic quantity.}
-	\chg{R1C5}{
-		Across all loading inclinations investigated, the predicted cohesive kink
-		angles remain within approximately one degree of the LEFM
-		maximum-tangential-stress (MTS) prediction.
-		This confirms the well-established LEFM result that the crack-deflection
-		direction is governed primarily by the elastic mixed-mode stress field.
-		The present study does not claim this as a new physical finding; rather, it
-		demonstrates that the proposed cohesive-zone framework is capable of
-		reproducing this classical behaviour in a numerically robust and energetically consistent
-		manner.
-	}
-	In this sense, the cohesive process zone and the specific shape of the TSL have
-	a negligible influence on the deflection angle, while their role is expressed
-	predominantly through the associated critical load.
-	
-	\item \emph{Critical loads carry a clear imprint of process-zone physics.}
-	Although both LEFM and the cohesive framework predict a monotonic increase of
-	the critical load with crack inclination, the cohesive model consistently
-	yields lower values. The reduction is modest (below $2\%$) near mode~I, but
-	reaches approximately $10\%$ for strongly skewed cracks. This systematic
-	difference reflects the finite size of the fracture-process zone and the
-	nonlinear separation response encoded in the TSL—effects that are absent in
-	classical LEFM.
-	
-	\item \emph{The potential-based cohesive law exhibits stronger mode interaction
-		than BK-type criteria.}
-	Comparisons with Benzeggagh--Kenane mixed-mode surfaces ($\eta=1$--$3$) show
-	that all BK predictions overestimate the effective toughness relative to the
-	present cohesive model. The cohesive critical loads lie below all BK curves,
-	indicating a stronger energetic coupling between modes, which effectively
-	corresponds to a mixed-mode exponent $\eta_{\mathrm{eff}}>3$. This highlights
-	that the potential-based TSL introduces mode interaction beyond that captured
-	by standard empirical criteria.
-	
-	\item \emph{The numerical framework shows high robustness and reproducibility.}
-	Convergence studies confirm that accurate and mesh-independent critical loads
-	are obtained once two modest conditions are met: (i) a bulk refinement level
-	$B/h_{\max}\ge40$, and (ii) at least $n_{\mathrm{coh}}\ge40$ cohesive segments
-	(or twice this value for conservative runs). Under these conditions, the
-	relative error in the critical load falls below $10^{-6}$, and reconstructed
-	bulk tractions closely match the cohesive tractions along nearly the entire
-	cohesive leg. Among the two tested selection measures, the global minimum of
-	$\sigma_{\mathrm{cr}}(\theta_2)$ is shallow and sensitive to bracketing, whereas
-	the energetic mouth criterion exhibits a much sharper minimum and is
-	numerically more robust.
-\end{enumerate}
+Second, the critical load retains a clearer signature of the finite
+fracture-process zone and of the traction--separation law. Although LEFM and
+CZM both predict the same qualitative trends with increasing mode mixity,
+the cohesive model consistently yields lower critical loads, with the
+difference becoming more pronounced as the mode-II contribution grows. In
+this sense, the finite process zone has a much stronger influence on the
+load level than on the selected kink direction.
 
-\chg{R1C5}{
-	Overall, the principal contribution of this study lies not in proposing a new
-	fracture criterion or physical crack-deflection mechanism, but in establishing
-	a cohesive-zone formulation that is energetically consistent, numerically
-	robust, and capable of assessing the robustness of classical LEFM kinking
-	predictions within a regularized, non-singular framework. The unified cohesive
-	potential, symmetric Hessian tangent, and channel-collapse meshing strategy
-	together provide a stable and reproducible tool for determining both kink
-	direction and critical load in mixed-mode cohesive-zone analyses.
-}
+Third, the numerical framework is robust provided the interface and bulk
+discretizations are chosen consistently. The convergence studies show that
+accurate and mesh-independent critical loads are obtained once the
+cohesive-leg resolution and far-field truncation are sufficiently refined,
+and the reconstructed bulk tractions agree closely with the cohesive
+tractions along almost the entire interface. Among the two directional
+selectors considered here, the load-based minimum is shallow and therefore
+only weakly conditioned, whereas the energetic mouth criterion exhibits a
+sharper minimum and is numerically more stable.
 
-\paragraph{Outlook: Sensitivity to TSL shape.}
-Because the predicted critical load depends on details of the
-traction--separation law—including strengthening length, pla\-teau width, and
-softening curvature—a broader parametric investigation of TSL shapes is
-warranted. Earlier mode-I studies (e.g.,~\cite{Selivanov2019ModeI}) indicate that
-the structure of the fracture process zone can be highly sensitive to these
-features even when global response quantities vary only moderately. Extending
-such analyses to fully mixed-mode kinking represents a natural next step. The
-present framework can also be extended to incremental crack growth by
-reorienting the cohesive leg as the crack advances, thereby providing a
-consistent starting point for future propagation studies.
+A further conclusion of the present work concerns the role of the auxiliary
+cohesive-leg length. The sensitivity study shows that this length should not
+be interpreted as a material parameter, but as a numerical regularization
+scale that must be chosen so that the active cohesive zone remains well
+contained within the trial segment. Within the quasi-static, small-process-zone
+regime considered here, a calibrated predictor--corrector choice of the
+auxiliary length provides a consistent basis for comparing directional
+predictions across a family of cohesive parameters. At the same time, this
+also clarifies the scope of the method: the present formulation is intended
+for controlled comparison with LEFM in quasi-brittle mixed-mode settings,
+not as a general interface law for arbitrary large-separation paths, highly
+ductile response, or strongly rate-dependent fracture.
+
+Overall, the principal contribution of this study lies not in proposing a
+new fracture criterion, but in establishing a cohesive-zone framework that
+is energetically consistent, numerically transparent, and suitable for
+assessing the robustness of classical LEFM kinking predictions in the
+presence of a finite but small fracture-process zone. The same ingredients
+also provide a natural foundation for future work on incremental
+crack-path computation, in which the cohesive continuation would be updated
+step by step as the crack advances.
+
+\paragraph{Outlook.}
+Two extensions appear particularly natural. The first is a broader
+sensitivity study with respect to the detailed shape of the
+traction--separation law, including the strengthening interval, plateau, and
+softening branch. The second is extension to incremental crack growth, for
+which the present automated angle-selection procedure and channel-based mesh
+construction already provide the essential directional and geometrical
+building blocks.
 
 
 
