@@ -1588,220 +1588,258 @@ Section~\ref{sec:scope_limitations}.
 \section{Results}
 \label{sec:results}
 
-For each trial direction $\theta_2$ of Leg~2 we solve the augmented system
-to the \emph{critical state}, defined by the Leg--2 mouth reaching the normal
-critical separation $d_n^{\max}$. Newton iterations employ the consistent
-cohesive tangent from Section~\ref{sec:tsl}. Interface fields are post-processed
-in the local frame $(\bt,\bn)$ attached to Leg~2. Field plots use normalized variables
-$\bar\sigma_{n,t}=\sigma_{n,t}/\sigma_{n,t}^{\max}$ and
-$(\bar d_n,\bar d_t)=(d_n/d_n^{\max},\,|d_t|/d_t^{\max})$.
-The \emph{critical load} $\sigma_{\mathrm{cr}}$ reported in tables and sweeps
-is dimensional (MPa).
+For each trial direction \(\theta_2\) of Leg~2, we solve the augmented
+system to the critical state, defined by the condition that the normal
+opening at the mouth of the cohesive continuation reaches the critical
+value \(d_n^{\max}\). Newton iterations employ the consistent cohesive
+tangent from Section~\ref{sec:tsl}. Interface fields are post-processed in
+the local frame \((\bt,\bn)\) attached to Leg~2. Field plots use normalized
+variables
+\[
+\bar\sigma_n=\frac{\sigma_n}{\sigma_n^{\max}},
+\qquad
+\bar\sigma_t=\frac{\sigma_t}{\sigma_t^{\max}},
+\qquad
+\bar d_n=\frac{d_n}{d_n^{\max}},
+\qquad
+\bar d_t=\frac{|d_t|}{d_t^{\max}},
+\]
+whereas the reported critical load \(\sigma_{\mathrm{cr}}\) remains
+dimensional.
 
-\paragraph{Parameters.}
-The angle of the physical crack is $\theta_1=-20^\circ$.
-Plane strain is assumed with $E=4$\,GPa and $\nu=0.3$.
-Cohesive strengths
-$(\sigma_n^{\max},\sigma_t^{\max})=(40,\ 15.4)$\,MPa
-(from $\sigma_n^{\max}=E/100$ and $\sigma_t^{\max}=G/100$ with
-$G=E/[2(1+\nu)]$).
-The prescribed fracture energies are
-$(\phi_n,\phi_t)=(800,\ 1200)$\,J\,m$^{-2}$,
-with coupling parameter $r=0.4$.
-One-dimensional TSL shape parameters are $a_1=0.002$,
-$a_{2n}=0.9$, and $a_{2t}=0.5$.
-\chg{R2C3}{Using the corresponding shape parameter $c$ for each mode,
-the resulting critical openings are
-$d_n^{\max}\approx 23.6\,\mu\text{m}$ and
-$d_t^{\max}\approx104\,\mu\text{m}$.
-}
+All numerical examples use the plate dimensions
+\(A=B=10~\mathrm{cm}\) and the physical crack length \(a=2~\mathrm{cm}\).
+The angle of the physical crack is \(\theta_1=-20^\circ\). Plane strain is
+assumed with \(E=4~\mathrm{GPa}\) and \(\nu=0.3\). The cohesive strengths
+are
+\[
+(\sigma_n^{\max},\sigma_t^{\max})=(40,15.4)~\mathrm{MPa},
+\]
+obtained from \(\sigma_n^{\max}=E/100\) and
+\(\sigma_t^{\max}=G/100\), where \(G=E/[2(1+\nu)]\). The prescribed
+fracture energies are
+\[
+(\phi_n,\phi_t)=(800,1200)~\mathrm{J\,m^{-2}},
+\]
+with coupling parameter \(r=0.4\). The one-dimensional TSL parameters are
+\[
+a_1=0.002,
+\qquad
+a_{2n}=0.9,
+\qquad
+a_{2t}=0.5.
+\]
+Using the corresponding values of \(c_\alpha\), the resulting critical
+openings are
+\[
+d_n^{\max}\approx 23.6~\mu\mathrm{m},
+\qquad
+d_t^{\max}\approx 104~\mu\mathrm{m}.
+\]
 
 \subsection{Convergence}
-\label{sec:conv}
 
 Convergence is assessed with respect to the interface resolution
-$n_{\mathrm{coh}}$, such that the minimum characteristic length along the
-cohesive leg is $h_{\min}=\delta/n_{\mathrm{coh}}$.
-Two complementary studies are performed:
-(i) refinement of the cohesive discretization at fixed far-field truncation,
-and (ii) refinement of the far-field cap at fixed interface resolution.
-All results reported in this section correspond to a representative mixed-mode
-configuration with $\theta_2=20^\circ$.
+\(n_{\mathrm{coh}}\), so that the minimum characteristic size along the
+cohesive leg is
+\[
+h_{\min}=\frac{\delta}{n_{\mathrm{coh}}}.
+\]
+Two complementary studies are performed: first, refinement of the cohesive
+discretization at fixed far-field truncation; second, refinement of the
+far-field cap at fixed interface resolution. All results in this subsection
+correspond to the representative mixed-mode configuration
+\(\theta_2=20^\circ\).
 
 \paragraph{Interface refinement.}
-At fixed far-field cap $B/h_{\max}=80$, the cohesive interface is refined as
-$n_{\mathrm{coh}}=\{10,20,40,80\}$.
-\chg{R1C3}{ Table~\ref{tab:conv_far80} reports the number of degrees of freedom, the critical
-load $\sigma_{\mathrm{cr}}$, and the ratio between mesh-generation time and
-nonlinear solution time, $t_{\mathrm{mesh}}/t_{\mathrm{solve}}$.
-This ratio provides a direct measure of the relative cost of remeshing compared
-to solving the nonlinear equilibrium problem.}
-
-With increasing $n_{\mathrm{coh}}$, the critical load rapidly stabilises.
-Applying a three-level Richardson/Aitken extrapolation to the finest three
-levels yields an asymptotic limit
-$\sigma_\infty = 5.875349$~MPa and a finest-mesh relative error
-\[
-\epsilon
-=
-\frac{\big|\sigma_{\mathrm{cr}}^{\text{(finest)}}-\sigma_\infty\big|}
-{\big|\sigma_\infty\big|}
-\simeq 1.8\times10^{-6},
-\]
-indicating that the calculation has entered the asymptotic regime with respect
-to interface refinement.
-\chg{R1C3}{Over the full range of resolutions considered, the cost of remeshing remains
-comparable to, but does not exceed, the cost of the nonlinear solve.}
+At fixed far-field cap \(B/h_{\max}=80\), the cohesive interface is refined
+as \(n_{\mathrm{coh}}=\{10,20,40,80\}\). Table~\ref{tab:refine}
+reports the number of degrees of freedom, the critical load
+\(\sigma_{\mathrm{cr}}\), the ratio between mesh-generation time and
+nonlinear solution time \(t_{\mathrm{mesh}}/t_{\mathrm{solve}}\), and the
+number of Newton iterations.
 
 \begin{table}[h!]
 	\centering
 	\caption{Convergence with interface refinement at fixed far-field cap
-		$B/h_{\max}=80$ and $\theta_2=20^\circ$.}
-	\label{tab:conv_far80}
-	\begin{tabular}{rcccc}
-		\toprule
-		$n_{\mathrm{coh}}$ & DOFs & $\sigma_{\mathrm{cr}}$ [MPa]
-		& $t_{\mathrm{mesh}}/t_{\mathrm{solve}}$ & iters \\
-		\midrule
-		10 & 120{,}962 & 5.81448 & 1.09 & 17 \\
-		20 & 123{,}446 & 5.90673 & 1.15 & 16 \\
-		40 & 127{,}162 & 5.87593 & 1.05 & 17 \\
-		80 & 133{,}184 & 5.87536 & 1.21 & 17 \\
-		\bottomrule
+		\(B/h_{\max}=80\) and \(\theta_2=20^\circ\).}
+	\label{tab:refine}
+	\begin{tabular}{ccccc}
+		\hline
+		\(n_{\mathrm{coh}}\) & DOFs & \(\sigma_{\mathrm{cr}}\) [MPa] &
+		\(t_{\mathrm{mesh}}/t_{\mathrm{solve}}\) & iters\\
+		\hline
+		10 & 120,962 & 5.81448 & 1.09 & 17\\
+		20 & 123,446 & 5.90673 & 1.15 & 16\\
+		40 & 127,162 & 5.87593 & 1.05 & 17\\
+		80 & 133,184 & 5.87536 & 1.21 & 17\\
+		\hline
 	\end{tabular}
 \end{table}
+
+With increasing \(n_{\mathrm{coh}}\), the critical load rapidly stabilizes.
+Applying a three-level Richardson--Aitken extrapolation to the finest three
+levels gives an asymptotic limit
+\[
+\sigma_\infty=5.875349~\mathrm{MPa},
+\]
+with finest-mesh relative error
+\[
+\epsilon=
+\frac{|\sigma_{\mathrm{cr}}^{(\mathrm{finest})}-\sigma_\infty|}
+{|\sigma_\infty|}
+\approx 1.8\times10^{-6}.
+\]
+This indicates that the calculation has entered the asymptotic regime with
+respect to interface refinement. Over the full range of resolutions
+considered, the cost of remeshing remains comparable to, but does not
+exceed, the cost of the nonlinear solve.
 
 \paragraph{Far-field truncation.}
 To assess sensitivity to the outer boundary, a second sweep is performed by
 varying the far-field cap
-$B/h_{\max}\in\{10,20,40,80\}$ while keeping the cohesive resolution fixed at
-$n_{\mathrm{coh}}=80$.
-The results are summarised in Table~\ref{tab:farfield_sweep}.
-
-As the far-field cap is increased, the critical load decreases monotonically
-and converges towards the same asymptotic value obtained in the interface
-refinement study.
-The difference between $B/h_{\max}=40$ and $80$ is below $1.3\times10^{-4}$~MPa,
-confirming that far-field truncation effects are negligible for
-$B/h_{\max}\ge40$.
-The iteration counts remain nearly constant across the sweep, \chg{R1C3}{and the ratio
-$t_{\mathrm{mesh}}/t_{\mathrm{solve}}$ increases moderately with problem size,
-reflecting the expected growth of meshing cost relative to the nonlinear solve.}
+\[
+B/h_{\max}\in\{10,20,40,80\}
+\]
+while keeping the cohesive resolution fixed at \(n_{\mathrm{coh}}=80\).
+The results are summarized in Table~\ref{tab:farfield}.
 
 \begin{table}[h!]
 	\centering
 	\caption{Far-field cap sensitivity at fixed interface resolution
-		$n_{\mathrm{coh}}=80$ and $\theta_2=20^\circ$.}
-	\label{tab:farfield_sweep}
-	\begin{tabular}{rcccc}
-		\toprule
-		$B/h_{\max}$ & DOFs & $\sigma_{\mathrm{cr}}$ [MPa]
-		& $t_{\mathrm{mesh}}/t_{\mathrm{solve}}$ & iters \\
-		\midrule
-		10 & 14{,}952  & 5.88913 & 0.72 & 18 \\
-		20 & 21{,}216  & 5.87796 & 0.59 & 18 \\
-		40 & 45{,}356  & 5.87548 & 0.63 & 17 \\
-		80 & 133{,}184 & 5.87536 & 1.14 & 17 \\
-		\bottomrule
+		\(n_{\mathrm{coh}}=80\) and \(\theta_2=20^\circ\).}
+	\label{tab:farfield}
+	\begin{tabular}{ccccc}
+		\hline
+		\(B/h_{\max}\) & DOFs & \(\sigma_{\mathrm{cr}}\) [MPa] &
+		\(t_{\mathrm{mesh}}/t_{\mathrm{solve}}\) & iters\\
+		\hline
+		10 & 14,952 & 5.88913 & 0.72 & 18\\
+		20 & 21,216 & 5.87796 & 0.59 & 18\\
+		40 & 45,356 & 5.87548 & 0.63 & 17\\
+		80 & 133,184 & 5.87536 & 1.14 & 17\\
+		\hline
 	\end{tabular}
 \end{table}
 
-Based on these results, production simulations adopt
-$n_{\mathrm{coh}}\ge40$ together with $B/h_{\max}\ge40$.
-Under these conditions, the critical load is converged to within
-$\epsilon\lesssim10^{-6}$, and further refinement of either the cohesive
-discretization or the far-field truncation does not affect the results in a
-meaningful way.
+As the far-field cap is increased, the critical load decreases
+monotonically and converges to the same asymptotic value obtained in the
+interface-refinement study. The difference between \(B/h_{\max}=40\) and
+\(80\) is below \(1.3\times10^{-4}\) MPa, confirming that truncation
+effects are negligible for \(B/h_{\max}\ge 40\). The iteration counts
+remain nearly constant across the sweep, and the ratio
+\(t_{\mathrm{mesh}}/t_{\mathrm{solve}}\) increases only moderately with
+problem size.
 
+Accordingly, the production calculations reported below adopt
+\(n_{\mathrm{coh}}\ge 40\) together with \(B/h_{\max}\ge 40\). Under these
+conditions, the critical load is converged to within
+\(\epsilon\lesssim 10^{-6}\), and further refinement of either the
+cohesive discretization or the far-field truncation does not affect the
+results in a meaningful way.
 
 \subsection{Selection of the kink angle}
-\label{sec:kink-angle}
 
-\chg{R3C3}{
-	\paragraph{On the definition of the critical state and the role of selection criteria.}
-	In the present framework, the critical state is defined uniquely and
-	independently of any directional selection.
-	For each prescribed trial orientation of the cohesive continuation, the
-	critical state is reached when the normal separation at the mouth of the
-	cohesive zone attains its critical value, $d_n = d_n^{\max}$, corresponding to
-	the exhaustion of normal cohesive resistance.
-	The criteria introduced below do not redefine this failure condition.
-	Instead, they provide alternative \emph{selection measures} for identifying
-	the preferred kink direction, all evaluated at the same critical state.
-	Accordingly, they should be interpreted as complementary diagnostics probing
-	different aspects of the critical configuration rather than as competing
-	failure criteria.
-}
+\paragraph{Critical state and directional selectors.}
+In the present framework, the critical state is defined uniquely and
+independently of any directional criterion. For each prescribed trial
+orientation of the cohesive continuation, the critical state is reached
+when the normal separation at the mouth of the cohesive zone attains its
+critical value,
+\[
+d_n=d_n^{\max},
+\]
+corresponding to exhaustion of the normal cohesive resistance. The criteria
+introduced below do not redefine this failure condition. Instead, they
+serve as complementary \emph{selection measures} for identifying the
+preferred kink direction, all evaluated at the same critical state.
+
+For the illustrative calculations in this subsection, the directional
+response is shown through coarse and fine angular sweeps so that the shape
+of the objective function can be inspected directly. In the repeated
+parametric study of Section~\ref{sec:scope_limitations}, by contrast, the
+minimizing angle is obtained by an automated iterative bracket-and-refine
+procedure. The distinction is purely algorithmic: the selector itself is
+unchanged, but the automated procedure is more efficient for repeated
+calculations.
 
 \paragraph{Load-based selector.}
-For a trial direction $\theta_2$, the critical state is solved and the
-corresponding critical load $\sigma_{\mathrm{cr}}(\theta_2)$ is recorded.
-The kink angle is defined as
+For a trial direction \(\theta_2\), the critical state is solved and the
+corresponding critical load \(\sigma_{\mathrm{cr}}(\theta_2)\) is recorded.
+The preferred direction is defined by
 \[
 \theta_2^{\sigma}
 =
-\operatorname*{arg\,min}_{\theta_2 \in \Theta}
-\ \sigma_{\mathrm{cr}}(\theta_2),
+\operatorname*{arg\,min}_{\theta_2\in\Theta}
+\sigma_{\mathrm{cr}}(\theta_2),
 \]
-where $\Theta$ denotes the prescribed search set of global angles.
-Numerically, the minimum is first localized on a coarse sweep and subsequently
-refined on a fine sweep; the reported minimizer corresponds to the vertex of a
-three--point parabolic interpolation through the discrete minimum and its two
-nearest neighbors.
+where \(\Theta\) denotes the prescribed search set of global angles.
+Numerically, the minimum is first localized on a coarse sweep and then
+refined on a fine sweep; the reported minimizer is the vertex of a
+three-point parabolic interpolation through the discrete minimum and its
+two nearest neighbors.
 
-With $(n_{\mathrm{coh}}, B/h_{\max}) = (40,40)$ and $h_{\mathrm{grad}}=1.15$, the
-coarse sweep yields
-$\min \sigma_{\mathrm{cr}} = 5.65160\,\text{MPa}$ at
-$\theta_2 \simeq 1.833^\circ$.
-Refinement to $(n_{\mathrm{coh}}, B/h_{\max}) = (80,80)$ gives
-$\min \sigma_{\mathrm{cr}} = 5.65151\,\text{MPa}$ at
-$\theta_2 \simeq 1.727^\circ$,
-corresponding to an angular shift of $0.106^\circ$.
-The corresponding coarse and refined curves are shown in
-Fig.~\ref{fig:kink-sweeps}, where diamonds mark the parabolic vertex and dashed
-lines indicate its position.
+With \((n_{\mathrm{coh}},B/h_{\max})=(40,40)\) and
+\(h_{\mathrm{grad}}=1.15\), the coarse sweep yields
+\[
+\min \sigma_{\mathrm{cr}}=5.65160~\mathrm{MPa}
+\quad\text{at}\quad
+\theta_2\simeq1.833^\circ.
+\]
+Refinement to \((n_{\mathrm{coh}},B/h_{\max})=(80,80)\) gives
+\[
+\min \sigma_{\mathrm{cr}}=5.65151~\mathrm{MPa}
+\quad\text{at}\quad
+\theta_2\simeq1.727^\circ,
+\]
+corresponding to an angular shift of \(0.106^\circ\). The corresponding
+coarse and refined curves are shown in Fig.~\ref{fig:kink-sweeps}, where
+diamonds mark the parabolic vertex and dashed lines indicate its position.
 
 \begin{figure}[t]
 	\centering
-	\begin{subfigure}[t]{0.48\linewidth}\centering
+	\begin{subfigure}[t]{0.48\linewidth}
+		\centering
 		\includegraphics[width=\linewidth]{Fig6aNew}
-		\caption{Coarse sweep ($n_{\mathrm{coh}}=40$, $B/h_{\max}=40$).}
+		\caption{Coarse sweep (\(n_{\mathrm{coh}}=40\), \(B/h_{\max}=40\)).}
 		\label{fig:kink-sweeps:a}
 	\end{subfigure}\hfill
-	\begin{subfigure}[t]{0.49\linewidth}\centering
+	\begin{subfigure}[t]{0.49\linewidth}
+		\centering
 		\includegraphics[width=\linewidth]{Fig6bNew}
-		\caption{Fine sweep ($n_{\mathrm{coh}}=80$, $B/h_{\max}=80$).}
+		\caption{Fine sweep (\(n_{\mathrm{coh}}=80\), \(B/h_{\max}=80\)).}
 		\label{fig:kink-sweeps:b}
 	\end{subfigure}
-	\caption{Critical load $\sigma_{\mathrm{cr}}$ versus global cohesive-leg angle
-		$\theta_2$. Diamonds denote the three--point parabolic vertex; dashed lines
-		pass through the vertex.}
+	\caption{Critical load \(\sigma_{\mathrm{cr}}\) versus global cohesive-leg
+		angle \(\theta_2\). Diamonds denote the three-point parabolic vertex;
+		dashed lines pass through the vertex.}
 	\label{fig:kink-sweeps}
 \end{figure}
 
 \paragraph{Energetic selector.}
 As a local alternative, we minimize the mixed-mode cohesive energy stored at
-the mouth of Leg~2 in the critical state, normalized by the mode~I fracture
-energy:
+the mouth of Leg~2 in the critical state, normalized by the mode-I
+fracture energy:
 \begin{equation}
 	\theta_2^{\Psi}
 	=
-	\operatorname*{arg\,min}_{\theta_2 \in \Theta}
+	\operatorname*{arg\,min}_{\theta_2\in\Theta}
 	\bigl(\hat\Psi_{\mathrm{crit}}(\theta_2)-1\bigr),
 	\qquad
 	\hat\Psi_{\mathrm{crit}}=\Psi_{\mathrm{crit}}/\phi_n .
 \end{equation}
-Here \(\Psi_{\mathrm{crit}}\) denotes the mixed-mode cohesive potential evaluated
-at the mouth at the onset of instability.
-
-For the trapezoidal traction--separation laws employed in this work,
-the normal opening at the mouth satisfies \(\bar d_n=1\) at the critical state,
-so that \chg{R2C3}{\(F(\bar d_n=1)=c_n\)}. Substituting into the mixed-mode potential yields
+Here \(\Psi_{\mathrm{crit}}\) denotes the mixed-mode cohesive potential
+evaluated at the mouth at the onset of instability. For the trapezoidal
+traction--separation laws used in this work, the normal opening at the
+mouth satisfies \(\bar d_n=1\) at the critical state, so that
+\[
+F(\bar d_n=1)=c_n.
+\]
+Substituting this relation into the mixed-mode potential yields
 \[
 \hat\Psi_{\mathrm{crit}}
 =
-1
-+
+1+
 \left(
 \frac{\phi_t}{\phi_n}\frac{1}{c_t}
 -
@@ -1810,40 +1848,50 @@ r\sqrt{\frac{\phi_t}{\phi_n}}
 \right)
 F(\bar d_t).
 \]
-The energetic excess \(\hat\Psi_{\mathrm{crit}}-1\) is therefore proportional to
-the tangential cohesive potential \(F(\bar d_t)\). Minimizing this quantity is
-thus equivalent to minimizing the shear opening at the mouth.
+Thus, the energetic excess \(\hat\Psi_{\mathrm{crit}}-1\) is proportional to
+the tangential cohesive potential \(F(\bar d_t)\), and minimizing it is
+equivalent to minimizing the shear opening at the mouth.
 
-
-Applying the same two--stage sweep and parabolic vertex refinement strategy, the
-coarse mesh yields
-$\theta_2^{\Psi} \simeq 3.536^\circ$ with
-$\min(\hat\Psi_{\mathrm{crit}}-1) \approx -1.876\times10^{-8}$.
+Applying the same two-stage sweep and parabolic-vertex refinement strategy,
+the coarse mesh yields
+\[
+\theta_2^{\Psi}\simeq3.536^\circ
+\]
+with
+\[
+\min(\hat\Psi_{\mathrm{crit}}-1)\approx-1.876\times10^{-8}.
+\]
 The refined sweep gives
-$\theta_2^{\Psi} \simeq 3.586^\circ$ with
-$\min(\hat\Psi_{\mathrm{crit}}-1) \approx -6.131\times10^{-9}$,
-corresponding to an angular shift of $0.05^\circ$.
-The near--zero values confirm numerical consistency of the energetic diagnostic.
-The corresponding results are shown in Fig.~\ref{fig:kink-psi}.
+\[
+\theta_2^{\Psi}\simeq3.586^\circ
+\]
+with
+\[
+\min(\hat\Psi_{\mathrm{crit}}-1)\approx-6.131\times10^{-9},
+\]
+corresponding to an angular shift of \(0.05^\circ\). The near-zero values
+confirm numerical consistency of the energetic diagnostic. The
+corresponding results are shown in Fig.~\ref{fig:kink-psi}.
 
 \begin{figure}[h!]
 	\centering
-	\begin{subfigure}[t]{0.48\textwidth}\centering
+	\begin{subfigure}[t]{0.48\textwidth}
+		\centering
 		\includegraphics[width=\linewidth]{Fig7aNew}
-		\caption{Coarse sweep ($n_{\mathrm{coh}}=40$, $B/h_{\max}=40$).}
+		\caption{Coarse sweep (\(n_{\mathrm{coh}}=40\), \(B/h_{\max}=40\)).}
 		\label{fig:kink-psi:a}
 	\end{subfigure}\hfill
-	\begin{subfigure}[t]{0.48\textwidth}\centering
+	\begin{subfigure}[t]{0.48\textwidth}
+		\centering
 		\includegraphics[width=\linewidth]{Fig7bNew}
-		\caption{Fine sweep ($n_{\mathrm{coh}}=80$, $B/h_{\max}=80$).}
+		\caption{Fine sweep (\(n_{\mathrm{coh}}=80\), \(B/h_{\max}=80\)).}
 		\label{fig:kink-psi:b}
 	\end{subfigure}
-	\caption{Energetic mouth diagnostic
-		$\hat\Psi_{\mathrm{crit}}-1$ versus global angle $\theta_2$.
-		Diamonds indicate the parabolic vertex; dashed lines mark its position.}
+	\caption{Energetic mouth diagnostic \(\hat\Psi_{\mathrm{crit}}-1\) versus
+		global angle \(\theta_2\). Diamonds indicate the parabolic vertex; dashed
+		lines mark its position.}
 	\label{fig:kink-psi}
 \end{figure}
-
 
 \paragraph{Critical-state fields.}
 We illustrate the critical configuration for a representative coarse discretization
