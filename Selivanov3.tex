@@ -726,15 +726,24 @@ cohesive contribution enters only through the surface integral over
 bulk-interface problem consistently while preserving a smooth transition from
 the intact state to complete separation.
 
-\section{Cohesive interface and traction–separation law}
+
+\section{Cohesive interface and traction--separation law}
 \label{sec:tsl}
 
-The cohesive behavior along $\Gamma_{\mathrm{cz}}$ is governed by a
+The cohesive behavior along \(\Gamma_{\mathrm{cz}}\) is governed by a
 potential-based traction--separation law. Local quantities are expressed in
-the Leg--2 frame $\QQ=[\bt^\top;\bn^\top]$ introduced in
-Section~\ref{sec:problem}. The face-to-face displacement jump resolves as
+the Leg--2 frame
 \[
-\bd=(d_t,d_n)^\top=\QQ\,\jump{\uu},
+\mathbf{Q}=
+\begin{bmatrix}
+	\mathbf{t}^{\top}\\
+	\mathbf{n}^{\top}
+\end{bmatrix},
+\]
+introduced in Section~\ref{sec:problem}. The face-to-face displacement jump
+resolves as
+\[
+\mathbf{d}=(d_t,d_n)^{\top}=\mathbf{Q}\jump{\mathbf{u}},
 \]
 with normalized openings
 \[
@@ -742,85 +751,95 @@ with normalized openings
 \qquad
 \bar d_n=\frac{d_n}{d_n^{\max}}.
 \]
-The cohesive strengths are denoted by $\sigma_t^{\max}$ and
-$\sigma_n^{\max}$. Together with the mode-I and mode-II fracture energies
-$\phi_\alpha$ (\(\alpha\in\{n,t\}\)), these strengths constitute the
+The cohesive strengths are denoted by \(\sigma_t^{\max}\) and
+\(\sigma_n^{\max}\). Together with the mode-I and mode-II fracture energies
+\(\phi_{\alpha}\) (\(\alpha\in\{n,t\}\)), these strengths constitute the
 independent fracture parameters of the model.
 
-The critical openings \(d_\alpha^{\max}\) are introduced as characteristic
+The critical openings \(d_{\alpha}^{\max}\) are introduced as characteristic
 length scales and are determined from the fracture-energy condition
-\[
-\phi_\alpha
-=
-\sigma_\alpha^{\max} d_\alpha^{\max} c_\alpha,
-\qquad
-c_\alpha=F_\alpha(1),
-\qquad
-F_\alpha(\xi)=\int_0^\xi t_\alpha(s)\,\dd s .
-\]
-Here \(t_\alpha(\xi)\) is the normalized traction--separation law in pure
-mode \(\alpha\), \(F_\alpha(\xi)\) is the associated dimensionless
-potential, and \(c_\alpha\) is the corresponding dimensionless area under
-the normalized traction curve. It is convenient to introduce the energetic
-prefactors
-\[
-\chi_\alpha:=\sigma_\alpha^{\max}d_\alpha^{\max}
-=\frac{\phi_\alpha}{c_\alpha},
-\]
+\begin{equation}
+	\phi_{\alpha}
+	=
+	\sigma_{\alpha}^{\max} d_{\alpha}^{\max} c_{\alpha},
+	\qquad
+	c_{\alpha}=F_{\alpha}(1),
+	\qquad
+	F_{\alpha}(\xi)=\int_{0}^{\xi}\tau_{\alpha}(s)\,\mathrm{d}s.
+	\label{eq:phi_energy}
+\end{equation}
+Here \(\tau_{\alpha}(\xi)\) is the normalized one-dimensional
+traction--separation law in pure mode \(\alpha\),
+\(F_{\alpha}(\xi)\) is the associated dimensionless potential, and
+\(c_{\alpha}\) is the corresponding dimensionless area under the normalized
+traction curve. It is convenient to introduce the energetic prefactors
+\begin{equation}
+	\chi_{\alpha}:=\sigma_{\alpha}^{\max}d_{\alpha}^{\max}
+	=
+	\frac{\phi_{\alpha}}{c_{\alpha}},
+	\qquad
+	\alpha\in\{n,t\},
+	\label{eq:chi_def}
+\end{equation}
 which set the mode-wise energy scales of the cohesive potential. These
 quantities are not additional material parameters; they follow directly from
-\((\sigma_\alpha^{\max},\phi_\alpha)\) and the chosen shape of the
+\((\sigma_{\alpha}^{\max},\phi_{\alpha})\) and the chosen shape of the
 traction--separation law.
 
-For notational brevity, once the pure-mode laws have been specified, we
-write \(t(\cdot)\) and \(F(\cdot)\) for the corresponding mode-dependent
-functions, with the active mode understood from the argument and the
-associated parameter set.
+For notational brevity, once the pure-mode laws have been specified, we write
+\(F(\cdot)\), \(\tau(\cdot)\), and \(g(\cdot)=\tau'(\cdot)\) for the
+corresponding mode-dependent functions, with the active mode understood from
+the argument and the associated parameter set.
 
 \paragraph{Mode-wise (one-dimensional) law.}
-The purpose of the strengthening branch has already been discussed in
+The physical role of the strengthening branch has already been discussed in
 Section~\ref{sec:problem}; here we specify the particular smooth law used in
 the computations. In each pure mode, the normalized traction consists of a
 strengthening branch, a plateau, and a softening branch. The parameters
-\(0<a_1<a_2<1\) define the end of the strengthening interval and the onset
-of softening, respectively. In applications, these parameters may be chosen
-separately for the normal and tangential modes; the mode index is omitted
-here for compactness.
+\(0<a_1<a_2<1\) define the end of the strengthening interval and the onset of
+softening, respectively. In applications, these parameters may be chosen
+separately for the normal and tangential modes; the mode index is omitted here
+for compactness.
 
 For the normal mode, compression is regularized by a linear penalty branch.
-The normalized traction \(t\), its derivative \(g=t'\), and the associated
-potential \(F\) are written in the compact form
-\[
-(F,t,g)(\xi)=
-\begin{cases}
-	\left(\dfrac{\kappa}{2}\xi^2,\ \kappa\xi,\ \kappa\right),
-	& \xi\le 0,\\[8pt]
-	\left(
-	\dfrac{\xi^2}{a_1}\Bigl(1-\dfrac{\xi}{3a_1}\Bigr),\
-	\dfrac{\xi}{a_1}\Bigl(2-\dfrac{\xi}{a_1}\Bigr),\
-	\dfrac{2}{a_1}\Bigl(1-\dfrac{\xi}{a_1}\Bigr)
-	\right),
-	& 0<\xi<a_1,\\[10pt]
-	\left(\xi-\dfrac{a_1}{3},\ 1,\ 0\right),
-	& a_1\le \xi<a_2,\\[10pt]
-	\left(
-	c-\displaystyle\int_\xi^1 t(s)\,\dd s,\
-	\dfrac{(1+2\xi-3a_2)(1-\xi)^2}{(1-a_2)^3},\
-	-\dfrac{6(1-\xi)(\xi-a_2)}{(1-a_2)^3}
-	\right),
-	& a_2\le \xi\le 1,\\[12pt]
-	(c,\ 0,\ 0),
-	& \xi>1.
-\end{cases}
-\]
+The normalized traction \(\tau\), its derivative \(g=\tau'\), and the
+associated potential \(F\) are written in the compact form
+
+\begin{multline}
+	\label{eq:tau_law}
+		(F,\tau,g)(\xi)= \\
+		\begin{cases}
+			\big(\tfrac{\kappa}{2}\,\xi^2,\ \kappa\,\xi,\ \kappa\big),
+			& \xi\le 0,\\[2pt]
+			\big(\tfrac{\xi^2}{a_1}\bigl(1-\tfrac{\xi}{3a_1}\bigr),\
+			\tfrac{\xi}{a_1}\bigl(2-\tfrac{\xi}{a_1}\bigr),\
+			\tfrac{2}{a_1}\bigl(1-\tfrac{\xi}{a_1}\bigr)\big),
+			& 0<\xi<a_1,\\[4pt]
+			(\xi-\tfrac{a_1}{3},\ 1,\ 0),
+			& a_1\le \xi<a_2,\\[4pt]
+			\Big(
+			c-\!\!\int_{\xi}^{1}\! \tau(s)\,\mathrm ds,\\
+			\qquad\frac{(1+2\xi-3a_2)(1-\xi)^2}{(1-a_2)^3},\
+			-\frac{6(1-\xi)(\xi-a_2)}{(1-a_2)^3}
+			\Big),
+			& a_2\le\xi\le 1,\\[8pt]
+			(c,\ 0,\ 0),
+			& \xi>1.
+		\end{cases}
+\end{multline}
 Here
-\[
-c=\frac16\,(3-2a_1+3a_2)
-\]
+\begin{equation}
+	c=\frac{1}{6}\left(3-2a_1+3a_2\right)
+	\label{eq:c_def}
+\end{equation}
 is the dimensionless area under the normalized traction--separation law.
-Choosing \(\kappa=2/a_1\) gives
+Choosing
 \[
-t(0^-)=t(0^+)=0,
+\kappa=\frac{2}{a_1}
+\]
+gives
+\[
+\tau(0^-)=\tau(0^+)=0,
 \qquad
 g(0^-)=g(0^+)=\frac{2}{a_1},
 \]
@@ -828,264 +847,176 @@ so the contact--opening transition is \(C^1\)-smooth.
 
 The dimensional pure-mode laws are expressed in terms of the normalized
 openings \(\bar d_n\) and \(\bar d_t\). For the normal mode we use
-\[
-\sigma_n(d_n)=
-\begin{cases}
-	\sigma_n^{\max}\,t(\bar d_n), & d_n\ge 0,\\[3pt]
-	k_c\,d_n, & d_n<0,
-\end{cases}
-\qquad
-k_c=\kappa\,\frac{\sigma_n^{\max}}{d_n^{\max}}.
-\]
-For the tangential mode we define the shear magnitude and the signed
-traction as
-\[
-|\sigma_t|(d_t)=\sigma_t^{\max}\,t(\bar d_t),
-\qquad
-\sigma_t(d_t)=|\sigma_t|(d_t)\,\operatorname{sgn}_0(d_t),
-\]
+\begin{equation}
+	\sigma_n(d_n)=
+	\begin{cases}
+		\sigma_n^{\max}\,\tau(\bar d_n), & d_n\ge 0,\\[3pt]
+		k_c\,d_n, & d_n<0,
+	\end{cases}
+	\qquad
+	k_c=\kappa\,\frac{\sigma_n^{\max}}{d_n^{\max}}.
+	\label{eq:sigma_n_pure}
+\end{equation}
+For the tangential mode we define the shear magnitude and the signed traction
+as
+\begin{equation}
+	|\sigma_t|(d_t)=\sigma_t^{\max}\,\tau(\bar d_t),
+	\qquad
+	\sigma_t(d_t)=|\sigma_t|(d_t)\,\operatorname{sgn}_0(d_t),
+	\label{eq:sigma_t_pure}
+\end{equation}
 where \(\operatorname{sgn}_0(0)=0\).
 
 The corresponding one-dimensional tangents are
-\[
-\frac{\dd \sigma_n}{\dd d_n}=
-\begin{cases}
-	\dfrac{\sigma_n^{\max}}{d_n^{\max}}\,g(\bar d_n), & d_n>0,\\[6pt]
-	k_c, & d_n<0,
-\end{cases}
-\qquad
-\frac{\dd |\sigma_t|}{\dd |d_t|}
-=
-\frac{\sigma_t^{\max}}{d_t^{\max}}\,g(\bar d_t).
-\]
-The pure-mode cohesive potentials are then
-\[
-\Psi_\alpha(d_\alpha)
-=
-\chi_\alpha\,F(\bar d_\alpha)
-=
-\frac{\phi_\alpha}{c_\alpha}\,F(\bar d_\alpha),
-\qquad
-\alpha\in\{n,t\}.
-\]
-
-\paragraph{Mode-wise (one-dimensional) law.}
-The shape of the one-dimensional cohesive traction--separation response has a
-direct influence on fracture behaviour. A cohesive law typically consists of a
-rising branch, a peak traction, and a softening segment. Each part contributes
-to the overall fracture process in a distinct manner: the initial strengthening
-branch regularises the transition from contact to opening; the peak traction
-governs crack initiation and the size of the FPZ; and the softening segment
-controls the rate of energy dissipation and the interaction with the surrounding
-elastic material. As emphasised by Shet and Chandra~\cite{ShetChandra2003}, the FPZ
-embodies micromechanisms that are intrinsic to the material, so the
-\emph{shape} of the traction--separation law, not merely the total energy or peak
-traction, is a material parameter in its own right. To retain control over these
-features while preserving smoothness and differentiability, we employ a
-normalized traction $t(\xi)$ with a strengthening segment, a plateau, and a
-softening branch.
-
-\chg{R2C3}{
-	The normalized traction--separation law $t$, its slope
-	$g=t'$ and the associated potential $F$ are controlled by the parameters
-	$0<a_1<a_2<1$, which define the end of the strengthening branch and the onset
-	of softening, respectively. In applications, $a_1$ and $a_2$ (and hence the
-	shape parameter $c$) may be chosen mode-wise; the subscript is suppressed here
-	for brevity.
-}
-
-For the \emph{normal (tensile)} cohesive mode, a linear penalty is introduced in
-compression to regularise contact, together with a $C^1$ contact--opening
-transition enforced by $\kappa=2/a_1$. The resulting pure-mode law reads
-
-\begin{multline}
-	\label{eq:TSL-pure-mode}
-	\mathcolor{Blue}{
-	(F,t,g)(\xi)= \\
+\begin{equation}
+	\frac{\mathrm{d}\sigma_n}{\mathrm{d}d_n}=
 	\begin{cases}
-		\big(\tfrac{\kappa}{2}\,\xi^2,\ \kappa\,\xi,\ \kappa\big),
-		& \xi\le 0,\\[2pt]
-		\big(\tfrac{\xi^2}{a_1}\bigl(1-\tfrac{\xi}{3a_1}\bigr),\
-		\tfrac{\xi}{a_1}\bigl(2-\tfrac{\xi}{a_1}\bigr),\
-		\tfrac{2}{a_1}\bigl(1-\tfrac{\xi}{a_1}\bigr)\big),
-		& 0<\xi<a_1,\\[4pt]
-		(\xi-\tfrac{a_1}{3},\ 1,\ 0),
-		& a_1\le \xi<a_2,\\[4pt]
-		\Big(
-		c-\!\!\int_{\xi}^{1}\! t(s)\,\mathrm ds,\\
-		\qquad\frac{(1+2\xi-3a_2)(1-\xi)^2}{(1-a_2)^3},\
-		-\frac{6(1-\xi)(\xi-a_2)}{(1-a_2)^3}
-		\Big),
-		& a_2\le\xi\le 1,\\[8pt]
-		(c,\ 0,\ 0),
-		& \xi>1.
+		\dfrac{\sigma_n^{\max}}{d_n^{\max}}\,g(\bar d_n), & d_n>0,\\[8pt]
+		k_c, & d_n<0,
 	\end{cases}
-}
-\end{multline}
-\chg{R2C3}{Here $c=\tfrac{1}{6}(3-2a_1+3a_2)$ is the dimensionless area under the	normalized traction--separation law.
-}
-Choosing $\kappa=2/a_1$ yields $t(0^-)=t(0^+)=0$ and
-$g(0^-)=g(0^+)=2/a_1$, i.e., a $C^1$ traction across the
-contact--opening transition.
-
-
-
-The dimensional pure-mode laws are written in terms of the normalized openings $\bar d_n$ and $\bar d_t$.
-For the normal mode we use a tensile cohesive law with a contact penalty in
-compression,
-\[
-\sigma_n(d_n)=
-\begin{cases}
-	\sigma_n^{\max}\,t(\bar d_n), & d_n\ge 0,\\[2pt]
-	k_c\,d_n, & d_n<0,
-\end{cases}
-\qquad
-k_c=\kappa\,\dfrac{\sigma_n^{\max}}{d_n^{\max}} .
-\]
-For the tangential mode we define the shear magnitude and the signed traction as
-\[
-|\sigma_t|(d_t)=\sigma_t^{\max}\,t(\bar d_t),
-\qquad
-\sigma_t(d_t)=|\sigma_t|(d_t)\,\operatorname{sgn}_0(d_t),
-\]
-where $\operatorname{sgn}_0(0)=0$.
-
-\noindent Their (one-dimensional) tangents are
-\[
-\frac{\dd\sigma_n}{\dd d_n}=
-\begin{cases}
-	\displaystyle \dfrac{\sigma_n^{\max}}{d_n^{\max}}\,g(\bar d_n), & d_n>0,\\[6pt]
-	k_c, & d_n<0,
-\end{cases}
-\qquad
-\frac{\dd|\sigma_t|}{\dd |d_t|}=
-\dfrac{\sigma_t^{\max}}{d_t^{\max}}\,g(\bar d_t).
-\]
-
-\chg{R2C3}{
-\noindent The corresponding pure-mode potentials are taken as
-\begin{equation*}
-	\Psi_\alpha(d_\alpha)
-	=\chi_\alpha\,F(\bar d_\alpha)
-	=\frac{\phi_\alpha}{c_\alpha}\,F(\bar d_\alpha),
-	\qquad \alpha\in\{n,t\}.
-\end{equation*}
-}
+	\qquad
+	\frac{\mathrm{d}|\sigma_t|}{\mathrm{d}|d_t|}
+	=
+	\frac{\sigma_t^{\max}}{d_t^{\max}}\,g(\bar d_t).
+	\label{eq:pure_tangents}
+\end{equation}
+The pure-mode cohesive potentials are then
+\begin{equation}
+	\Psi_{\alpha}(d_{\alpha})
+	=
+	\chi_{\alpha}F(\bar d_{\alpha})
+	=
+	\frac{\phi_{\alpha}}{c_{\alpha}}\,F(\bar d_{\alpha}),
+	\qquad
+	\alpha\in\{n,t\}.
+	\label{eq:pure_potentials}
+\end{equation}
 
 \paragraph{Potential-based mixed-mode coupling.}
-The conservative mixed-mode cohesive response is formulated in terms of a single
-scalar potential. \chg{R2C3}{ Building on the pure-mode energetic contributions
-$\chi_\alpha F(\bar d_\alpha)$, the mixed-mode potential is defined as
+The conservative mixed-mode response is defined through a single scalar
+cohesive potential. Starting from the pure-mode energetic contributions
+\(\chi_nF(\bar d_n)\) and \(\chi_tF(\bar d_t)\), we introduce the coupled
+potential
 \begin{equation}
+	\Psi(d_n,d_t)
+	=
+	\chi_nF(\bar d_n)
+	+
+	\chi_tF(\bar d_t)
+	-
+	r\sqrt{\chi_n\chi_t}\,F(\bar d_n)F(\bar d_t),
 	\label{eq:psi_mixed}
-	\Psi(d_n,d_t)=
-	\chi_n F(\bar d_n)
-	+\chi_t F(\bar d_t)
-	- r\,\sqrt{\chi_n\chi_t}\,
-	F(\bar d_n)F(\bar d_t),
 \end{equation}
-The dimensionless parameter $r$ controls the strength of the mixed-mode
-interaction. Similar multiplicative energetic couplings have been widely adopted in
-potential-based mixed-mode cohesive formulations.
-Admissibility of the cohesive law requires the multiplicative degradation
-factors in the resulting tractions to remain non-negative over the admissible
-range $0\le F(\xi)\le c_\alpha$. This yields the bound
-\[
-0\le r \le r^{\max}
-=\min\!\Bigg(
-\frac{1}{c_n}\sqrt{\frac{\chi_n}{\chi_t}},
-\frac{1}{c_t}\sqrt{\frac{\chi_t}{\chi_n}}
-\Bigg).
-\]
-}
+where \(r\) is a dimensionless coupling parameter. This form is a minimal
+energetic extension of the uncoupled law: it is derived from a single
+potential, recovers the pure normal or pure tangential response when the
+complementary opening vanishes, and preserves variational consistency.
 
-\chg{R2C5}{
-	The form \eqref{eq:psi_mixed} constitutes a minimal energetic extension of
-	the pure-mode cohesive laws. It is derived from a single scalar potential,
-	ensures variational consistency, and exactly recovers the uncoupled normal or
-	tangential response when the complementary separation vanishes.
-}
+Admissibility requires the multiplicative degradation factors in the
+resulting tractions to remain non-negative over the admissible range
+\(0\le F(\xi)\le c_{\alpha}\). This yields the bound
+\begin{equation}
+	0\le r\le r_{\max}
+	=
+	\min\!\left(
+	\frac{1}{c_n}\sqrt{\frac{\chi_n}{\chi_t}},
+	\frac{1}{c_t}\sqrt{\frac{\chi_t}{\chi_n}}
+	\right).
+	\label{eq:rmax}
+\end{equation}
+Within this range, the coupling weakens the normal resistance when the
+tangential opening grows, and conversely weakens the tangential resistance
+when the normal opening grows.
 
-The cohesive tractions follow from
-$\bTcz=\partial\Psi/\partial\bd
-=(\sigma_t,\sigma_n)^\top$ as
-\chg{R2C3}{
-\begin{align}
-	\label{eq:tractions_mixed}
-	\begin{bmatrix}\sigma_t\\[2pt]\sigma_n\end{bmatrix}
-	&=
+The cohesive traction vector follows from the gradient of the potential,
+\(\mathbf{T}_{\mathrm{cz}}=\partial\Psi/\partial\mathbf{d}
+=(\sigma_t,\sigma_n)^{\top}\), which gives
+\begin{equation}
+	\begin{bmatrix}
+		\sigma_t\\[3pt]
+		\sigma_n
+	\end{bmatrix}
+	=
 	\begin{bmatrix}
 		\sigma_t^{\max}
-		\!\left(
+		\left(
 		1-r\sqrt{\dfrac{\chi_n}{\chi_t}}\,F(\bar d_n)
 		\right)
-		t(\bar d_t)\,\operatorname{sgn}_0(d_t)
-		\\[10pt]
+		\tau(\bar d_t)\,\operatorname{sgn}_0(d_t)
+		\\[12pt]
 		\sigma_n^{\max}
-		\!\left(
+		\left(
 		1-r\sqrt{\dfrac{\chi_t}{\chi_n}}\,F(\bar d_t)
 		\right)
-		t(\bar d_n)
+		\tau(\bar d_n)
 	\end{bmatrix}.
-\end{align}
-}
-\paragraph{Consistent tangent (local stiffness).}
-Because $\Psi$ is a scalar potential, the consistent local tangent is the
+	\label{eq:Tcz_mixed}
+\end{equation}
+Thus, the mixed-mode law preserves the one-dimensional traction shape in each
+mode but scales it by an energetic degradation factor governed by the opening
+in the complementary mode.
+
+\paragraph{Consistent tangent.}
+Because \(\Psi\) is a scalar potential, the local algorithmic tangent is the
 symmetric Hessian
-$\mat K_{\rm loc}=\partial\bTcz/\partial\bd$.
-It admits the exact symmetric diagonal factorization
-\begin{equation}
-	\label{eq:Kloc-factor}
-	\mat K_{\rm loc}=\mat S\,\mat M(\bar d_n,\bar d_t)\,\mat S,
-	\qquad
-	\mat S=\operatorname{diag}\!\left(
-	\sqrt{\tfrac{\sigma_t^{\max}}{d_t^{\max}}},\
-	\sqrt{\tfrac{\sigma_n^{\max}}{d_n^{\max}}}
-	\right),
-\end{equation}
-where the dimensionless symmetric \emph{core} depends only on the normalized
-openings:
-\chg{R2C3}{
-\begin{equation}
-	\label{eq:Kcore}
-	\mat M(\bar d_n,\bar d_t)=
-	\begin{bmatrix}
-		\Big[1-r\sqrt{\tfrac{\chi_n}{\chi_t}}\,F(\bar d_n)\Big]\,g(\bar d_t)
-		&
-		-\,r\,t(\bar d_t)\,t(\bar d_n)
-		\\[6pt]
-		-\,r\,t(\bar d_t)\,t(\bar d_n)
-		&
-		\Big[1-r\sqrt{\tfrac{\chi_t}{\chi_n}}\,F(\bar d_t)\Big]\,g(\bar d_n)
-	\end{bmatrix}.
-\end{equation}
-}
-This structure is key: the tangent is symmetric by construction (as the Hessian
-of a potential), which improves robustness and supports quadratic convergence in
-the Newton iterations used later.
-
-
-
-\paragraph{Coupled response illustration.}
-The coupling effects introduced by Eq.~\eqref{eq:psi_mixed} are illustrated in
-Figs.~\ref{fig:tsl_2d} and~\ref{fig:tsl_3d}.
-Figure~\ref{fig:tsl_2d} shows the normalized normal and tangential tractions
-for several fixed values of the companion separation. As the tangential
-separation $\bar d_t$ increases, the normal traction $\bar\sigma_n$ is reduced,
-and vice versa, indicating gradual degradation of the complementary mode.
-Figure~\ref{fig:tsl_3d} presents the mixed-mode cohesive potential in normalized
-form,
 \[
-\hat\Psi(\bar d_n,\bar d_t)=\Psi(\bar d_n,\bar d_t)/\sqrt{\chi_n\chi_t},
+\mathbf{K}_{\mathrm{loc}}
+=
+\frac{\partial \mathbf{T}_{\mathrm{cz}}}{\partial \mathbf{d}}.
 \]
-together with the corresponding tractions and the components of the local
-tangent matrix~$\mat K_{\rm loc}$. This normalization is used for visualization only and does not enter the
-governing equations or the numerical implementation.
-The coupling between the normal and tangential directions appears as the
-nonzero off-diagonal term~$K_{nt}$.
+It is convenient to write it in the factorized form
+\begin{equation}
+	\mathbf{K}_{\mathrm{loc}}
+	=
+	\mathbf{S}\,\mathbf{M}(\bar d_n,\bar d_t)\,\mathbf{S},
+	\qquad
+	\mathbf{S}
+	=
+	\begin{bmatrix}
+		\sqrt{\dfrac{\sigma_t^{\max}}{d_t^{\max}}} & 0 \\[8pt]
+		0 & \sqrt{\dfrac{\sigma_n^{\max}}{d_n^{\max}}}
+	\end{bmatrix},
+	\label{eq:Kloc_factor}
+\end{equation}
+where the dimensionless symmetric core is
+\begin{equation}
+	\mathbf{M}(\bar d_n,\bar d_t)=
+	\begin{bmatrix}
+		\left(
+		1-r\sqrt{\dfrac{\chi_n}{\chi_t}}\,F(\bar d_n)
+		\right)g(\bar d_t)
+		&
+		-r\,\tau(\bar d_t)\tau(\bar d_n)
+		\\[10pt]
+		-r\,\tau(\bar d_t)\tau(\bar d_n)
+		&
+		\left(
+		1-r\sqrt{\dfrac{\chi_t}{\chi_n}}\,F(\bar d_t)
+		\right)g(\bar d_n)
+	\end{bmatrix}.
+	\label{eq:Mcore}
+\end{equation}
+This structure is important for the subsequent finite-element formulation.
+The tangent is symmetric by construction, which improves the robustness of the
+Newton iterations and makes the energetic coupling between the two modes fully
+consistent at the discrete level.
 
-
-
+\paragraph{Illustration of the coupled response.}
+Figures~\ref{fig:tsl_2d} and~\ref{fig:tsl_3d} illustrate the effect of the mixed-mode coupling.
+Figure~2 shows the normalized normal and tangential tractions for several
+fixed values of the complementary opening. As expected from
+Eq.~\eqref{eq:Tcz_mixed}, increasing separation in one mode reduces the
+cohesive resistance in the other. Figure~\ref{fig:tsl_3d} shows the normalized cohesive
+potential,
+\[
+\hat{\Psi}(\bar d_n,\bar d_t)
+=
+\frac{\Psi(\bar d_n,\bar d_t)}{\sqrt{\chi_n\chi_t}},
+\]
+together with the corresponding normalized tractions and the entries of the
+local tangent matrix. The off-diagonal term of
+\(\mathbf{K}_{\mathrm{loc}}\) represents the energetic coupling between the
+normal and tangential directions.
 
 \begin{figure}[t]
 	\centering
@@ -1110,125 +1041,80 @@ nonzero off-diagonal term~$K_{nt}$.
 	\label{fig:tsl_3d}
 \end{figure}
 
-\paragraph{Parameters used in Figs.~\ref{fig:tsl_2d}–\ref{fig:tsl_3d}.}
-We take the \emph{dimensionless} TSL shape and coupling parameters
+For these figures we use
 \[
-a_1=0.2,\qquad a_{2n}=0.6,\qquad a_{2t}=0.3,\qquad r=0.40,
-\]
-and the following \emph{dimensional} material/TSL scales:
-\[
-\sigma_n^{\max}=40~\text{MPa},\quad \sigma_t^{\max}=16~\text{MPa},\quad
-\phi_n = 800~\text{J\,m}^{-2},\quad \phi_t = 1200~\text{J\,m}^{-2}.
-\]
-
-For the normalized law \eqref{eq:TSL-pure-mode}, the dimensionless areas under
-$t(\xi)$ are
-\[
-c_n=\frac{1}{6}\bigl(3-2a_1+3a_{2n}\bigr)=0.7333,
+a_1=0.2,
 \qquad
-c_t=\frac{1}{6}\bigl(3-2a_1+3a_{2t}\bigr)=0.5833.
-\]
-
-The critical openings follow from the fracture--energy condition
-$d_\alpha^{\max}= \phi_\alpha/(\sigma_\alpha^{\max}c_\alpha)$, yielding
-\[
-d_n^{\max}\approx 27.3~\mu\text{m},
+a_{2n}=0.6,
 \qquad
-d_t^{\max}\approx 129~\mu\text{m}.
+a_{2t}=0.3,
+\qquad
+r=0.40,
+\]
+together with
+\[
+\sigma_n^{\max}=40~\mathrm{MPa},
+\qquad
+\sigma_t^{\max}=16~\mathrm{MPa},
+\qquad
+\phi_n=800~\mathrm{J\,m^{-2}},
+\qquad
+\phi_t=1200~\mathrm{J\,m^{-2}}.
+\]
+The corresponding dimensionless areas under the normalized traction laws are
+\[
+c_n=\frac{1}{6}(3-2a_1+3a_{2n})=0.7333,
+\qquad
+c_t=\frac{1}{6}(3-2a_1+3a_{2t})=0.5833,
+\]
+and the resulting critical openings are
+\[
+d_n^{\max}\approx 27.3~\mu\mathrm{m},
+\qquad
+d_t^{\max}\approx 129~\mu\mathrm{m}.
+\]
+For these parameters, the admissibility bound
+Eq.~\eqref{eq:rmax} gives \(r_{\max}\approx1.25\), so the choice \(r=0.40\)
+lies well within the admissible range. The normal branch uses the
+\(C^1\)-smooth contact penalty \(\kappa=2/a_1=10\), corresponding to the
+dimensional contact stiffness
+\[
+k_c=\kappa\,\frac{\sigma_n^{\max}}{d_n^{\max}}.
 \]
 
-The mixed-mode coupling parameter is admissible under the bound
-$r\le r^{\max}\approx 1.25$; thus $r=0.40$ is admissible.
+\paragraph{Remark on the choice of \texorpdfstring{$a_1$}{a1}.}
+The parameter \(a_1\) controls the end of the strengthening branch and
+therefore the opening interval over which the cohesive traction rises to its
+peak value. In the illustrative plots above, a comparatively large value is
+used so that the shape of the law is clearly visible. In the actual kinking
+calculations, however, \(a_1\) should be chosen as small as practicable.
+Otherwise the apparent opening range of the strengthening branch becomes
+artificially extended and the fracture-process zone is correspondingly
+over-regularized. In the computations reported later, reducing \(a_1\) did
+not produce locking or spurious stiffening under mesh refinement; its main
+effect was to increase the number of Newton iterations. The potential-based
+formulation is helpful here because the symmetric consistent tangent reduces
+the sensitivity of the nonlinear solver to the precise value of \(a_1\).
 
-The $C^1$ compression--opening switch on the normal branch uses the
-(dimensionless) penalty
-\(
-\kappa={2}/{a_1}=10,
-\)
-which corresponds to the dimensional contact slope
-$k_c=\kappa\,\sigma_n^{\max}/d_n^{\max}$ (units: Pa\,m$^{-1}$), applied only for $d_n<0$.
-All figure fields are displayed in normalized form, i.e., tractions scaled by
-$(\sigma_n^{\max},\sigma_t^{\max})$ and openings by $(d_n^{\max},d_t^{\max})$,
-while the parameters above retain their physical units.
+\paragraph{Interpretation and limitation of the coupling.}
+The potential \(\Psi\) provides a single smooth energetic surface from which
+all tractions and tangent moduli follow by differentiation. This guarantees a
+conservative interface response, a thermodynamically consistent coupling
+between modes, and a symmetric local tangent. These are key advantages for
+the implicit finite-element procedure developed in the next section.
 
-
-
-
-
-\paragraph{Remark on the choice of $a_{1}$.}
-The parameter $a_{1}$ controls the end of the strengthening branch of the
-traction--separation law and therefore sets the initial crack opening over
-which cohesive tractions rise to their peak value.
-In Section~\ref{sec:tsl}, a comparatively large value was used for clarity of
-presentation, but such values are not representative of real materials: if
-$a_{1}$ is too large, the apparent process-zone opening becomes unrealistically
-extended.
-In practice, $a_{1}$ should be chosen as small as possible while still
-ensuring rapid and stable convergence of the nonlinear solver.
-\chg{R1C2}{
-    For the range of values considered in this work, no locking effects or spurious
-    stiffening were observed as $a_{1}$ was reduced, including under global mesh
-    refinement; the primary effect of decreasing $a_{1}$ is an increase in the
-    number of Newton iterations required to reach convergence.
-}
-The high-resolution studies in Section~\ref{sec:results} show that
-$a_{1}\lesssim 0.01$ provides accurate traction reconstruction and fast
-convergence, whereas larger values artificially enlarge the crack opening
-across the strengthening interval (the $(\beta,\delta)$ portion of the cohesive
-zone, see Fig.~\ref{fig:stmt:c}).
-\chg{R1C2}{
-    The potential-based formulation employed here yields a symmetric and consistent
-    algorithmic tangent, which stabilizes the Newton process and reduces sensitivity
-    to the specific choice of $a_{1}$ compared to non-potential-based cohesive laws.
-}
-
-
-
-\paragraph{Discussion of coupling effects.}
-The potential~\eqref{eq:psi_mixed} ensures energy consistency and a symmetric
-tangent matrix; however, the coupling it introduces also generates certain
-nonphysical features.
-When the tangential separation becomes critical while the normal opening
-remains small, the model still produces finite normal cohesive tractions.
-Conversely, when the interface opens completely in the normal direction,
-tangential tractions do not vanish entirely.
-This residual stress field is a known limitation of potential-based TSLs
-because energy coupling prevents either traction component from reaching zero
-independently.  In practice, the effect is small for moderate~$r$
-($r\le0.3$), but it should be considered when interpreting mixed-mode
-crack-path predictions.
-
-\paragraph{Significance of the potential.}
-The cohesive potential provides a single, smooth energetic surface from which
-all tractions and tangent moduli follow by differentiation.
-Its existence guarantees that the interface response is conservative and
-thermodynamically consistent, and that the linearization used in
-Section~\ref{sec:construction} yields a symmetric tangent operator.
-This symmetry improves numerical stability and ensures quadratic convergence
-of Newton iterations while maintaining a physically consistent distribution of
-cohesive energy among modes.
-
-\chg{R1C6}{
-	\paragraph{Relation to stabilized and energetically consistent CZM formulations.}
-	Numerical robustness and energetic consistency of cohesive-zone formulations
-	have been extensively studied in the literature.
-	Stabilized interface-element approaches have been proposed, for example by
-	Ghosh et al.~\cite{Ghosh2019StabilizedCZM,Ghosh2021RobustnessCZM}, to address
-	convergence difficulties arising in delamination analyses when very stiff,
-	penalty-like cohesive laws are employed.
-	From a complementary perspective, Dimitri et al.~\cite{Dimitri2014ConsistencyCZM}
-	emphasized the importance of thermodynamic consistency and potential-based
-	formulations in mixed-mode cohesive models to avoid non-conservative or
-	path-dependent responses.
-	The present work aligns with this latter viewpoint: robustness is achieved
-	intrinsically through a unified potential-based cohesive law with a symmetric
-	Hessian tangent, rather than through additional stabilization terms or extreme
-	penalty stiffness.
-	This guarantees consistent energetic coupling between modes and stable Newton
-	iterations while retaining a clear physical interpretation of the cohesive
-	parameters.
-}
-
+At the same time, the potential-based coupling also imposes a clear
+limitation. Because both traction components are derived from a single
+non-separable energetic function, complete separation in one mode does not,
+in general, force the traction in the complementary mode to vanish
+independently. As a result, residual complementary tractions may persist in
+extreme mixed-mode states. In the parameter range considered here this effect
+is small, but it should be kept in mind when interpreting the physical
+meaning of the coupled response. The present formulation is therefore best
+viewed as a smooth, energetically consistent mixed-mode regularization,
+particularly suited to the study of crack initiation and incipient kinking,
+rather than as a fully general interface law for arbitrary large-separation
+paths.
 
 \section{Cohesive interface discretization and consistent linearization}
 \label{sec:construction}
