@@ -495,90 +495,104 @@ compute the corresponding critical states.
 \label{sec:governing}
 
 The displacement field
-$\uu:\,\Omega\setminus(\Gamma_{\mathrm{cr}}\cup\Gamma_{\mathrm{cz}})\to\mathbb{R}^2$
-is the primary unknown of the boundary-value problem.
-The body is treated as a homogeneous, isotropic, linear-elastic solid in
-plane strain, and equilibrium is assumed under quasi-static loading conditions.
+\[
+\uu:\Omega\setminus(\Gamma_{\mathrm{cr}}\cup\Gamma_{\mathrm{cz}})
+\to\mathbb{R}^2
+\]
+is the primary unknown of the boundary-value problem. The body is treated as
+a homogeneous, isotropic, linear-elastic solid in plane strain, and
+equilibrium is assumed under quasi-static loading conditions.
 
-\paragraph{Kinematics and constitutive law.}
-The infinitesimal strain tensor and Cauchy stress tensor are related by the
-linear elastic law
+\paragraph{Bulk kinematics and constitutive law.}
+The infinitesimal strain tensor and the Cauchy stress tensor are related by
+the linear-elastic law
 \begin{equation}
-	\eps(\uu)
-	=\tfrac12(\nabla\uu+\nabla\uu^\top),
+	\eps(\uu)=\tfrac12(\grad\uu+\grad\uu^\top),
 	\qquad
 	\sig=\four D:\eps(\uu),
 	\label{eq:constitutive}
 \end{equation}
-where $\four D$ is the fourth-order isotropic elasticity tensor defined by
-the Young’s modulus~$E$ and Poisson’s ratio~$\nu$.
-Under plane-strain conditions the out-of-plane stress satisfies
-$\sigma_{zz}=\nu(\sigma_{xx}+\sigma_{yy})$,
-and the shear modulus is $G=E/[2(1+\nu)]$.
+where \(\four D\) is the fourth-order isotropic elasticity tensor defined by
+the Young's modulus \(E\) and Poisson's ratio \(\nu\). Under plane-strain
+conditions, the out-of-plane stress satisfies
+\[
+\sigma_{zz}=\nu(\sigma_{xx}+\sigma_{yy}),
+\]
+and the shear modulus is \(G=E/[2(1+\nu)]\).
 
-
-\paragraph{Equilibrium equations.}
-In the absence of body forces, the equilibrium of stresses in the bulk
-domain reads
+\paragraph{Equilibrium in the bulk.}
+In the absence of body forces, the stress field in the bulk satisfies
 \begin{equation}
-	\nabla\!\cdot\!\sig=\vec 0
+	\diver\sig=\vb 0
 	\qquad
-	\text{in } \Omega\setminus(\Gamma_{\mathrm{cr}}\cup\Gamma_{\mathrm{cz}}),
+	\text{in }
+	\Omega\setminus(\Gamma_{\mathrm{cr}}\cup\Gamma_{\mathrm{cz}}),
 	\label{eq:equilibrium}
 \end{equation}
-where $\nabla\!\cdot(\cdot)$ denotes the row-wise divergence of a second-order
-tensor.  Equation~\eqref{eq:equilibrium} governs the elastic field in all
-regions of the body except along the discontinuity surfaces.
+where \(\diver(\cdot)\) denotes the row-wise divergence of a second-order
+tensor. Thus, the elastic field is governed by
+Eq.~\eqref{eq:equilibrium} everywhere in the body except along the physical
+crack and the cohesive continuation.
 
 \paragraph{Boundary and interface conditions.}
-Let $\vb n_b$ denote the outward unit normal to $\partial\Omega$.
-Uniform tractions are applied on the horizontal edges (Fig.~\ref{fig:stmt:a}),
+Let \(\vb n_b\) denote the outward unit normal to \(\partial\Omega\). Uniform
+tractions are applied on the horizontal edges,
 \[
 \sig\,\vb n_b=
 \begin{cases}
-	+\sigma\,\vb e_y,& y=+B,\\
-	-\sigma\,\vb e_y,& y=-B,
+	+\sigma\,\ey, & y=+B,\\[2pt]
+	-\sigma\,\ey, & y=-B,
 \end{cases}
-\qquad\text{and}\qquad
-\sig\,\vb n_b=\vb 0 \ \ \text{on } x=0 \text{ and } x=A,
+\qquad
+\sig\,\vb n_b=\vb 0
+\quad\text{on }x=0\text{ and }x=A,
 \]
-where the scalar $\sigma$ is the prescribed far-field load factor.
-To suppress rigid-body motion we impose the minimal point constraints
-\[
-\uu(A,0)\!\cdot\!\vb e_y=0,\qquad
-\uu(0,B)\!\cdot\!\vb e_x=0,\qquad
-\uu(0,-B)\!\cdot\!\vb e_x=0,
-\]
-which fix one vertical and two horizontal degrees of freedom without otherwise
-restricting the solution.
+where the scalar \(\sigma\) is the prescribed far-field load factor.
 
-Across the faces of the physical crack $\Gamma_{\mathrm{cr}}$ the tractions
-vanish:
+To suppress rigid-body motion, we impose the minimal point constraints
 \[
-\sig\,\bn=\vb 0 \quad \text{on } \quad \Gamma_{\mathrm{cr}}^{\pm}.
+\uu(A,0)\cdot\ey=0,
+\qquad
+\uu(0,B)\cdot\ex=0,
+\qquad
+\uu(0,-B)\cdot\ex=0,
 \]
-Along the cohesive segment $\Gamma_{\mathrm{cz}}$,
-the displacement jump and cohesive traction satisfy the local interface relations
+which fix one vertical and two horizontal degrees of freedom without
+otherwise restricting the solution.
+
+Across the faces of the physical crack \(\Gamma_{\mathrm{cr}}\), the
+tractions vanish:
+\[
+\sig\,\bn=\vb 0
+\qquad
+\text{on }\Gamma_{\mathrm{cr}}^\pm .
+\]
+Along the cohesive continuation \(\Gamma_{\mathrm{cz}}\), the displacement
+jump and cohesive traction are related through
 \begin{equation}
-	\bd=\mat Q\,\jump{\uu},\qquad
-	\bTcz=\bTcz(\bd) \in\mathbb{R}^2,
+	\bd=\QQ\,\jump{\uu},
+	\qquad
+	\bTcz=\bTcz(\bd)\in\mathbb{R}^2,
 	\label{eq:cohesive_relations}
 \end{equation}
-\chg{R2C2}{Here, $\bTcz$ denotes the cohesive traction vector expressed as a nonlinear,
-	history-independent function of the displacement jump $\bd$ across the interface,}
- $\mat Q=[\bt^\top;\bn^\top]$ is the local orthonormal frame attached to
-Leg~2 (introduced in Section~\ref{sec:problem}),
-$\bd=(d_t,d_n)$ are the local tangential sliding and normal opening displacements,
-and $\bTcz=(\sigma_t,\sigma_n)$ are the corresponding cohesive tractions.
-Traction continuity implies $\bTcz^{(+)}=-\,\bTcz^{(-)}$ along the interface,
-and the functional dependence $\bTcz(\bd)$ is given by the potential-based
-mixed-mode TSL in Section~\ref{sec:tsl}.
-
+where \(\QQ=[\bt^\top;\bn^\top]\) is the local orthonormal frame attached to
+Leg~2, \(\bd=(d_t,d_n)\) are the local tangential and normal components of
+the displacement jump, and \(\bTcz=(\sigma_t,\sigma_n)\) is the
+corresponding cohesive traction vector. The cohesive response is taken as a
+nonlinear, history-independent function of the jump, and traction continuity
+across the interface implies
+\[
+\bTcz^{(+)}=-\,\bTcz^{(-)} .
+\]
+The specific functional form of \(\bTcz(\bd)\) is given by the
+potential-based mixed-mode traction--separation law introduced in
+Section~\ref{sec:tsl}.
 
 \paragraph{Weak form.}
-Multiplying the equilibrium equation~\eqref{eq:equilibrium} by an admissible
-virtual displacement field~$\delta\uu$ and integrating by parts yields the
-variational (weak) form of equilibrium:
+Let \(\Gamma_N\subset\partial\Omega\) denote the traction-loaded part of the
+external boundary. Multiplying Eq.~\eqref{eq:equilibrium} by an admissible
+virtual displacement field \(\delta\uu\) and integrating by parts gives the
+variational form
 \begin{equation}
 	\int_{\Omega\setminus(\Gamma_{\mathrm{cr}}\cup\Gamma_{\mathrm{cz}})}
 	\eps(\delta\uu):\sig\,\dd\Omega
@@ -586,25 +600,21 @@ variational (weak) form of equilibrium:
 	\int_{\Gamma_{\mathrm{cz}}}
 	\delta\bd^\top\,\bTcz\,\dd s
 	=
-	\int_{\partial_t\Omega}
-	\delta\uu^\top\,\sig\bn\,\dd s .
+	\int_{\Gamma_N}
+	\delta\uu^\top(\sig\,\vb n_b)\,\dd s .
 	\label{eq:weak_form}
 \end{equation}
-The first integral represents the bulk elastic contribution, while the second
-integral accounts for the work of cohesive tractions over the displacement
-jumps along $\Gamma_{\mathrm{cz}}$.  The right-hand side is the external work
-of the applied tractions.  Equation~\eqref{eq:weak_form} constitutes the
-starting point for the finite-element discretization developed in
-Section~\ref{sec:construction}.
+The first integral is the bulk elastic contribution, the second represents
+the work of cohesive tractions over the displacement jumps along
+\(\Gamma_{\mathrm{cz}}\), and the right-hand side is the external work of the
+applied boundary tractions.
 
-\paragraph{Remarks.}
-The weak form separates the elastic and cohesive contributions explicitly,
-making it possible to linearize the coupled system consistently with respect
-to the interface degrees of freedom.  The cohesive-zone influence enters only
-through the surface integral over $\Gamma_{\mathrm{cz}}$, which naturally
-vanishes once the interface is fully degraded and the crack has propagated.
-This formulation thus ensures a smooth transition from the intact to the
-fully separated state without discontinuities in stiffness or traction fields.
+Equation~\eqref{eq:weak_form} provides the starting point for the finite-element
+discretization developed in Section~\ref{sec:construction}. In this form, the
+cohesive contribution enters only through the surface integral over
+\(\Gamma_{\mathrm{cz}}\), which makes it possible to linearize the coupled
+bulk-interface problem consistently while preserving a smooth transition from
+the intact state to complete separation.
 
 \section{Cohesive interface and traction–separation law}
 \label{sec:tsl}
