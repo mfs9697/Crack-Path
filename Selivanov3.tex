@@ -141,10 +141,34 @@
 \maketitle
 
 \begin{abstract}
-	We present a compact finite-element framework for crack kinking in plane strain that augments the physical crack with a short, zero-thickness cohesive continuation. A thin auxiliary channel is used to generate a refined T3 mesh and is collapsed after T6 conversion, so the analysis is performed on the physical interface with coincident node pairs. The interface law is potential-based, differentiable, and bounded in both normal and tangential directions; its cohesive potential yields an energetically consistent formulation with a symmetric Hessian tangent, enabling robust Newton convergence. Local openings are evaluated in a frame attached to the trial leg and rotated to the global frame for assembly. We detail the construction of interface degrees of freedom, the jump operator and rotation, and a mode-mix-aware procedure to select the kink direction.
-	Numerical studies show stable determination of the kink angle, rapid convergence of the critical load, and reproducible energy measures across independently generated meshes. With moderate far-field caps and interface resolution, the critical load is mesh-independent to near machine precision, and bulk tractions on the faces match cohesive tractions reconstructed from jumps along almost the entire leg. We also compare a global load-based selector with a local energetic mouth criterion, highlighting their complementary behavior. The framework is designed as a practical, mesh-robust tool for simulating initiation and early growth of kinking cracks under mixed-mode conditions.
-	\keywords{Mixed-mode fracture \and Cohesive zone model \and Traction--separation law \and Potential-based cohesive interface}
-
+	We present a compact finite-element framework for incipient mixed-mode crack
+	kinking in plane strain, in which the physical crack is augmented by a short,
+	zero-thickness cohesive continuation. A thin auxiliary channel is used only
+	for mesh generation and is collapsed after T6 conversion, so that the
+	analysis is carried out on the physical interface with coincident node pairs.
+	The cohesive law is potential-based, differentiable, and bounded in both the
+	normal and tangential directions; the corresponding cohesive potential yields
+	an energetically consistent formulation with a symmetric Hessian tangent and
+	robust Newton convergence.
+	
+	The construction of the interface degrees of freedom, jump operator,
+	line-integration operators, and consistent linearization is detailed
+	explicitly. Two complementary selectors are considered for the kink
+	direction: a global load-based criterion and a local energetic mouth
+	criterion. Numerical studies show rapid convergence of the critical load,
+	stable determination of the kink angle, and close agreement between bulk
+	tractions and cohesive tractions reconstructed from the displacement jumps
+	along almost the entire cohesive leg.
+	
+	The framework is examined deliberately in a near-LEFM regime. In this
+	setting, the predicted kink direction remains close to the classical elastic
+	benchmark, whereas the critical load exhibits a clearer sensitivity to the
+	finite cohesive zone and to the traction--separation law. A calibrated
+	sensitivity study of the auxiliary cohesive-leg length shows that, when the
+	active cohesive zone is kept well contained within the trial segment, the
+	directional prediction depends only weakly on this auxiliary choice. The method is thus best suited to quasi-static mixed-mode crack kinking in a near-LEFM regime, where it provides a controlled finite-process-zone counterpart to classical elastic predictors.
+	\keywords{Mixed-mode fracture \and Cohesive zone model \and
+		Traction--separation law \and Potential-based cohesive interface}
 \end{abstract}
 
 \section{Introduction}
@@ -400,10 +424,9 @@ the findings and future directions.
 		
 		\multicolumn{3}{@{}l@{}}{\textbf{LEFM benchmark quantities}}\\
 		\midrule
-		\(r_I\) & Radius of the circular contour used for \(J\)-integral evaluation & m\\
-		\(\vec{P}^{\pm}(\theta)\) & Mirror-symmetric sampling points on the contour & m\\
-		\(\eps^{\mathrm I},\,\eps^{\mathrm{II}}\) & Mode-separated strain fields & --\\
-		\(\sig^{\mathrm I},\,\sig^{\mathrm{II}}\) & Mode-separated stress fields & Pa\\
+	\(\vb P^{\pm}(\theta)\) & Mirror-symmetric sampling points on the contour & m\\
+	\(\vb\varepsilon^{\mathrm I},\,\vb\varepsilon^{\mathrm{II}}\) & Mode-separated in-plane strain fields in Voigt notation & --\\
+	\(\vb\sigma^{\mathrm I},\,\vb\sigma^{\mathrm{II}}\) & Mode-separated in-plane stress fields in Voigt notation & Pa\\
 		\(U^{\mathrm I},\,U^{\mathrm{II}}\) & Mode-separated elastic energy densities & J\,m\(^{-3}\)\\
 		\(\vb t^{\mathrm I},\,\vb t^{\mathrm{II}}\) & Traction vectors from the separated fields & Pa\\
 		\(f_{\mathrm I},\,f_{\mathrm{II}}\) & Mode-separated \(J\)-integrands & J\,m\(^{-2}\)\\
@@ -2183,8 +2206,8 @@ near-tip fields are sampled at pairs of mirror-symmetric points
 expressed in local crack-tip coordinates \((x_1,x_2)\), where \(x_1\) is
 aligned with the physical crack.
 
-Let \(\mat{\varepsilon}_P\), \(\mat{\sigma}_P\), and
-\(\partial\vb u_P/\partial x_1\) denote the strain tensor, stress tensor,
+Let \(\bm{\upvarepsilon}_{P^{+}}\), \(\bm{\upsigma}_{P^{+}}\), and
+\(\partial\vb u_{P^{+}}/\partial x_1\) denote the strain tensor, stress tensor,
 and directional displacement gradient at \(\vb P^{+}(\theta)\). The
 corresponding quantities at \(\vb P^{-}(\theta)\) are defined analogously.
 Following the mirror-point formulation of Ishikawa, Kitagawa, and Okamura,
@@ -2249,8 +2272,8 @@ The mode-separated strain and stress fields are then obtained as
 	\end{bmatrix}.
 	\label{eq:mode_sep}
 \end{align}
-Thus, \(\mat{\varepsilon}_P\), \(\mat{\varepsilon}_Q\),
-\(\mat{\sigma}_P\), and \(\mat{\sigma}_Q\) are second-order tensors in the
+Thus, \(\bm{\upvarepsilon}_{P^{+}}\), \(\bm{\upvarepsilon}_{P^{-}}\),
+\(\bm{\upsigma}_{P^{+}}\), and \(\bm{\upsigma}_{P^{-}}\) are second-order tensors in the
 continuum description, whereas
 \(\vb\varepsilon^{\mathrm I}\), \(\vb\varepsilon^{\mathrm{II}}\),
 \(\vb\sigma^{\mathrm I}\), and \(\vb\sigma^{\mathrm{II}}\) denote their
