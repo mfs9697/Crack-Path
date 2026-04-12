@@ -2076,275 +2076,352 @@ computational effort.
 \section{Comparison with LEFM predictors}
 \label{sec:LEFM-comparison}
 
-This section compares the crack-kinking direction obtained from the cohesive-zone
-framework with the classical LEFM prediction.
-The goal is to quantify how mode mixity, encoded in the orientation $\theta_{1}$ of the
-physical leg, influences the preferred deflection angle and to assess whether the cohesive
-continuation modifies the geometric kink condition.
+This section compares the crack-kinking direction and critical load obtained
+from the cohesive-zone framework with classical LEFM-based predictions. The
+goal is not to claim exact equivalence between the two descriptions, but to
+assess, in the near-LEFM regime considered here, which parts of the response
+remain essentially elastic and which retain a measurable imprint of the
+finite cohesive zone.
 
 \subsection{Relative angle definition}
-Throughout the paper, the kink angle is measured as the signed relative rotation
-between the two legs, consistent with the notation introduced in Table~\ref{tab:notation},
+
+Throughout the paper, the kink angle is measured as the signed relative
+rotation between the two legs,
 \begin{equation}
-	\Delta\theta = \operatorname{wrap}_{(-\pi,\pi]}\!\left( \theta_{2} - \theta_{1} \right).
+	\Delta\theta
+	=
+	\operatorname{wrap}_{(-\pi,\pi]}\!\left(\theta_2-\theta_1\right),
+	\label{eq:dtheta_wrap}
 \end{equation}
-This wrapping operation ensures that $\Delta\theta$ is always reported in the interval $(-\pi,\pi]$, preserving the correct direction of kinking (e.g., clockwise vs. counterclockwise). In plots, angles are reported in degrees, with $\Delta\theta$ obtained from the
-wrapped value converted accordingly.
+where the wrapping operation ensures that \(\Delta\theta\) is always reported
+in the interval \((-\pi,\pi]\), thus preserving the correct sense of
+deflection (clockwise or counterclockwise). In plots, angles are reported in
+degrees after conversion of the wrapped value.
 
 In the comparison below, we use two decorated forms of the same quantity:
 \[
-\Delta\theta_{\mathrm{LEFM}}, \qquad
+\Delta\theta_{\mathrm{LEFM}}
+=
+\operatorname{wrap}_{(-\pi,\pi]}\!\left(\theta_2-\theta_1\right),
+\qquad
 \Delta\theta_{\mathrm{CZM}}
-= \operatorname{wrap}_{(-\pi,\pi]}\!\left( \theta_{2} - \theta_{1} \right),
+=
+\operatorname{wrap}_{(-\pi,\pi]}\!\left(\theta_2-\theta_1\right),
 \]
-where $\Delta\theta_{\mathrm{LEFM}}$ is obtained from the
-maximum tangential stress (MTS) criterion, and $\Delta\theta_{\mathrm{CZM}}$ from the
-cohesive critical state.
-
+where \(\Delta\theta_{\mathrm{LEFM}}\) is obtained from the maximum-tangential-stress
+(MTS) criterion applied to the LEFM stress-intensity factors, and
+\(\Delta\theta_{\mathrm{CZM}}\) is obtained from the cohesive critical state.
 
 \subsection{LEFM predictor}
-\label{sec:LEFM-predictor}
 
-For a given inclination $\theta_{1}$ of the physical crack, the classical prediction
-of the kinking direction within LEFM is obtained from the mixed-mode
-stress intensity factors $(K_{\rm I},K_{\rm II})$ associated with
-Leg~1 and the maximum--tangential--stress (MTS) criterion.  For inclined edge
-cracks under uniform loading, closed-form approximations for
-$(K_{\rm I},K_{\rm II})$ and the corresponding kink angle exist and provide
-convenient engineering estimates.  In this work, however, all mixed-mode
-quantities are computed directly by mode-separating the $J$-integral.
+For a given inclination \(\theta_1\) of the physical crack, the LEFM
+benchmark is constructed from the mixed-mode stress-intensity factors
+\((K_{\mathrm I},K_{\mathrm{II}})\) associated with Leg~1 and the
+maximum-tangential-stress criterion. Rather than using closed-form
+approximations for inclined edge cracks, all mixed-mode quantities are
+computed here directly by mode separation of the \(J\)-integral.
 
-\paragraph{Single-contour $J$-integral and mirror-point mode decomposition.}
-A circular contour of radius $r_{\rm I}$ is placed around the crack tip, and the
+\paragraph{Single-contour \(J\)-integral and mirror-point mode decomposition.}
+A circular contour of radius \(r_I\) is placed around the crack tip, and the
 near-tip fields are sampled at pairs of mirror-symmetric points
 \[
-P(\theta) = \bigl(r_{\rm I}\cos\theta, \; r_{\rm I}\sin\theta\bigr),\qquad
-Q(\theta) = \bigl(r_{\rm I}\cos\theta, \; -r_{\rm I}\sin\theta\bigr),
-\qquad \theta\in(0,\pi).
-\]
-Let $\boldsymbol{\varepsilon}_{P}$, $\boldsymbol{\sigma}_{P}$ and
-$\partial\mathbf{u}_{P}/\partial x_{1}$ denote the strain, stress, and directional
-displacement gradient at~$P(\theta)$ in the local coordinates $(x_{1},x_{2})$ aligned
-with the crack.  Their counterparts at $Q(\theta)$ are constructed analogously.
-Following the mirror-point formulation of Ishikawa, Kitagawa and Okamura
-(see Kuna~\cite{Kuna2013}), symmetric and antisymmetric combinations yield the
-mode I and mode II components:
-\[
-\begin{aligned}
-	\boldsymbol{\varepsilon}^{\rm I}
-	&= \tfrac12\bigl[\varepsilon_{P,11} + \varepsilon_{Q,11},\;
-	\varepsilon_{P,22} + \varepsilon_{Q,22},\;
-	\gamma_{P,12} - \gamma_{Q,12}\bigr]^{T},\\[3pt]
-	\boldsymbol{\varepsilon}^{\rm II}
-	&= \tfrac12\bigl[\varepsilon_{P,11} - \varepsilon_{Q,11},\;
-	\varepsilon_{P,22} - \varepsilon_{Q,22},\;
-	\gamma_{P,12} + \gamma_{Q,12}\bigr]^{T},
-\end{aligned}
-\]
-\[
-\begin{aligned}
-	\boldsymbol{\sigma}^{\rm I}
-	&= \tfrac12\bigl[\sigma_{P,11} + \sigma_{Q,11},\;
-	\sigma_{P,22} + \sigma_{Q,22},\;
-	\sigma_{P,12} - \sigma_{Q,12}\bigr]^{T},\\[3pt]
-	\boldsymbol{\sigma}^{\rm II}
-	&= \tfrac12\bigl[\sigma_{P,11} - \sigma_{Q,11},\;
-	\sigma_{P,22} - \sigma_{Q,22},\;
-	\sigma_{P,12} + \sigma_{Q,12}\bigr]^{T}.
-\end{aligned}
-\]
-Here $\gamma_{12}=2\varepsilon_{12}$ denotes the engineering shear strain.
-
-
-The corresponding directional displacement gradients are
-$\partial\mathbf{u}^{\rm I}/\partial x_{1}$ and
-$\partial\mathbf{u}^{\rm II}/\partial x_{1}$.
-The elastic energy densities are
-\[
-U_{\rm I} = \tfrac12\,\boldsymbol{\sigma}^{\rm I}\!:\boldsymbol{\varepsilon}^{\rm I},
+P(\theta)=\bigl(r_I\cos\theta,\ r_I\sin\theta\bigr),
 \qquad
-U_{\rm II} = \tfrac12\,\boldsymbol{\sigma}^{\rm II}\!:\boldsymbol{\varepsilon}^{\rm II}.
+Q(\theta)=\bigl(r_I\cos\theta,\ -r_I\sin\theta\bigr),
+\qquad
+\theta\in(0,\pi).
+\]
+Let \(\varepsilon_P\), \(\sigma_P\), and
+\(\partial \mathbf u_P/\partial x_1\) denote the strain, stress, and
+directional displacement gradient at \(P(\theta)\) in local crack-tip
+coordinates \((x_1,x_2)\) aligned with the physical crack. Their
+counterparts at \(Q(\theta)\) are defined analogously. Following the
+mirror-point formulation of Ishikawa, Kitagawa, and Okamura (see Kuna
+\cite{Kuna2013}), the symmetric and antisymmetric combinations yield the
+mode-I and mode-II fields:
+\begin{align}
+	\varepsilon^{\mathrm I}
+	&=
+	\frac12
+	\begin{bmatrix}
+		\varepsilon_{P,11}+\varepsilon_{Q,11}\\
+		\varepsilon_{P,22}+\varepsilon_{Q,22}\\
+		\gamma_{P,12}-\gamma_{Q,12}
+	\end{bmatrix},
+	&
+	\varepsilon^{\mathrm{II}}
+	&=
+	\frac12
+	\begin{bmatrix}
+		\varepsilon_{P,11}-\varepsilon_{Q,11}\\
+		\varepsilon_{P,22}-\varepsilon_{Q,22}\\
+		\gamma_{P,12}+\gamma_{Q,12}
+	\end{bmatrix},
+	\nonumber\\[4pt]
+	\sigma^{\mathrm I}
+	&=
+	\frac12
+	\begin{bmatrix}
+		\sigma_{P,11}+\sigma_{Q,11}\\
+		\sigma_{P,22}+\sigma_{Q,22}\\
+		\sigma_{P,12}-\sigma_{Q,12}
+	\end{bmatrix},
+	&
+	\sigma^{\mathrm{II}}
+	&=
+	\frac12
+	\begin{bmatrix}
+		\sigma_{P,11}-\sigma_{Q,11}\\
+		\sigma_{P,22}-\sigma_{Q,22}\\
+		\sigma_{P,12}+\sigma_{Q,12}
+	\end{bmatrix},
+	\label{eq:mode_sep}
+\end{align}
+where \(\gamma_{12}=2\varepsilon_{12}\) is the engineering shear strain.
+The corresponding directional displacement gradients are denoted by
+\(\partial \mathbf u^{\mathrm I}/\partial x_1\) and
+\(\partial \mathbf u^{\mathrm{II}}/\partial x_1\), and the elastic energy
+densities are
+\[
+U^{\mathrm I}
+=
+\frac12\,\sigma^{\mathrm I}:\varepsilon^{\mathrm I},
+\qquad
+U^{\mathrm{II}}
+=
+\frac12\,\sigma^{\mathrm{II}}:\varepsilon^{\mathrm{II}}.
 \]
 
-\paragraph{Mode-separated $J$-integrals.}
-Let $\mathbf{n}=(\cos\theta,\sin\theta)$ denote the outward normal at $P(\theta)$.
-With $\mathbf{t}^{\rm I}=\boldsymbol{\sigma}^{\rm I}\mathbf{n}$ and
-$\mathbf{t}^{\rm II}=\boldsymbol{\sigma}^{\rm II}\mathbf{n}$, the mode-separated
-$J$-integrands projected onto~$x_{1}$ are
+\paragraph{Mode-separated \(J\)-integrals and stress-intensity factors.}
+Let \(\mathbf n=(\cos\theta,\sin\theta)\) denote the outward normal at
+\(P(\theta)\). With
 \[
-f_{\rm I}(\theta)
-= U_{\rm I} n_{1}
-- \mathbf{t}^{\rm I}\!\cdot\!
-\frac{\partial\mathbf{u}^{\rm I}}{\partial x_{1}},
+\mathbf t^{\mathrm I}=\sigma^{\mathrm I}\mathbf n,
 \qquad
-f_{\rm II}(\theta)
-= U_{\rm II} n_{1}
-- \mathbf{t}^{\rm II}\!\cdot\!
-\frac{\partial\mathbf{u}^{\rm II}}{\partial x_{1}}.
+\mathbf t^{\mathrm{II}}=\sigma^{\mathrm{II}}\mathbf n,
+\]
+the mode-separated \(J\)-integrands projected onto the crack direction
+\(x_1\) are
+\[
+f_{\mathrm I}(\theta)
+=
+U^{\mathrm I}n_1
+-
+\mathbf t^{\mathrm I}\cdot
+\frac{\partial\mathbf u^{\mathrm I}}{\partial x_1},
+\qquad
+f_{\mathrm{II}}(\theta)
+=
+U^{\mathrm{II}}n_1
+-
+\mathbf t^{\mathrm{II}}\cdot
+\frac{\partial\mathbf u^{\mathrm{II}}}{\partial x_1}.
 \]
 Integration over the upper semicircle and doubling for symmetry gives
-\[
-J_{\rm I}  = 2r_{\rm I}\!\int_{0}^{\pi} f_{\rm I}(\theta)\,d\theta,
-\qquad
-J_{\rm II} = 2r_{\rm I}\!\int_{0}^{\pi} f_{\rm II}(\theta)\,d\theta.
-\]
+\begin{equation}
+	J_{\mathrm I}
+	=
+	2r_I\int_0^\pi f_{\mathrm I}(\theta)\,\mathrm d\theta,
+	\qquad
+	J_{\mathrm{II}}
+	=
+	2r_I\int_0^\pi f_{\mathrm{II}}(\theta)\,\mathrm d\theta.
+	\label{eq:J_modes}
+\end{equation}
 
-\paragraph{Stress intensity factors and MTS kink angle.}
-Using the plane-strain modulus $E' = E/(1-\nu^{2})$, the mode-separated
-stress intensity factors follow from the energetic identities
+Using the plane-strain modulus
 \[
-K_{\rm I} = \sqrt{E'J_{\rm I}},\qquad
-K_{\rm II} = \operatorname{sign}(J_{\rm II})\sqrt{E'|J_{\rm II}|}.
+E'=\frac{E}{1-\nu^2},
 \]
-The LEFM kink angle is then obtained from the MTS condition
-\[
-\Delta\theta_{\rm LEFM}
-= \arg\max_{\theta}\,\sigma_{\theta\theta}(K_{\rm I},K_{\rm II},\theta),
-\]
-where $\sigma_{\theta\theta}$ is the LEFM near-tip circumferential stress.
+the corresponding stress-intensity factors are recovered from the energetic
+identities
+\begin{equation}
+	K_{\mathrm I}=\sqrt{E'J_{\mathrm I}},
+	\qquad
+	K_{\mathrm{II}}
+	=
+	\operatorname{sign}(J_{\mathrm{II}})
+	\sqrt{E'|J_{\mathrm{II}}|}.
+	\label{eq:KIKII}
+\end{equation}
 
-\paragraph{Critical load: Quadratic energetic criterion.}
+\paragraph{LEFM kink-angle predictor.}
+The LEFM kink direction is then obtained from the
+maximum-tangential-stress criterion,
+\begin{equation}
+	\Delta\theta_{\mathrm{LEFM}}
+	=
+	\operatorname*{arg\,max}_{\theta}
+	\sigma_{\theta\theta}(K_{\mathrm I},K_{\mathrm{II}},\theta),
+	\label{eq:MTS}
+\end{equation}
+where \(\sigma_{\theta\theta}\) is the classical LEFM circumferential stress
+in the crack-tip asymptotic field.
+
+\paragraph{LEFM critical load: quadratic energetic criterion.}
 For critical-load predictions, the mode-separated energy-release rates at a
-reference load $\sigma_{0}$ are
+reference load \(\sigma_0\) are
 \[
-G_{\rm I}(\sigma_{0}) = \frac{K_{\rm I}^{2}}{E'}, \qquad
-G_{\rm II}(\sigma_{0}) = \frac{K_{\rm II}^{2}}{E'}.
-\]
-Since $G\propto \sigma^{2}$ for fixed geometry,
-\[
-G_{\rm I}(\sigma)
-= G_{\rm I}(\sigma_{0})\bigl(\tfrac{\sigma}{\sigma_{0}}\bigr)^{2},\qquad
-G_{\rm II}(\sigma)
-= G_{\rm II}(\sigma_{0})\bigl(\tfrac{\sigma}{\sigma_{0}}\bigr)^{2}.
-\]
-The quadratic mixed-mode criterion
-\[
-\frac{G_{\rm I}}{G_{\rm Ic}}
-+ \frac{G_{\rm II}}{G_{\rm IIc}} = 1
-\]
-then yields the LEFM critical load
-\[
-\sigma_{\rm cr}^{\rm (quad)}
-= \frac{\sigma_{0}}
-{\sqrt{\dfrac{G_{\rm I}(\sigma_{0})}{G_{\rm Ic}}
-		+ \dfrac{G_{\rm II}(\sigma_{0})}{G_{\rm IIc}}}}.
-\]
-
-\paragraph{Critical load: Benzeggagh--Kenane (BK) criterion.}
-The BK criterion \cite{BenzeggaghKenane1996} is an energy-based mixed-mode
-fracture model that prescribes an effective fracture toughness
-\[
-G_{\rm c}(\beta)
-= G_{\rm Ic}
-+ \bigl(G_{\rm IIc} - G_{\rm Ic}\bigr)\,\beta^{\eta},
+G_{\mathrm I}(\sigma_0)=\frac{K_{\mathrm I}^2}{E'},
 \qquad
-\beta = \frac{G_{\rm II}}{G_{\rm I}+G_{\rm II}},
+G_{\mathrm{II}}(\sigma_0)=\frac{K_{\mathrm{II}}^2}{E'}.
 \]
-where $\eta>0$ controls the sensitivity of the toughness to the mode mixity.
-Evaluating the mode-mix parameter $\beta_{0}$ at a reference load $\sigma_{0}$
-allows the LEFM critical load to be computed from
-$G(\sigma_{\rm cr}) = G_{\rm c}(\beta_{0})$, which gives
+Since \(G\propto\sigma^2\) for fixed geometry,
 \[
-\sigma_{\rm cr}^{\rm (BK)}(\eta)
-= \sigma_{0}\,
-\sqrt{\frac{G_{\rm c}(\beta_{0})}{
-		G_{\rm I}(\sigma_{0}) + G_{\rm II}(\sigma_{0})}}.
+G_{\mathrm I}(\sigma)
+=
+G_{\mathrm I}(\sigma_0)\left(\frac{\sigma}{\sigma_0}\right)^2,
+\qquad
+G_{\mathrm{II}}(\sigma)
+=
+G_{\mathrm{II}}(\sigma_0)\left(\frac{\sigma}{\sigma_0}\right)^2.
 \]
-This expression provides a convenient mixed-mode benchmark for comparison with
-the cohesive predictions.
+Applying the quadratic mixed-mode criterion
+\[
+\frac{G_{\mathrm I}}{G_{\mathrm Ic}}
++
+\frac{G_{\mathrm{II}}}{G_{\mathrm{IIc}}}
+=1
+\]
+yields the LEFM critical load
+\begin{equation}
+	\sigma_{\mathrm{cr}}^{(\mathrm{quad})}
+	=
+	\sqrt{
+		\frac{\sigma_0^2}{
+			G_{\mathrm I}(\sigma_0)/G_{\mathrm Ic}
+			+
+			G_{\mathrm{II}}(\sigma_0)/G_{\mathrm{IIc}}
+		}
+	}.
+	\label{eq:sigcr_quad}
+\end{equation}
 
+\paragraph{LEFM critical load: Benzeggagh--Kenane criterion.}
+As an additional benchmark, we also consider the Benzeggagh--Kenane (BK)
+mixed-mode criterion \cite{BenzeggaghKenane1996}, which defines an effective
+fracture toughness
+\begin{equation}
+	G_c(\beta)
+	=
+	G_{\mathrm Ic}
+	+
+	\bigl(G_{\mathrm{IIc}}-G_{\mathrm Ic}\bigr)\beta^{\eta},
+	\qquad
+	\beta
+	=
+	\frac{G_{\mathrm{II}}}{G_{\mathrm I}+G_{\mathrm{II}}},
+	\label{eq:BK}
+\end{equation}
+where \(\eta>0\) controls the sensitivity of the toughness to mode mixity.
+Evaluating the mode-mix parameter \(\beta_0\) at the reference load
+\(\sigma_0\), the BK critical load follows from
+\(G(\sigma_{\mathrm{cr}})=G_c(\beta_0)\):
+\begin{equation}
+	\sigma_{\mathrm{cr}}^{(\mathrm{BK})}(\eta)
+	=
+	\sigma_0
+	\sqrt{
+		\frac{G_c(\beta_0)}
+		{G_{\mathrm I}(\sigma_0)+G_{\mathrm{II}}(\sigma_0)}
+	}.
+	\label{eq:sigcr_BK}
+\end{equation}
+Equations~\eqref{eq:sigcr_quad} and~\eqref{eq:sigcr_BK} provide the LEFM
+critical-load benchmarks used in the comparison below.
 
-\subsection{LEFM vs CZM mixed-mode fracture predictions}
+\subsection{LEFM versus CZM mixed-mode fracture predictions}
 
-In the cohesive-zone framework, each loading inclination $\theta_1$ is analyzed
-through a two-stage procedure.
-For each prescribed trial direction $\theta_2$ of the cohesive continuation,
-a fully nonlinear equilibrium problem is solved up to the critical state.
-An outer parametric sweep over $\theta_2$ is then performed, and the preferred
-kink direction is selected according to a chosen diagnostic, either the global
-critical stress $\sigma_{\mathrm{cr}}$ or the energetic mouth functional
-$\hat{\Psi}$.
-This approach yields consistent predictions for both the kink direction and the
-associated critical load within a unified CZM setting.
+In the cohesive-zone framework, each loading inclination \(\theta_1\) is
+analyzed through a two-stage procedure. For each prescribed trial direction
+\(\theta_2\) of the cohesive continuation, a fully nonlinear equilibrium
+problem is solved up to the critical state. An outer search over
+\(\theta_2\) is then performed, and the preferred direction is selected by
+either the global critical load \(\sigma_{\mathrm{cr}}\) or the energetic
+mouth functional \(\hat\Psi\). This provides consistent predictions of both
+the kink direction and the associated critical load within a unified CZM
+setting.
 
-Figure~\ref{fig:LEFM-vs-CZM} compares the resulting kink angles and critical
-loads with classical LEFM predictions.
-LEFM results are shown for the MTS criterion, as well as for quadratic and
-Benzeggagh--Kenane (BK) mixed-mode laws with different $\eta$ parameters.
-CZM results are reported for both selection strategies, namely minimization of
-$\sigma_{\mathrm{cr}}$ and minimization of $\hat{\Psi}$.
+Figure~\ref{fig:LEFM-CZM} compares these predictions with the LEFM
+benchmarks. In Fig.~\ref{fig:LEFM-CZM:a}, the relative kink angles
+\(\Delta\theta\) are shown for the MTS predictor and for the two cohesive
+selectors. In Fig.~\ref{fig:LEFM-CZM:b}, the corresponding critical loads
+are compared with the quadratic energetic criterion and with the BK law for
+several values of the exponent \(\eta\).
 
-
-\begin{figure}[h!]
+\begin{figure}[t]
 	\centering
-	\begin{subfigure}[b]{0.48\linewidth}
+	\begin{subfigure}[t]{0.48\linewidth}
+		\centering
 		\includegraphics[width=\linewidth]{Fig9aNew}
-		\caption{Kink angle $\Delta\theta$ vs. $\theta_1$}
-		\label{fig:kink-angle-subplot}
-	\end{subfigure}
-	\hfill
-	\begin{subfigure}[b]{0.48\linewidth}
+		\caption{Kink angle \(\Delta\theta\) versus \(\theta_1\).}
+		\label{fig:LEFM-CZM:a}
+	\end{subfigure}\hfill
+	\begin{subfigure}[t]{0.48\linewidth}
+		\centering
 		\includegraphics[width=\linewidth]{Fig9bNew}
-		\caption{Critical load $\sigma_{\rm cr}$ vs. $\theta_1$}
-		\label{fig:crit-load-subplot}
+		\caption{Critical load \(\sigma_{\mathrm{cr}}\) versus \(\theta_1\).}
+		\label{fig:LEFM-CZM:b}
 	\end{subfigure}
-	\caption{Comparison of LEFM and CZM predictions. LEFM includes MTS, quadratic, and BK criteria. CZM results correspond to minimization of either $\sigma_{\rm cr}$ or the energetic functional $\hat{\Psi}$.}
-	\label{fig:LEFM-vs-CZM}
+	\caption{Comparison of LEFM and CZM predictions. LEFM includes the MTS,
+		quadratic, and BK criteria. CZM results correspond to minimization of either
+		\(\sigma_{\mathrm{cr}}\) or the energetic functional \(\hat\Psi\).}
+	\label{fig:LEFM-CZM}
 \end{figure}
 
+\paragraph{Kink angle.}
+For small loading inclinations \(\theta_1\), all approaches yield very close
+kink angles, with differences below about \(0.5^\circ\). This confirms that,
+in the small-process-zone regime considered here, the cohesive formulation
+recovers the expected near-LEFM limit for the directional response. As
+\(\theta_1\) increases, systematic differences emerge. The CZM prediction
+obtained by minimizing the global critical load \(\sigma_{\mathrm{cr}}\)
+produces slightly shallower deflection angles than the LEFM MTS criterion,
+with deviations growing gradually and reaching roughly \(1.5^\circ\) at
+\(\theta_1=30^\circ\).
 
-\subsection*{Analysis of results}
-
-\chg{R2C9}{
-	\paragraph{Kink angle.}
-	Figure~\ref{fig:kink-angle-subplot} compares the crack deflection angles predicted by LEFM and by CZM using two different selectors.	For small loading inclinations $\theta_1$, all approaches yield very close kink angles, with differences below $0.5^\circ$, indicating that the cohesive-zone formulation correctly recovers the LEFM limit when the fracture process zone is	small and the response is predominantly mode~I. \newline
-	As $\theta_1$ increases, systematic differences emerge. The CZM prediction obtained by minimizing the critical load $\sigma_{\mathrm{cr}}$	consistently produces slightly \emph{shallower} deflection angles than LEFM, with deviations growing monotonically and reaching about $1.5^\circ$ at $\theta_1=30^\circ$. In contrast, the energetic selector based on minimizing $\hat{\Psi}$ yields systematically larger deflection magnitudes $|\Delta\theta|$ than the
-	load-based selector, with deviations approaching $3^\circ$ at the largest
-	inclination considered.\newline
-	The smooth, nearly linear evolution of all three curves confirms that the
-	outer minimization procedure is well posed.
-	The larger separation observed for the energetic selector reflects its local
-	character: by penalizing shear participation at the cohesive-zone mouth, it
-	favors crack paths that promote opening-dominated separation even when the
-	global load capacity varies weakly with direction.
-}
-
+By contrast, the energetic selector based on minimizing \(\hat\Psi\) yields
+consistently larger deflection magnitudes \(|\Delta\theta|\) than the
+load-based selector, with deviations approaching \(3^\circ\) at the largest
+inclination considered. This separation reflects the different roles of the
+two selectors already observed in Section~\ref{sec:results}: the load-based
+criterion is governed by the global variation of the critical load, whereas
+the energetic selector gives greater weight to the local opening-dominated
+state at the mouth of the cohesive continuation.
 
 \paragraph{Critical load.}
 The corresponding critical loads are shown in
-Fig.~\ref{fig:crit-load-subplot}.
-For all loading angles $\theta_1$, the CZM predicts lower critical stresses than
-LEFM, with the difference increasing as mode~II participation grows.
-At $\theta_1=2^\circ$, the reduction is below $1.5\%$, whereas at
-$\theta_1=30^\circ$ it reaches approximately $10\%$.
+Fig.~\ref{fig:LEFM-CZM:b}. For all loading angles \(\theta_1\), the CZM
+predicts lower critical stresses than LEFM, with the difference increasing
+as mode-II participation becomes stronger. At \(\theta_1=2^\circ\), the
+reduction is below about \(1.5\%\), whereas at \(\theta_1=30^\circ\) it
+reaches approximately \(10\%\). The two cohesive selectors produce nearly
+identical values of \(\sigma_{\mathrm{cr}}\), with differences remaining
+below about \(0.05\%\) over the full range considered. Thus, although the
+two selectors may lead to different kink angles, the global load-carrying
+capacity is governed primarily by the overall cohesive dissipation rather
+than by the local directional diagnostic.
 
-The two CZM selectors produce virtually identical values of
-$\sigma_{\mathrm{cr}}$, with differences remaining below $0.05\%$ across the
-entire range of $\theta_1$.
-This confirms that, although the selectors may lead to different kink
-directions, the global load-carrying capacity is governed primarily by the
-overall cohesive dissipation rather than by the local directional criterion.
+\paragraph{Physical interpretation.}
+The parameter \(\theta_1\) controls the mode mixity at the crack tip rather
+than the applied load level itself. For small \(\theta_1\), the response is
+opening-dominated, and LEFM and CZM therefore yield nearly identical kink
+angles and critical loads. As \(\theta_1\) increases, shear participation
+modifies the distribution of tractions and separations within the fracture
+process zone, even though its overall extent remains governed mainly by the
+material parameters and the attained load. This redistribution is captured
+naturally by the mixed-mode cohesive law.
 
-
-\subsection*{Physical Interpretation}
-
-The parameter $\theta_1$ controls the mode mixity at the crack tip rather than the
-applied load level.
-For small $\theta_1$, the response is opening-dominated and LEFM and CZM yield
-nearly identical kink angles and critical loads, reflecting convergence of the
-cohesive formulation to the LEFM limit.
-As $\theta_1$ increases, shear participation modifies the distribution of
-tractions and separations within the fracture process zone, even though its
-overall extent remains governed primarily by material parameters and the
-attained load.
-This internal redistribution is captured by the mixed-mode cohesive law without
-invoking any notable change in process-zone length.
-The distinction between the CZM selectors reflects their different physical
-emphases: minimization of the global critical load $\sigma_{\mathrm{cr}}$
-identifies directions close to the LEFM prediction, whereas minimization of the
-energetic mouth measure $\hat{\Psi}$ emphasizes local opening at the knee of the
-cohesive continuation, leading to systematically steeper kink angles while
-leaving the critical load essentially unchanged.
+The comparison in Fig.~\ref{fig:LEFM-CZM} therefore supports the same
+qualitative conclusion reached in the earlier sections: in the near-LEFM
+regime, the kink direction remains governed predominantly by the mixed-mode
+elastic field, whereas the critical load retains a clearer signature of the
+finite cohesive zone and of the traction--separation law. At the same time,
+the comparison should not be interpreted as evidence of universal agreement
+between LEFM and CZM. The present results apply to a deliberately
+small-process-zone setting, in which the cohesive formulation is used as a
+regularized finite-process-zone framework for controlled comparison with the
+tip-based LEFM predictors.
 
 \section{Sensitivity to the auxiliary cohesive-leg length, range of applicability, and limitations}
 \label{sec:scope_limitations}
