@@ -293,8 +293,8 @@ and limitations of the method. Section~\ref{sec:conclusions} summarises
 the findings and future directions.
 
 {\small
-	\begin{longtable}{@{}>{\raggedright\arraybackslash}p{0.24\textwidth}%
-			>{\raggedright\arraybackslash}p{0.60\textwidth}%
+	\begin{longtable}{@{}>{\raggedright\arraybackslash}p{0.2\textwidth}%
+			>{\raggedright\arraybackslash}p{0.64\textwidth}%
 			>{\raggedleft\arraybackslash}p{0.08\textwidth}@{}}
 		\caption{Notation used throughout.
 			Subscripts \(n,t\) denote normal and tangential components in the Leg~2 frame
@@ -396,13 +396,13 @@ the findings and future directions.
 		\(\vb F_{\mathrm{ext}}\) & Unit external load vector & N\\
 		\(\vb F_{\mathrm{aug}}\) & Augmented residual for the critical-state problem & mixed\\
 		\(\mat J_{\mathrm{aug}}\) & Jacobian of the augmented system & mixed\\
-		\(g(\vb u)\) & Scalar critical-state constraint function & m\\
+		\(c(\vb u)\) & Scalar critical-state constraint function & m\\
 		\(d_n^{\mathrm{tip}}\) & Normal opening at the cohesive tip & m\\
 		
 		\multicolumn{3}{@{}l@{}}{\textbf{LEFM benchmark quantities}}\\
 		\midrule
 		\(r_I\) & Radius of the circular contour used for \(J\)-integral evaluation & m\\
-		\(P(\theta),\,Q(\theta)\) & Mirror-symmetric sampling points on the contour & m\\
+		\(\vec{P}^{\pm}(\theta)\) & Mirror-symmetric sampling points on the contour & m\\
 		\(\eps^{\mathrm I},\,\eps^{\mathrm{II}}\) & Mode-separated strain fields & --\\
 		\(\sig^{\mathrm I},\,\sig^{\mathrm{II}}\) & Mode-separated stress fields & Pa\\
 		\(U^{\mathrm I},\,U^{\mathrm{II}}\) & Mode-separated elastic energy densities & J\,m\(^{-3}\)\\
@@ -422,7 +422,7 @@ the findings and future directions.
 		\multicolumn{3}{@{}l@{}}{\textbf{Sensitivity study and outputs}}\\
 		\midrule
 		\(\rho\) & Stiffness-to-strength ratio, \(E/\sigma_n^{\max}\) & --\\
-		\(K_{\mathrm{eff}}\) & Effective stress-intensity measure, \(\sqrt{K_{\mathrm I}^2+K_{\mathrm{II}}^2}\) & Pa\,m\(^{1/2}\)\\
+		\(K_{\mathrm{eff}}\) & Effective stress-intensity measure, \((K_{\mathrm I}^2+K_{\mathrm{II}}^2)^{1/2}\) & Pa\,m\(^{1/2}\)\\
 		\(r_D\) & Dugdale-type estimate of the characteristic process-zone size & m\\
 		\(C_D\) & Calibration constant in the \(r_D\) estimate & --\\
 		\(r_\beta\) & Target fraction of active cohesive length within the trial segment & --\\
@@ -1412,7 +1412,7 @@ as
 	=
 	\begin{bmatrix}
 		\vb R(\vb u,\sigma)\\[3pt]
-		g(\vb u)
+		c(\vb u)
 	\end{bmatrix}
 	=
 	\begin{bmatrix}
@@ -1437,7 +1437,7 @@ The Jacobian of the augmented system has the block structure
 		&
 		-\vb F_{\mathrm{ext}}
 		\\[10pt]
-		\dfrac{\partial g}{\partial\vb u}
+		\dfrac{\partial c}{\partial\vb u}
 		&
 		0
 	\end{bmatrix}.
@@ -1448,7 +1448,7 @@ entries, corresponding to the two tip nodes on the upper and lower faces of
 Leg~2. If \(\bn\) denotes the local normal of the final cohesive segment,
 then
 \[
-\frac{\partial g}{\partial\vb u}
+\frac{\partial c}{\partial\vb u}
 =
 \big[
 \cdots\ \bn^\top\ \cdots\ -\bn^\top\ \cdots
@@ -2161,77 +2161,114 @@ benchmark is constructed from the mixed-mode stress-intensity factors
 \((K_{\mathrm I},K_{\mathrm{II}})\) associated with Leg~1 and the
 maximum-tangential-stress criterion. Rather than using closed-form
 approximations for inclined edge cracks, all mixed-mode quantities are
-computed here directly by mode separation of the \(J\)-integral.
+computed directly by mode separation of the \(J\)-integral.
 
 \paragraph{Single-contour \(J\)-integral and mirror-point mode decomposition.}
 A circular contour of radius \(r_I\) is placed around the crack tip, and the
 near-tip fields are sampled at pairs of mirror-symmetric points
 \[
-P(\theta)=\bigl(r_I\cos\theta,\ r_I\sin\theta\bigr),
+\vb P^{+}(\theta)=
+\begin{bmatrix}
+	r_I\cos\theta\\
+	r_I\sin\theta
+\end{bmatrix},
 \qquad
-Q(\theta)=\bigl(r_I\cos\theta,\ -r_I\sin\theta\bigr),
+\vb P^{-}(\theta)=
+\begin{bmatrix}
+	r_I\cos\theta\\
+	-r_I\sin\theta
+\end{bmatrix},
 \qquad
-\theta\in(0,\pi).
+\theta\in(0,\pi),
 \]
-Let \(\varepsilon_P\), \(\sigma_P\), and
-\(\partial \uu_P/\partial x_1\) denote the strain, stress, and
-directional displacement gradient at \(P(\theta)\) in local crack-tip
-coordinates \((x_1,x_2)\) aligned with the physical crack. Their
-counterparts at \(Q(\theta)\) are defined analogously. Following the
-mirror-point formulation of Ishikawa, Kitagawa, and Okamura (see Kuna
-\cite{Kuna2013}), the symmetric and antisymmetric combinations yield the
-mode-I and mode-II fields:
+expressed in local crack-tip coordinates \((x_1,x_2)\), where \(x_1\) is
+aligned with the physical crack.
+
+Let \(\mat{\varepsilon}_P\), \(\mat{\sigma}_P\), and
+\(\partial\vb u_P/\partial x_1\) denote the strain tensor, stress tensor,
+and directional displacement gradient at \(\vb P^{+}(\theta)\). The
+corresponding quantities at \(\vb P^{-}(\theta)\) are defined analogously.
+Following the mirror-point formulation of Ishikawa, Kitagawa, and Okamura,
+the symmetric and antisymmetric parts of the fields are used to extract the
+mode-I and mode-II contributions.
+
+For numerical evaluation, the in-plane stress and strain tensors are written
+in Voigt form as
+\[
+\vb\varepsilon=
+\begin{bmatrix}
+	\varepsilon_{11}\\
+	\varepsilon_{22}\\
+	\gamma_{12}
+\end{bmatrix},
+\qquad
+\vb\sigma=
+\begin{bmatrix}
+	\sigma_{11}\\
+	\sigma_{22}\\
+	\sigma_{12}
+\end{bmatrix},
+\qquad
+\gamma_{12}=2\varepsilon_{12}.
+\]
+The mode-separated strain and stress fields are then obtained as
 \begin{align}
-	\varepsilon^{\mathrm I}
+	\vb\varepsilon^{\mathrm I}
 	&=
 	\frac12
 	\begin{bmatrix}
-		\varepsilon_{P,11}+\varepsilon_{Q,11}\\
-		\varepsilon_{P,22}+\varepsilon_{Q,22}\\
-		\gamma_{P,12}-\gamma_{Q,12}
+		\varepsilon_{P^{+},11}+\varepsilon_{P^{-},11}\\
+		\varepsilon_{P^{+},22}+\varepsilon_{P^{-},22}\\
+		\gamma_{P^{+},12}-\gamma_{P^{-},12}
 	\end{bmatrix},
 	&
-	\varepsilon^{\mathrm{II}}
+	\vb\varepsilon^{\mathrm{II}}
 	&=
 	\frac12
 	\begin{bmatrix}
-		\varepsilon_{P,11}-\varepsilon_{Q,11}\\
-		\varepsilon_{P,22}-\varepsilon_{Q,22}\\
-		\gamma_{P,12}+\gamma_{Q,12}
+		\varepsilon_{P^{+},11}-\varepsilon_{P^{-},11}\\
+		\varepsilon_{P^{+},22}-\varepsilon_{P^{-},22}\\
+		\gamma_{P^{+},12}+\gamma_{P^{-},12}
 	\end{bmatrix},
 	\nonumber\\[4pt]
-	\sigma^{\mathrm I}
+	\vb\sigma^{\mathrm I}
 	&=
 	\frac12
 	\begin{bmatrix}
-		\sigma_{P,11}+\sigma_{Q,11}\\
-		\sigma_{P,22}+\sigma_{Q,22}\\
-		\sigma_{P,12}-\sigma_{Q,12}
+		\sigma_{P^{+},11}+\sigma_{P^{-},11}\\
+		\sigma_{P^{+},22}+\sigma_{P^{-},22}\\
+		\sigma_{P^{+},12}-\sigma_{P^{-},12}
 	\end{bmatrix},
 	&
-	\sigma^{\mathrm{II}}
+	\vb\sigma^{\mathrm{II}}
 	&=
 	\frac12
 	\begin{bmatrix}
-		\sigma_{P,11}-\sigma_{Q,11}\\
-		\sigma_{P,22}-\sigma_{Q,22}\\
-		\sigma_{P,12}+\sigma_{Q,12}
-	\end{bmatrix},
+		\sigma_{P^{+},11}-\sigma_{P^{-},11}\\
+		\sigma_{P^{+},22}-\sigma_{P^{-},22}\\
+		\sigma_{P^{+},12}+\sigma_{P^{-},12}
+	\end{bmatrix}.
 	\label{eq:mode_sep}
 \end{align}
-where \(\gamma_{12}=2\varepsilon_{12}\) is the engineering shear strain.
-The corresponding directional displacement gradients are denoted by
-\(\partial \uu^{\mathrm I}/\partial x_1\) and
-\(\partial \uu^{\mathrm{II}}/\partial x_1\), and the elastic energy
-densities are
+Thus, \(\mat{\varepsilon}_P\), \(\mat{\varepsilon}_Q\),
+\(\mat{\sigma}_P\), and \(\mat{\sigma}_Q\) are second-order tensors in the
+continuum description, whereas
+\(\vb\varepsilon^{\mathrm I}\), \(\vb\varepsilon^{\mathrm{II}}\),
+\(\vb\sigma^{\mathrm I}\), and \(\vb\sigma^{\mathrm{II}}\) denote their
+mode-separated in-plane representations in Voigt notation.
+
+The corresponding directional displacement gradients
+\(\partial\vb u^{\mathrm I}/\partial x_1\) and
+\(\partial\vb u^{\mathrm{II}}/\partial x_1\) are two-component vectors, and
+the mode-separated elastic energy densities are
 \[
 U^{\mathrm I}
 =
-\frac12\,\sigma^{\mathrm I}:\varepsilon^{\mathrm I},
+\frac12\,\vb\sigma^{\mathrm I}\!\cdot\!\vb\varepsilon^{\mathrm I},
 \qquad
 U^{\mathrm{II}}
 =
-\frac12\,\sigma^{\mathrm{II}}:\varepsilon^{\mathrm{II}}.
+\frac12\,\vb\sigma^{\mathrm{II}}\!\cdot\!\vb\varepsilon^{\mathrm{II}}.
 \]
 
 \paragraph{Mode-separated \(J\)-integrals and stress-intensity factors.}
