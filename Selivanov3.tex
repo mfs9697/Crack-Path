@@ -417,7 +417,7 @@ the findings and future directions.
 		\(\mat A_e\) & Face assembly/rotation operator, \(\vb f_e=\mat A_e\vb s_e\) & --\\
 		\(\vb f_e\) & Cohesive element residual vector & N\\
 		\(\mat K_e\) & Cohesive element tangent matrix & N\,m\(^{-1}\)\\
-		\(\mathbf K_{\mathrm{loc}},\ \mathbf K_{\mathrm{loc},\ell}\) & Local \(2\times2\) tangent and its nodal blocks & Pa\,m\(^{-1}\)\\
+		\(\mat{K}_{\mathrm{loc}},\ \mat{K}_{\mathrm{loc},\ell}\) & Local \(2\times2\) tangent and its nodal blocks & Pa\,m\(^{-1}\)\\
 		\(\vb F_{\mathrm{coh}}(\vb u)\) & Global cohesive residual & N\\
 		\(\mat K\) & Bulk elastic stiffness matrix & N\,m\(^{-1}\)\\
 		\(\vb F_{\mathrm{ext}}\) & Unit external load vector & N\\
@@ -425,7 +425,6 @@ the findings and future directions.
 		\(\mat J_{\mathrm{aug}}\) & Jacobian of the augmented system & mixed\\
 		\(h(\vb u)\) & Scalar critical-state constraint function & m\\
 		\(d_n^{\mathrm{tip}}\) & Normal opening at the cohesive tip & m\\
-		
 		\multicolumn{3}{@{}l@{}}{\textbf{LEFM benchmark quantities}}\\
 		\midrule
 	\(\vb P^{\pm}(\theta)\) & Mirror-symmetric sampling points on the contour & m\\
@@ -1404,9 +1403,9 @@ where
 	=
 	\operatorname{blkdiag}
 	\!\left(
-	\mathbf K_{\mathrm{loc},i},
-	\mathbf K_{\mathrm{loc},j},
-	\mathbf K_{\mathrm{loc},k}
+	\mat{K}_{\mathrm{loc},i},
+	\mat{K}_{\mathrm{loc},j},
+	\\mat{K}_{\mathrm{loc},k}
 	\right)
 	\in\mathbb R^{6\times 6}.
 	\label{eq:seg-Kloc}
@@ -1414,7 +1413,7 @@ where
 Here \(\mathbf K_{\mathrm{loc},\ell}\) is the \(2\times2\) local tangent at
 station \(\ell\), obtained from the Hessian of the mixed-mode potential as
 described in Section~\ref{sec:tsl}. Because the constitutive law is
-potential-based, each block \(\mathbf K_{\mathrm{loc},\ell}\) is symmetric,
+potential-based, each block \(\mat{K}_{\mathrm{loc},\ell}\) is symmetric,
 and this symmetry is inherited by the element Jacobian away from the sign
 switch at \(d_t=0\).
 
@@ -1521,7 +1520,7 @@ global model compact. We generate a thin channel solely to drive triangular
 to quadratic (T6) elements and collapse the channel to obtain a
 zero-thickness crack with collocated top/bottom nodes. In the baseline
 calculations considered in Sections~\ref{sec:results} and
-\ref{sec:LEFM-comparison}, the mesh is constructed for a prescribed trial
+\ref{sec:LEFM-comparison}, the mesh is constructed for a auxiliary trial
 cohesive length \(\delta\). Section~\ref{sec:scope_limitations} considers a
 separate parametric study in which this auxiliary length is selected
 adaptively before meshing.
