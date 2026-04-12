@@ -38,7 +38,7 @@
 % ===================== Notation layer  =====================
 
 % --- Vectors & 2nd-order tensors: bold italic ---
-\newcommand{\vb}[1]{\bm{#1}}      % generic vector-like (also 2nd-order tensors)
+\newcommand{\vb}[1]{\bm{#1}}      % generic vector-like
 
 % --- Keep access to arrowed vectors; make \vec bold-italic by default ---
 \let\arrowvec\vec                  % save the original arrowed \vec
@@ -1465,7 +1465,7 @@ The Jacobian of the augmented system has the block structure
 	\end{bmatrix}.
 	\label{eq:aug-J}
 \end{equation}
-The row vector \(\partial g/\partial\vb u\) contains only four nonzero
+The row vector \(\partial h/\partial\vb u\) contains only four nonzero
 entries, corresponding to the two tip nodes on the upper and lower faces of
 Leg~2. If \(\bn\) denotes the local normal of the final cohesive segment,
 then
