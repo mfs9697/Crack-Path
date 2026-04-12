@@ -1894,176 +1894,183 @@ corresponding results are shown in Fig.~\ref{fig:kink-psi}.
 \end{figure}
 
 \paragraph{Critical-state fields.}
-We illustrate the critical configuration for a representative coarse discretization
-($n_{\mathrm{coh}}=40$, $h_{\mathrm{grad}}=1.15$, $B/h_{\max}=40$),
-using the energetic selector $\theta_2 \approx 3.586^\circ$ for Leg~2.
-Figure~\ref{fig:crit-results:stress} shows the normalized bulk stress component
-$\sigma_{yy}/\sigma_n^{\max}$, exhibiting the expected near-interface concentration
-and smooth spatial decay.
-The underlying mesh is shown explicitly, confirming that the stress field remains
-well resolved in the graded region adjacent to the cohesive leg.
+We illustrate the critical configuration for a representative coarse
+discretization,
+\[
+n_{\mathrm{coh}}=40,
+\qquad
+h_{\mathrm{grad}}=1.15,
+\qquad
+B/h_{\max}=40,
+\]
+using the energetic selector
+\[
+\theta_2^{\Psi}\approx 3.586^\circ
+\]
+for Leg~2.
 
-Figure~\ref{fig:crit-results:profiles} reports profiles sampled along the cohesive leg
-from the knee to the tip.
-The top panel shows the normalized openings $\bar d_n$ and $\bar d_t$, indicating that
-the normal separation is already close to its critical value near the knee, with
-negligible tangential opening.
-The middle and bottom panels compare the bulk tractions
-(Cauchy stress projected onto $\pm\mathbf n$) on the upper and lower faces with the
-TSL tractions reconstructed from the local displacement jump.
+Figure~\ref{fig:crit-results:stress} shows the normalized bulk stress
+component \(\sigma_{yy}/\sigma_n^{\max}\). The field exhibits the expected
+near-interface concentration together with a smooth spatial decay away from
+the cohesive continuation. The underlying mesh is shown explicitly, confirming
+that the stress field remains well resolved in the graded region adjacent to
+Leg~2.
 
-Excellent agreement is observed along most of the cohesive leg, \emph{excluding} a short
-segment near the knee that lies on the softening branch of the cohesive law, with the
-correct action--reaction symmetry (top $\bar\sigma_n \approx -1$, bottom
-$\bar\sigma_n \approx +1$, and $\bar\sigma_t \approx 0$).
-Small discrepancies are confined to the first few cohesive elements measured from the
-knee and are associated with the early part of the softening branch.
-These deviations are attributed to nodal stress recovery effects in the graded mesh
-and do not affect the global consistency between bulk stresses and the imposed cohesive
-traction--separation law.
+Figure~\ref{fig:crit-results:profiles} reports profiles sampled along the
+cohesive leg from the knee to the tip. The top panel shows the normalized
+openings \(\bar d_n\) and \(\bar d_t\), indicating that the normal separation
+is already close to its critical value near the knee, whereas the tangential
+opening remains small. The middle and bottom panels compare the bulk
+tractions, obtained by projecting the Cauchy stress onto \(\pm\bn\), with the
+tractions reconstructed from the cohesive traction--separation law.
 
+The agreement is excellent along most of the cohesive leg, including the
+correct action--reaction symmetry between the two faces
+(top \(\bar\sigma_n\approx -1\), bottom \(\bar\sigma_n\approx +1\), and
+\(\bar\sigma_t\approx 0\)). Small discrepancies are confined to the first few
+cohesive elements measured from the knee, where the solution lies on the
+early softening branch of the cohesive law. These deviations are attributed
+to nodal stress-recovery effects in the graded mesh and do not affect the
+global consistency between the bulk field and the imposed cohesive
+traction--separation response.
 
 \begin{figure}[!h]
 	\centering
 	\begin{subfigure}[t]{0.53\textwidth}
 		\centering
 		\includegraphics[width=\linewidth]{Fig8aNew}
-		\caption{Normalized bulk $\sigma_{yy}$ near the cohesive leg (critical state). The deformed mesh is shown at 30× scale.}
+		\caption{Normalized bulk \(\sigma_{yy}\) near the cohesive leg (critical
+			state). The deformed mesh is shown at \(30\times\) scale.}
 		\label{fig:crit-results:stress}
 	\end{subfigure}\hfill
 	\begin{subfigure}[t]{0.45\textwidth}
 		\centering
 		\includegraphics[width=\linewidth]{Fig8bNew}
-		\caption{Along-leg profiles: $\bar d_n,\bar d_t$ (top) and bulk vs.\ TSL tractions on the upper (middle) and lower (bottom) faces.}
+		\caption{Along-leg profiles: \(\bar d_n,\bar d_t\) (top) and bulk versus TSL
+			tractions on the upper (middle) and lower (bottom) faces.}
 		\label{fig:crit-results:profiles}
 	\end{subfigure}
-	\caption{Critical-state fields for the two-leg crack with a short cohesive continuation.
-		Bulk tractions satisfy the cohesive boundary conditions and match the TSL prediction; minor
-		differences are restricted to the first six cohesive elements from the knee.}
+	\caption{Critical-state fields for the two-leg crack with a short cohesive
+		continuation. Bulk tractions satisfy the cohesive boundary conditions and
+		match the TSL prediction; minor differences are restricted to the first six
+		cohesive elements from the knee.}
 	\label{fig:crit-results}
 \end{figure}
 
-\chg{R1C4}{
-	\paragraph{Conditioning of the load-based selector.}
-	As illustrated in Fig.~\ref{fig:kink-sweeps}, the function
-	$\sigma_{\mathrm{cr}}(\theta_2)$ exhibits a very shallow minimum in the
-	vicinity of $\theta_2 \approx 1.6$--$1.9^\circ$.
-	Although the minimum can be localized reliably using parabolic refinement in
-	the present deterministic setting, the pronounced flatness of
-	$\sigma_{\mathrm{cr}}(\theta_2)$ indicates that the load-based criterion is
-	only weakly conditioned with respect to the kink angle.
-	Consequently, in analyses affected by numerical noise (e.g., discretization
-	errors or solver tolerances), or in materials characterized by a more
-	extended fracture process zone, small perturbations may lead to noticeable
-	variations in the estimated minimizing angle.
-	This sensitivity motivates the use of complementary selection measures.
-	In contrast to the load-based response, the energetic mouth diagnostic
-	$\hat{\Psi}_{\mathrm{crit}}(\theta_2)-1$ exhibits a distinctly steeper and
-	better-localized minimum, thereby providing improved numerical robustness
-	when the global critical load is nearly insensitive to the kink direction.
-}
+\paragraph{Conditioning of the load-based selector.}
+As illustrated in Fig.~\ref{fig:kink-sweeps}, the function
+\(\sigma_{\mathrm{cr}}(\theta_2)\) exhibits a very shallow minimum in the
+vicinity of
+\[
+\theta_2\approx 1.6^\circ\text{--}1.9^\circ.
+\]
+Although the minimum can be localized reliably in the present deterministic
+setting by parabolic refinement, the pronounced flatness of
+\(\sigma_{\mathrm{cr}}(\theta_2)\) indicates that the load-based criterion is
+only weakly conditioned with respect to the kink angle. Consequently, in the
+presence of numerical noise, discretization effects, or a more extended
+fracture-process zone, small perturbations may lead to noticeable variations
+in the estimated minimizing angle.
 
-
+By contrast, the energetic mouth diagnostic
+\(\hat{\Psi}_{\mathrm{crit}}(\theta_2)-1\) exhibits a distinctly steeper and
+better-localized minimum. This makes the energetic selector numerically more
+robust when the global critical load is only weakly sensitive to the trial
+direction and explains why the two selectors play complementary roles in the
+present study.
 
 \subsection{Discussion}
-The two selectors probe different facets of the critical state and therefore
-need not coincide.
-The load-based criterion is \emph{global}, as it reflects equilibrium and the
-mixed-mode response of the entire structure at the critical state.
-In the present calculations, it yields
-$\theta_2^{\sigma} \approx 1.6$--$1.9^\circ$, and the function
-$\sigma_{\mathrm{cr}}(\theta_2)$ exhibits an extremely shallow minimum in this
-vicinity.
-As a result, the load-based selector is only weakly conditioned with respect
-to the kink angle, and its minimizer is sensitive to discretization details
-and solver tolerances.
 
-By contrast, the energetic mouth criterion is inherently \emph{local}.
-At the critical state, the normal opening at the mouth satisfies
-$\bar d_n=1$, so that the normal cohesive response is already on its plateau
-or early softening branch.
-The energetic excess $\hat{\Psi}_{\mathrm{crit}}-1$ therefore scales with the
-tangential contribution, which remains small and leads to a rapidly vanishing
-value.
-This produces a steeper and better-localized minimum of
-$\hat{\Psi}_{\mathrm{crit}}(\theta_2)-1$, yielding
-$\theta_2^{\Psi} \approx 3.586^\circ$.
+The two selectors probe different facets of the critical state and therefore
+need not coincide. The load-based criterion is \emph{global}, in the sense
+that it reflects equilibrium and the mixed-mode response of the entire
+structure at the critical state. In the present calculations, it yields
+\[
+\theta_2^{\sigma}\approx 1.6^\circ\text{--}1.9^\circ,
+\]
+and the function \(\sigma_{\mathrm{cr}}(\theta_2)\) exhibits an extremely
+shallow minimum in this vicinity. As a result, the load-based selector is
+only weakly conditioned with respect to the kink angle, and its minimizer is
+sensitive to discretization details and solver tolerances.
+
+By contrast, the energetic mouth criterion is inherently \emph{local}. At the
+critical state, the normal opening at the mouth satisfies \(\bar d_n=1\), so
+that the normal cohesive response is already on its plateau or early
+softening branch. The energetic excess
+\(\hat{\Psi}_{\mathrm{crit}}-1\) therefore scales with the tangential
+contribution, which remains small and vanishes rapidly. This produces a
+steeper and better-localized minimum of
+\(\hat{\Psi}_{\mathrm{crit}}(\theta_2)-1\), yielding
+\[
+\theta_2^{\Psi}\approx 3.586^\circ.
+\]
 The resulting difference between the two selectors is approximately
-$1.86^\circ$.
+\(1.86^\circ\).
 
 In practice, the energetic diagnostic exhibits a pronounced U-shaped profile,
-making the parabolic vertex fit robust even on relatively coarse angular
-sweeps.
-In contrast, the much flatter minimum of $\sigma_{\mathrm{cr}}(\theta_2)$
-benefits significantly from refinement and tight bracketing of the search
-interval.
-If a single selector is desired, a natural compromise is to minimize the
-\emph{integrated} cohesive work along Leg~2 rather than its mouth value alone,
-or to employ a composite objective that balances load capacity against cohesive
-dissipation, thereby accounting for the response of the full interface.
+making the parabolic-vertex fit robust even on relatively coarse angular
+sweeps. By contrast, the much flatter minimum of
+\(\sigma_{\mathrm{cr}}(\theta_2)\) benefits significantly from refinement and
+tight bracketing of the search interval. If a single selector is desired, a
+natural compromise would be to minimize the \emph{integrated} cohesive work
+along Leg~2 rather than its mouth value alone, or to employ a composite
+objective that balances load capacity against cohesive dissipation and
+therefore accounts for the response of the full interface.
 
+\paragraph{Remark on cohesive-law regularization and modeling scope.}
+The interpretation of the above results is closely tied to the adopted
+cohesive regularization. The present framework employs a smooth,
+potential-based traction--separation law, with the displacement jump as the
+primary kinematic variable and cohesive tractions obtained as its energetic
+conjugate. This choice is motivated by numerical robustness and by the
+availability of a symmetric algorithmic tangent in mixed-mode problems.
 
-\chg{R3C1}{
-	\paragraph{Remark on cohesive-law regularization and modeling scope.}
-	The interpretation of the above results is closely tied to the adopted cohesive
-	regularization.
-	The present framework employs a smooth, potential-based traction--separation
-	law, with the displacement jump as the primary kinematic variable and cohesive
-	tractions obtained as its energetic conjugate.
-	This choice is motivated by numerical robustness and the availability of a
-	symmetric algorithmic tangent in mixed-mode problems.
-	Within this setting, the extent of the \emph{active} cohesive zone is not
-	prescribed a priori, but emerges implicitly from the solution as the portion of
-	the interface undergoing separation.
-	Formulations in which the cohesive-zone length is treated as an explicit
-	unknown correspond to free-boundary cohesive crack models and require a
-	different mathematical setting, which is beyond the scope of the present
-	finite-element CZM approach.
-}
+Within this setting, the extent of the \emph{active} cohesive zone is not
+prescribed a priori, but emerges implicitly from the solution as the portion
+of the interface undergoing separation. Formulations in which the
+cohesive-zone length is treated as an explicit unknown correspond to
+free-boundary cohesive-crack models and require a different mathematical
+setting, which lies beyond the scope of the present finite-element CZM
+approach.
 
-\chg{R3C2}{
-	\paragraph{Remark on the role of crack and trial-leg lengths.}
-	Consistent with this modeling scope, both the initial crack and the kinked
-	segment are introduced here as given geometrical inputs in the incipient-kinking
-	analysis.
-	The length of the kinked segment should be regarded as an auxiliary numerical
-	parameter rather than as a physical crack length.
-	The physically relevant quantity is the \emph{active} cohesive-zone extent,
-	which emerges from the solution as the portion of the trial interface that
-	experiences separation.
-	Accordingly, the trial leg is chosen sufficiently long so that the active
-	cohesive zone remains strictly contained within it; once this consistency
-	condition is satisfied, the predicted kink direction and critical load are
-	insensitive to the selected trial-leg length.
-	The estimate $\ell_p$ serves as a classical scaling guideline to ensure that
-	the fracture-process zone can fully develop without artificial truncation; it
-	does not prescribe the cohesive-zone length and is not a constitutive
-	assumption.
-	Treating the cohesive crack length as a true free parameter requires a
-	free-boundary or incremental propagation formulation, which lies beyond the
-	scope of the present incipient-kinking study.
-}
+\paragraph{Remark on the role of crack and trial-leg lengths.}
+Consistent with this modeling scope, both the initial crack and the kinked
+segment are introduced here as given geometrical inputs in the
+incipient-kinking analysis. The length of the kinked segment should be
+regarded as an auxiliary numerical parameter rather than as a physical crack
+length. The physically relevant quantity is the \emph{active} cohesive-zone
+extent, which emerges from the solution as the portion of the trial interface
+that experiences separation. Accordingly, the trial leg is chosen
+sufficiently long that the active cohesive zone remains strictly contained
+within it; once this consistency condition is satisfied, the predicted kink
+direction and critical load are insensitive to the selected trial-leg length.
 
-\chg{R1C3}{
-	\paragraph{Remark on a possible extension to crack propagation.}
-	While the present study is restricted to the determination of the kinking
-	direction and associated critical load for a predefined trial leg, the proposed
-	framework naturally lends itself to extension toward incremental crack
-	propagation.
-	In such a setting, the crack path would be updated step by step, and a new
-	cohesive segment would be activated at each increment.
-	The thin-channel construction and subsequent collapse would then be repeated
-	for the updated crack geometry, implying regeneration of the mesh only in the
-	vicinity of the advancing crack.
-	Although this introduces additional computational cost, the channel-based
-	meshing procedure is fully automated, local to the crack region, and does not
-	require explicit mesh surgery or global topological modifications; the
-	interface operators and nonlinear solution strategy remain unchanged.
-	The parametric kinking studies reported here indicate that the cost of mesh
-	generation is comparable to that of the nonlinear solve and scales smoothly
-	with interface refinement, suggesting that multi-step crack-growth simulations
-	can be carried out without a prohibitive increase in computational effort.
-}
+The estimate \(\ell_p\) serves as a classical scaling guideline to ensure
+that the fracture-process zone can fully develop without artificial
+truncation; it does not prescribe the cohesive-zone length and is not a
+constitutive assumption. Treating the cohesive crack length as a true free
+parameter requires a free-boundary or incremental propagation formulation and
+therefore lies beyond the scope of the present incipient-kinking study.
+
+\paragraph{Remark on a possible extension to crack propagation.}
+While the present study is restricted to the determination of the kinking
+direction and associated critical load for a predefined trial leg, the
+proposed framework naturally lends itself to extension toward incremental
+crack propagation. In such a setting, the crack path would be updated step by
+step, and a new cohesive segment would be activated at each increment. The
+thin-channel construction and subsequent collapse would then be repeated for
+the updated crack geometry, implying regeneration of the mesh only in the
+vicinity of the advancing crack.
+
+Although this introduces additional computational cost, the channel-based
+meshing procedure is fully automated, local to the crack region, and does not
+require explicit mesh surgery or global topological modifications; the
+interface operators and nonlinear solution strategy remain unchanged. The
+parametric kinking studies reported here indicate that the cost of mesh
+generation is comparable to that of the nonlinear solve and scales smoothly
+with interface refinement, suggesting that multi-step crack-growth
+simulations can be carried out without a prohibitive increase in
+computational effort.
 
 
 \section{Comparison with LEFM predictors}
