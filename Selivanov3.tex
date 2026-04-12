@@ -38,7 +38,7 @@
 
 % --- Vectors & 2nd-order tensors: bold italic ---
 \newcommand{\vb}[1]{\bm{#1}}      % generic vector-like (also 2nd-order tensors)
-%\newcommand{\tens}[1]{\bm{#1}}    % alias for clarity in code
+\newcommand{\tens}[1]{\bm{#1}}    % alias for clarity in code
 
 % --- Keep access to arrowed vectors; make \vec bold-italic by default ---
 \let\arrowvec\vec                  % save the original arrowed \vec
@@ -294,104 +294,147 @@ and limitations of the method. Section~\ref{sec:conclusions} summarises
 the findings and future directions.
 
 {\small
-	\begin{longtable}{@{}>{\raggedright\arraybackslash}p{0.22\textwidth}%
-			>{\raggedright\arraybackslash}p{0.64\textwidth}%
+	\begin{longtable}{@{}>{\raggedright\arraybackslash}p{0.24\textwidth}%
+			>{\raggedright\arraybackslash}p{0.60\textwidth}%
 			>{\raggedleft\arraybackslash}p{0.08\textwidth}@{}}
-		\caption{Notation used throughout. Subscripts $n,t$ denote normal and tangential components in the Leg~2 frame $\mat Q=[\bt^\top;\bn^\top]$.}
+		\caption{Notation used throughout.
+			Subscripts \(n,t\) denote normal and tangential components in the Leg~2 frame
+			\(\mat Q=[\bt^\top;\bn^\top]\).}
 		\label{tab:notation}\\
 		\toprule
 		\textbf{Symbol} & \textbf{Meaning} & \textbf{Units}\\
 		\midrule
 		\endfirsthead
+		
 		\multicolumn{3}{@{}l@{}}{\small\textit{Table \thetable\ (continued)}}\\
 		\toprule
 		\textbf{Symbol} & \textbf{Meaning} & \textbf{Units}\\
 		\midrule
 		\endhead
+		
 		\midrule
 		\multicolumn{3}{r}{\small\textit{Continued on next page}}\\
 		\endfoot
+		
 		\bottomrule
 		\endlastfoot
-
+		
 		\multicolumn{3}{@{}l@{}}{\textbf{Geometry and loading}}\\
 		\midrule
-		$A,\,B$ & Plate width and half-height ($x\in[0,A],\,y\in[-B,B]$) & m\\
-		$V_0,\,V_1,\,V_2$ & Mouth, knee, and tip coordinates of the two-leg path & m\\
-		$a$ & Physical leg length (Leg~1): $|V_1{-}V_0|$ & m\\
-		$\delta$ & Prescribed cohesive length (Leg~2, trial leg) & m\\
-		$\beta$ & Active cohesive sublength on Leg~2 & m\\
-		$\theta_1,\,\theta_2$ & Absolute orientations of Leg~1/2 (from $+x$) & rad\\
-		$\Delta\theta$ & Signed kink angle $\operatorname{wrap}_{(-\pi,\pi]}(\theta_2-\theta_1)$ & rad\\
-		$\bt,\,\bn$ & Unit tangent (knee$\to$tip) and unit normal (lower$\to$upper) & --\\
-		$\mat Q=[\bt^\top;\bn^\top]$ & Local $2{\times}2$ frame attached to Leg~2 & --\\
-		$s,\,r$ & Local coordinates along $\bt$ and $\bn$ & m\\
-		$\sigma$ & Magnitude of the applied tractions on the top and bottom plate faces (equal in magnitude, opposite in sign) & MPa\\[2pt]
-
+		\(\Omega\) & Bulk domain & m\(^2\)\\
+		\(\partial\Omega\) & External boundary of the body & m\\
+		\(\Gamma_{\mathrm{cr}},\ \Gamma_{\mathrm{cz}}\) & Physical crack and cohesive continuation boundaries & m\\
+		\(\Gamma_N\) & Traction-loaded part of the external boundary & m\\
+		\(A,\,B\) & Plate width and half-height \((x\in[0,A],\,y\in[-B,B])\) & m\\
+		\(V_0,\,V_1,\,V_2\) & Mouth, knee, and tip coordinates of the two-leg path & m\\
+		\(a\) & Physical crack length (Leg~1), \(|V_1-V_0|\) & m\\
+		\(\delta\) & Auxiliary cohesive-leg length (Leg~2, trial segment) & m\\
+		\(\beta\) & Active cohesive sublength on Leg~2 & m\\
+		\(\theta_1,\,\theta_2\) & Absolute orientations of Leg~1 and Leg~2 & rad\\
+		\(\Delta\theta\) & Signed kink angle \(\operatorname{wrap}_{(-\pi,\pi]}(\theta_2-\theta_1)\) & rad\\
+		\(\Delta\theta_{\mathrm{LEFM}},\ \Delta\theta_{\mathrm{CZM}}\) & Relative kink angles from LEFM and CZM predictors & rad\\
+		\(\bt,\,\bn\) & Unit tangent (mouth\(\to\)tip) and unit normal (lower\(\to\)upper) on Leg~2 & --\\
+		\(\mat Q=[\bt^\top;\bn^\top]\) & Local \(2\times2\) frame attached to Leg~2 & --\\
+		\(s,\,r\) & Local coordinates along \(\bt\) and \(\bn\) & m\\
+		\(\vb n_b\) & Outward unit normal to \(\partial\Omega\) & --\\
+		\(\sigma\) & Scalar far-field load amplitude applied on the plate edges & Pa\\
+		
 		\multicolumn{3}{@{}l@{}}{\textbf{Bulk kinematics and material}}\\
 		\midrule
-		$\vec u$ & Displacement field & m\\
-		$\jump{\vec u}$ & Displacement jump across Leg~2: $\vec u^{(+)}-\vec u^{(-)}$ & m\\
-		$\boldsymbol\varepsilon(\vec u)$ & Small strain $\tfrac12(\nabla\vec u+\nabla\vec u^\top)$ & --\\
-		$\boldsymbol\sigma$ & Cauchy stress & Pa\\
-		$\mat D$ & Elasticity tensor (plane strain) & Pa\\
-		$E,\ \nu,\ G$ & Young’s modulus, Poisson’s ratio, shear modulus ($G=E/[2(1+\nu)]$) & Pa, --, Pa\\[2pt]
-
+		\(\uu\) & Displacement field & m\\
+		\(\jump{\uu}\) & Displacement jump across Leg~2, \(\uu^{(+)}-\uu^{(-)}\) & m\\
+		\(\eps(\uu)\) & Small-strain tensor, \(\tfrac12(\nabla\uu+\nabla\uu^\top)\) & --\\
+		\(\sig\) & Cauchy stress tensor & Pa\\
+		\(\mat D\) & Elasticity tensor (plane strain) & Pa\\
+		\(E,\ \nu,\ G\) & Young’s modulus, Poisson’s ratio, shear modulus & Pa,\ --,\ Pa\\
+		\(E'\) & Plane-strain modulus, \(E/(1-\nu^2)\) & Pa\\
+		
 		\multicolumn{3}{@{}l@{}}{\textbf{Mesh and interface}}\\
 		\midrule
-		$n_{\mathrm{coh}}$ & Equal segments on Leg~2 (interface resolution) & --\\
-		$h_{\min}$ & Target near-interface size $=\delta/n_{\mathrm{coh}}$ & m\\
-		$h_{\mathrm{grad}}$ & Geometric growth factor away from the band & --\\
-		$h_{\max}$ & Far-field size cap & m\\
-		$w$ & Channel half-width (mesh only; collapsed before solve) & m\\[2pt]
-
+		\(n_{\mathrm{coh}}\) & Number of equal interface segments on Leg~2 & --\\
+		\(h_{\min}\) & Target near-interface size, \(\delta/n_{\mathrm{coh}}\) & m\\
+		\(h_{\mathrm{grad}}\) & Geometric growth factor away from the channel & --\\
+		\(h_{\max}\) & Far-field size cap & m\\
+		\(w_c\) & Channel half-width used only for mesh generation & m\\
+		\(l_e\) & Physical length of one quadratic interface segment & m\\
+		
 		\multicolumn{3}{@{}l@{}}{\textbf{Cohesive variables and TSL}}\\
 		\midrule
-		$\vec d=(d_t,d_n)$ & Local sliding/opening in $(\bt,\bn)$: $\vec d=\mat Q\,\jump{\vec u}$ & m\\
-		$d_n^{\max},\,d_t^{\max}$ & Critical separations (normal, tangential) & m\\
-		$\bar d_n,\,\bar d_t$ & Normalized separations: $d_n/d_n^{\max}$, $|d_t|/d_t^{\max}$ & --\\
-		$\vec T_{\rm cz}=(\sigma_t,\sigma_n)$ & Local cohesive traction (action–reaction on faces) & Pa\\
-		$\sigma_n^{\max},\,\sigma_t^{\max}$ & Cohesive strengths (normal, shear) & Pa\\
-		$\bar\sigma_n,\,\bar\sigma_t$ & Normalized tractions $\sigma_\alpha/\sigma_\alpha^{\max}$ & --\\
-		$\phi_n,\,\phi_t$ & Mode~I/II fracture energies (areas under TSL branches) & J\,m$^{-2}$\\
-		$F,\tau,g$ & Normalized cohesive potential and its derivatives
-		($\tau=F'$, $g=\tau'$), with saturation \chg{R2C3}{$F(1)=c$} & --\\
-		\chg{R2C3}{$c$} & \chg{R2C3}{Dimensionless TSL shape parameter ($c=\int_0^1 \tau(\xi)\,\mathrm d\xi$)} & --\\
-		\chg{R2C3}{$\chi_\alpha$} &
-		\chg{R2C3}{Mode-wise energetic prefactor of the cohesive law,
-		$\chi_\alpha=\sigma_\alpha^{\max} d_\alpha^{\max}
-		=\phi_\alpha/c_\alpha$}
-		&
-		J\,m$^{-2}$\\
-		$a_1,\,a_2$ & TSL shape switches (end of strengthening branch; onset of softening) & --\\
+		\(\bd=(d_t,d_n)\) & Local tangential sliding and normal opening, \(\bd=\mat Q\jump{\uu}\) & m\\
+		\(d_n^{\max},\,d_t^{\max}\) & Critical separations in normal and tangential modes & m\\
+		\(\bar d_n,\,\bar d_t\) & Normalized openings, \(d_n/d_n^{\max}\), \(|d_t|/d_t^{\max}\) & --\\
+		\(\bTcz=(\sigma_t,\sigma_n)\) & Local cohesive traction vector & Pa\\
+		\(\sigma_n^{\max},\,\sigma_t^{\max}\) & Cohesive strengths in normal and tangential modes & Pa\\
+		\(\bar\sigma_n,\,\bar\sigma_t\) & Normalized tractions, \(\sigma_\alpha/\sigma_\alpha^{\max}\) & --\\
+		\(\phi_n,\,\phi_t\) & Mode-I and mode-II fracture energies & J\,m\(^{-2}\)\\
+		\(F,\ \tau,\ g\) & Normalized cohesive potential, traction law, and slope, with \(\tau=F'\), \(g=\tau'\) & --\\
+		\(c,\ c_n,\ c_t\) & Dimensionless areas under the normalized TSLs & --\\
+		\(\chi_\alpha\) & Energetic prefactor, \(\chi_\alpha=\sigma_\alpha^{\max}d_\alpha^{\max}=\phi_\alpha/c_\alpha\) & J\,m\(^{-2}\)\\
+		\(a_1,\ a_2,\ a_{2n},\ a_{2t}\) & TSL shape parameters (end of strengthening / onset of softening) & --\\
+		\(\kappa\) & Dimensionless compression-penalty parameter & --\\
+		\(k_c\) & Contact slope, \(k_c=\kappa\,\sigma_n^{\max}/d_n^{\max}\) & Pa\,m\(^{-1}\)\\
+		\(r,\ r_{\max}\) & Mixed-mode coupling parameter and its admissible upper bound & --\\
+		\(\Psi,\ \Psi_\alpha\) & Mixed-mode and pure-mode cohesive potentials & J\,m\(^{-2}\)\\
+		\(\hat\Psi\) & Normalized mixed-mode cohesive potential & --\\
 		
-		$\kappa$ & Dimensionless compression penalty (e.g., $2/a_1$) & --\\
-		$k_c$ & Contact slope $k_c=\kappa\,\sigma_n^{\max}/d_n^{\max}$ & Pa\,m$^{-1}$\\
-		$r$ & Mixed-mode energetic coupling parameter ($0\le r\le r^{\max}$) & --\\[2pt]
-
-		\multicolumn{3}{@{}l@{}}{\textbf{Discrete interface operators (assembly)}}\\
+		\multicolumn{3}{@{}l@{}}{\textbf{Discrete interface operators and assembly}}\\
 		\midrule
-		$\mathcal T$ & Nodewise TSL map, $\vb s_e=\mathcal T(\vec d_e)$ & --\\
-		$\mat R$ & Consistent line “mass’’: $\mat R=l_e\!\int_0^1\!N^\top N\,\mathrm d\xi$ & m\\
-		$\mat A_e$ & Face assembly/rotation: $\vec f_e=\mat A_e\,\vb s_e$ (action–reaction) & --\\
-		$\mat B_e$ &
-		Element jump operator mapping nodal displacements to local displacement jumps,
-		$\bd_e=\mat B_e\vb U_e$
-		&
-		--\\
-		$\mat P_e$ & Node-order reversal $(i,j,k)\mapsto(k,j,i)$ & --\\
-		$\mat K_{\rm loc}$ & Local $2\times2$ tangent & Pa\,m$^{-1}$\\[2pt]
-
-		\multicolumn{3}{@{}l@{}}{\textbf{Outputs and selectors}}\\
+		\(N(\xi)\) & Quadratic shape-function row on the interface segment & --\\
+		\(\mat P_e\) & Node-order reversal matrix, \((i,j,k)\mapsto(k,j,i)\) & --\\
+		\(\vb U_e,\ \vb U_e^\pm\) & Element displacement vector and its top/bottom parts & m\\
+		\(\bd_e\) & Local opening vector at the three quadratic stations & m\\
+		\(\mathcal T\) & Nodewise traction map, \(\vb s_e=\mathcal T(\bd_e)\) & --\\
+		\(\vb s_e\) & Stacked local nodal cohesive tractions & Pa\\
+		\(\mat B_e\) & Element jump operator, \(\bd_e=\mat B_e\vb U_e\) & --\\
+		\(\mat R\) & Consistent line-integration matrix, \(l_e\int_0^1 N^\top N\,\dd\xi\) & m\\
+		\(\vb r_e^\pm\) & Top/bottom nodal resultants on one interface segment & N\\
+		\(\mat A_e\) & Face assembly/rotation operator, \(\vb f_e=\mat A_e\vb s_e\) & --\\
+		\(\vb f_e\) & Cohesive element residual vector & N\\
+		\(\mat K_e\) & Cohesive element tangent matrix & N\,m\(^{-1}\)\\
+		\(\mathbf K_{\mathrm{loc}},\ \mathbf K_{\mathrm{loc},\ell}\) & Local \(2\times2\) tangent and its nodal blocks & Pa\,m\(^{-1}\)\\
+		\(\vb F_{\mathrm{coh}}(\vb u)\) & Global cohesive residual & N\\
+		\(\mat K\) & Bulk elastic stiffness matrix & N\,m\(^{-1}\)\\
+		\(\vb F_{\mathrm{ext}}\) & Unit external load vector & N\\
+		\(\vb F_{\mathrm{aug}}\) & Augmented residual for the critical-state problem & mixed\\
+		\(\mat J_{\mathrm{aug}}\) & Jacobian of the augmented system & mixed\\
+		\(g(\vb u)\) & Scalar critical-state constraint function & m\\
+		\(d_n^{\mathrm{tip}}\) & Normal opening at the cohesive tip & m\\
+		
+		\multicolumn{3}{@{}l@{}}{\textbf{LEFM benchmark quantities}}\\
 		\midrule
-		$\sigma_{\mathrm{cr}}$ & Critical load at the critical state & Pa\\
-		$\Psi_{\mathrm{crit}},\ \hat\Psi_{\mathrm{crit}}$ & Mouth work on Leg~2; $\hat\Psi_{\mathrm{crit}}=\Psi_{\mathrm{crit}}/\phi_n$ & J\,m$^{-2}$, --\\
-		$\theta_2^{\sigma},\,\theta_2^{\Psi}$ & Kink angles from load-based and mouth-energy criteria & deg\\
-		$\sigma_\infty$ & Extrapolated critical load (Richardson/Aitken) & Pa\\
-		$p,\ \epsilon$ & Observed order and finest-mesh relative error & --\\
+		\(r_I\) & Radius of the circular contour used for \(J\)-integral evaluation & m\\
+		\(P(\theta),\,Q(\theta)\) & Mirror-symmetric sampling points on the contour & m\\
+		\(\eps^{\mathrm I},\,\eps^{\mathrm{II}}\) & Mode-separated strain fields & --\\
+		\(\sig^{\mathrm I},\,\sig^{\mathrm{II}}\) & Mode-separated stress fields & Pa\\
+		\(U^{\mathrm I},\,U^{\mathrm{II}}\) & Mode-separated elastic energy densities & J\,m\(^{-3}\)\\
+		\(\vb t^{\mathrm I},\,\vb t^{\mathrm{II}}\) & Traction vectors from the separated fields & Pa\\
+		\(f_{\mathrm I},\,f_{\mathrm{II}}\) & Mode-separated \(J\)-integrands & J\,m\(^{-2}\)\\
+		\(J_{\mathrm I},\,J_{\mathrm{II}}\) & Mode-separated \(J\)-integrals & J\,m\(^{-2}\)\\
+		\(K_{\mathrm I},\,K_{\mathrm{II}}\) & Mode-I and mode-II stress-intensity factors & Pa\,m\(^{1/2}\)\\
+		\(\sigma_{\theta\theta}\) & LEFM circumferential stress in the crack-tip field & Pa\\
+		\(G_{\mathrm I},\,G_{\mathrm{II}}\) & Mode-separated energy-release rates & J\,m\(^{-2}\)\\
+		\(G_{\mathrm Ic},\,G_{\mathrm{IIc}}\) & Critical energy-release rates for the quadratic LEFM criterion & J\,m\(^{-2}\)\\
+		\(\sigma_0\) & Reference load used in LEFM critical-load scaling & Pa\\
+		\(G_c(\beta)\) & Effective toughness in the BK criterion & J\,m\(^{-2}\)\\
+		\(\beta,\ \beta_0\) & BK mode-mix parameter and its value at \(\sigma_0\) & --\\
+		\(\eta\) & BK exponent controlling toughness sensitivity to mode mixity & --\\
+		\(\sigma_{\mathrm{cr}}^{(\mathrm{quad})},\,\sigma_{\mathrm{cr}}^{(\mathrm{BK})}\) & LEFM critical loads from the quadratic and BK criteria & Pa\\
+		
+		\multicolumn{3}{@{}l@{}}{\textbf{Sensitivity study and outputs}}\\
+		\midrule
+		\(\rho\) & Stiffness-to-strength ratio, \(E/\sigma_n^{\max}\) & --\\
+		\(K_{\mathrm{eff}}\) & Effective stress-intensity measure, \(\sqrt{K_{\mathrm I}^2+K_{\mathrm{II}}^2}\) & Pa\,m\(^{1/2}\)\\
+		\(r_D\) & Dugdale-type estimate of the characteristic process-zone size & m\\
+		\(C_D\) & Calibration constant in the \(r_D\) estimate & --\\
+		\(r_\beta\) & Target fraction of active cohesive length within the trial segment & --\\
+		\(\theta_2^\sigma,\ \theta_2^\Psi,\ \theta_2^\ast\) & Kink angles from the load-based selector, energetic selector, and automated Section~\ref{sec:scope_limitations} search & deg\\
+		\(\sigma_{\mathrm{cr}}\) & Critical load at the cohesive critical state & Pa\\
+		\(\Psi_{\mathrm{crit}},\ \hat\Psi_{\mathrm{crit}}\) & Cohesive work at the mouth and its normalization by \(\phi_n\) & J\,m\(^{-2}\), --\\
+		\(\sigma_\infty\) & Extrapolated critical load (Richardson--Aitken) & Pa\\
+		\(p,\ \epsilon\) & Observed order and finest-mesh relative error & --\\
+		
 	\end{longtable}
 }
-
 
 
 \section{Problem statement}
@@ -2179,8 +2222,8 @@ mode-I and mode-II fields:
 \end{align}
 where \(\gamma_{12}=2\varepsilon_{12}\) is the engineering shear strain.
 The corresponding directional displacement gradients are denoted by
-\(\partial \mathbf u^{\mathrm I}/\partial x_1\) and
-\(\partial \mathbf u^{\mathrm{II}}/\partial x_1\), and the elastic energy
+\(\partial \uu^{\mathrm I}/\partial x_1\) and
+\(\partial \uu^{\mathrm{II}}/\partial x_1\), and the elastic energy
 densities are
 \[
 U^{\mathrm I}
@@ -2193,12 +2236,12 @@ U^{\mathrm{II}}
 \]
 
 \paragraph{Mode-separated \(J\)-integrals and stress-intensity factors.}
-Let \(\mathbf n=(\cos\theta,\sin\theta)\) denote the outward normal at
+Let \(\vec{n}=(\cos\theta,\sin\theta)\) denote the outward normal at
 \(P(\theta)\). With
 \[
-\mathbf t^{\mathrm I}=\sigma^{\mathrm I}\mathbf n,
+\tvec^{\mathrm I}=\sigma^{\mathrm I}\vec{n},
 \qquad
-\mathbf t^{\mathrm{II}}=\sigma^{\mathrm{II}}\mathbf n,
+\tvec^{\mathrm{II}}=\sigma^{\mathrm{II}}\vec{n},
 \]
 the mode-separated \(J\)-integrands projected onto the crack direction
 \(x_1\) are
@@ -2207,15 +2250,15 @@ f_{\mathrm I}(\theta)
 =
 U^{\mathrm I}n_1
 -
-\mathbf t^{\mathrm I}\cdot
-\frac{\partial\mathbf u^{\mathrm I}}{\partial x_1},
+\tvec^{\mathrm I}\cdot
+\frac{\partial\uu^{\mathrm I}}{\partial x_1},
 \qquad
 f_{\mathrm{II}}(\theta)
 =
 U^{\mathrm{II}}n_1
 -
-\mathbf t^{\mathrm{II}}\cdot
-\frac{\partial\mathbf u^{\mathrm{II}}}{\partial x_1}.
+\tvec^{\mathrm{II}}\cdot
+\frac{\partial\uu^{\mathrm{II}}}{\partial x_1}.
 \]
 Integration over the upper semicircle and doubling for symmetry gives
 \begin{equation}
