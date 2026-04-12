@@ -144,8 +144,7 @@
 	We present a compact finite-element framework for crack kinking in plane strain that augments the physical crack with a short, zero-thickness cohesive continuation. A thin auxiliary channel is used to generate a refined T3 mesh and is collapsed after T6 conversion, so the analysis is performed on the physical interface with coincident node pairs. The interface law is potential-based, differentiable, and bounded in both normal and tangential directions; its cohesive potential yields an energetically consistent formulation with a symmetric Hessian tangent, enabling robust Newton convergence. Local openings are evaluated in a frame attached to the trial leg and rotated to the global frame for assembly. We detail the construction of interface degrees of freedom, the jump operator and rotation, and a mode-mix-aware procedure to select the kink direction.
 	Numerical studies show stable determination of the kink angle, rapid convergence of the critical load, and reproducible energy measures across independently generated meshes. With moderate far-field caps and interface resolution, the critical load is mesh-independent to near machine precision, and bulk tractions on the faces match cohesive tractions reconstructed from jumps along almost the entire leg. We also compare a global load-based selector with a local energetic mouth criterion, highlighting their complementary behavior. The framework is designed as a practical, mesh-robust tool for simulating initiation and early growth of kinking cracks under mixed-mode conditions.
 	\keywords{Mixed-mode fracture \and Cohesive zone model \and Traction--separation law \and Potential-based cohesive interface}
-	% \PACS{PACS code1 \and PACS code2 \and more}
-	%\subclass{MSC code1 \and MSC code2 \and more}
+
 \end{abstract}
 
 \section{Introduction}
@@ -396,7 +395,7 @@ the findings and future directions.
 		\(\vb F_{\mathrm{ext}}\) & Unit external load vector & N\\
 		\(\vb F_{\mathrm{aug}}\) & Augmented residual for the critical-state problem & mixed\\
 		\(\mat J_{\mathrm{aug}}\) & Jacobian of the augmented system & mixed\\
-		\(c(\vb u)\) & Scalar critical-state constraint function & m\\
+		\(h(\vb u)\) & Scalar critical-state constraint function & m\\
 		\(d_n^{\mathrm{tip}}\) & Normal opening at the cohesive tip & m\\
 		
 		\multicolumn{3}{@{}l@{}}{\textbf{LEFM benchmark quantities}}\\
@@ -1412,7 +1411,7 @@ as
 	=
 	\begin{bmatrix}
 		\vb R(\vb u,\sigma)\\[3pt]
-		c(\vb u)
+		h(\vb u)
 	\end{bmatrix}
 	=
 	\begin{bmatrix}
@@ -1437,7 +1436,7 @@ The Jacobian of the augmented system has the block structure
 		&
 		-\vb F_{\mathrm{ext}}
 		\\[10pt]
-		\dfrac{\partial c}{\partial\vb u}
+		\dfrac{\partial h}{\partial\vb u}
 		&
 		0
 	\end{bmatrix}.
@@ -1448,7 +1447,7 @@ entries, corresponding to the two tip nodes on the upper and lower faces of
 Leg~2. If \(\bn\) denotes the local normal of the final cohesive segment,
 then
 \[
-\frac{\partial c}{\partial\vb u}
+\frac{\partial h}{\partial\vb u}
 =
 \big[
 \cdots\ \bn^\top\ \cdots\ -\bn^\top\ \cdots
