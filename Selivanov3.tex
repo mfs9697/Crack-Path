@@ -2081,41 +2081,133 @@ energetic mouth measure $\hat{\Psi}$ emphasizes local opening at the knee of the
 cohesive continuation, leading to systematically steeper kink angles while
 leaving the critical load essentially unchanged.
 
-\subsection{Sensitivity to the auxiliary cohesive-leg length}
+\section{Sensitivity to the auxiliary cohesive-leg length, range of applicability, and limitations}
+\label{sec:scope_limitations}
 
-As discussed in Section~2, the prescribed length $\delta$ of the auxiliary cohesive continuation is a numerical parameter rather than a constitutive one. Its function is to provide sufficient space for the fracture-process zone to develop along the trial leg without artificial truncation. If $\delta$ is chosen too short, the active cohesive zone may approach the artificial tip of the segment, and the resulting critical load and selected kink direction may become dependent on the assumed trial-leg length. It is therefore important to verify that the reported results are not artifacts of an arbitrary choice of $\delta$.
+The critical state in the present formulation remains defined exactly as in
+Section~\ref{sec:construction}: for each prescribed trial orientation of
+Leg~2, the nonlinear problem is solved until the mouth opening reaches the
+critical normal separation. What is examined here is a different issue,
+namely the influence of the \emph{auxiliary} cohesive-leg length~$\delta$ on
+the resulting directional prediction and on the interpretation of the method.
+This distinction is important because the present crack-kinking procedure does
+not operate at a mathematical crack tip. Instead, it infers the preferred
+direction from a finite cohesive continuation that regularizes the singular
+elastic field over a short but nonzero process-zone probe.
 
-To examine this point, we performed an additional series of calculations in which $\delta$ was not fixed a priori, but estimated adaptively from a Dugdale-type process-zone scaling. For each value of the material parameter ratio
-\[
-\eta=\frac{E}{\sigma_n^{\max}},
-\]
-and for each prescribed orientation $\theta_1$, the corresponding LEFM solution was first used to define an effective mixed-mode stress-intensity measure,
-\[
-K_{\mathrm{eff}}=\sqrt{K_I^2+K_{II}^2},
-\]
-from which a Dugdale-type estimate of the process-zone size was constructed as
-\[
-r_D=C_D\left(\frac{K_{\mathrm{eff}}}{\sigma_n^{\max}}\right)^2.
-\]
-The trial cohesive-leg length was then chosen as
-\[
-\delta=\frac{r_D}{r_\beta},
-\]
-where $r_\beta$ is the target value of $\beta/\delta$, with $\beta$ denoting the activated portion of the cohesive segment. In the present calculations, $r_\beta\approx 0.9$, so that the active zone remains sufficiently far from the segment tip while still being well resolved.
+The present sensitivity study is carried out in a deliberately near-LEFM
+regime, taking $\beta/a \approx 0.05$ as a practical benchmark for a small
+but finite fracture-process zone. This value should be understood as a
+working reference for controlled comparison, not as a universal criterion for
+the validity of LEFM.
 
-This procedure gives the algorithm a predictor--corrector structure. The LEFM field provides a first estimate of the characteristic process-zone size through $r_D$, whereas the subsequent cohesive calculation checks a posteriori whether the activated portion of the trial segment occupies the intended fraction of the cohesive leg. Table~\ref{tab:eta_sweep_all} summarizes the resulting values of the normalized trial-leg length $\delta/a$, the active-zone fraction $\beta/\delta$, and the selected angle $\theta_2^\ast$ for three representative initial crack inclinations.
+\subsection{Calibrated adaptive estimation of the auxiliary cohesive length and its numerical robustness}
+\label{subsec:adaptive_delta}
+
+The present crack-kinking procedure does not evaluate a tip criterion at a
+mathematical crack tip. Instead, it infers the preferred propagation direction
+from a short cohesive continuation of finite length~$\delta$, which
+regularizes the singular elastic field over a finite process-zone probe. For
+this reason, the choice of~$\delta$ is not a secondary implementation detail:
+it must be large enough to contain the full active cohesive zone, but it
+should not vary in an uncontrolled way when material parameters are changed.
+
+In the present formulation, $\delta$ is not treated as a material parameter.
+It is an auxiliary numerical length introduced to represent the finite
+fracture-process zone in a controlled way. If $\delta$ were kept fixed while
+the cohesive strength varied, the activated part of the cohesive segment could
+occupy very different fractions of the trial leg. In that case, changes in the
+predicted kink direction would reflect not only the constitutive variation
+itself, but also an inconsistent relation between the finite cohesive zone and
+the imposed probe geometry. To avoid this difficulty, the present calculations
+use a calibrated adaptive estimate of~$\delta$.
+
+We introduce the stiffness-to-strength ratio
+\begin{equation}
+	\rho=\frac{E}{\sigma_n^{\max}},
+\end{equation}
+and define the effective stress-intensity measure
+\begin{equation}
+	K_{\mathrm{eff}}=\sqrt{K_I^2+K_{II}^2}.
+\end{equation}
+A Dugdale-type estimate is then used for the characteristic process-zone size,
+\begin{equation}
+	r_D=C_D\left(\frac{K_{\mathrm{eff}}}{\sigma_n^{\max}}\right)^2,
+\end{equation}
+where $C_D$ is a dimensionless calibration constant. The trial cohesive length
+is chosen from
+\begin{equation}
+	\delta=\frac{r_D}{r_\beta},
+\end{equation}
+where $r_\beta$ is the target fraction of the active cohesive length within
+the trial segment, and $\beta$ denotes the activated part of Leg~2 in the
+converged critical state.
+
+Here $C_D$ is not taken as universal. Rather, it is calibrated separately for
+each $\rho$-sweep so that the activated cohesive zone occupies approximately
+the same fraction of the trial segment throughout that sweep. For the three
+initial crack inclinations considered here, the adopted values are
+$C_D=17.2$ for $\theta_1=-30^\circ$,
+$C_D=22.36=1.3\times 17.2$ for $\theta_1=-40^\circ$, and
+$C_D=34.4=2.0\times 17.2$ for $\theta_1=-50^\circ$. Accordingly, the present
+estimate of~$\delta$ should be interpreted as a calibrated predictor rather
+than as a universal closed-form law.
+
+This gives the procedure a predictor--corrector character. The LEFM field
+provides a first estimate of the process-zone scale through $K_{\mathrm{eff}}$,
+while the subsequent CZM solution checks a posteriori whether the activated
+length~$\beta$ indeed occupies the intended fraction of the trial cohesive
+segment. The role of the study below is therefore not merely parametric. It is
+to verify that this normalization remains effective as the stiffness-to-strength
+ratio changes.
+
+A further algorithmic distinction should be emphasized. In Section~7, the kink
+angle is presented through coarse and fine angular sweeps in order to
+illustrate directly the shallow minimum of $\sigma_{cr}(\theta_2)$ and the
+sharper minimum of the energetic selector. In the present parametric study,
+however, the selected angle $\theta_2^\ast$ is determined by an automated
+iterative procedure that repeatedly brackets and refines the minimizing angle
+until the prescribed angular tolerance is reached. This replacement is purely
+algorithmic: it does not alter the directional criterion itself, but makes the
+determination of $\theta_2^\ast$ fully automatic and computationally efficient
+for repeated calculations. In this sense, the procedure is already suitable as
+the directional core of a future stepwise crack-growth algorithm, although the
+corresponding propagation study lies beyond the scope of the present paper.
+
+Table~\ref{tab:rho_sweep_all} summarizes the results obtained on the finer mesh
+used for production calculations, with
+\[
+n_{\mathrm{coh}}=80,\qquad B/h_{\max}=80,\qquad h_{\mathrm{grad}}=1.15.
+\]
+Three conclusions follow immediately. First, the normalized trial length
+$\delta/a$ increases monotonically with $\rho$ for all three initial crack
+orientations. This is consistent with the estimate
+$r_D\propto K_{\mathrm{eff}}^2/(\sigma_n^{\max})^2$: with fixed $E$,
+increasing $\rho$ corresponds to decreasing cohesive strength and therefore to
+a larger predicted process-zone size. Second, the ratio $\beta/\delta$ remains
+nearly constant throughout each sweep. This confirms that the calibrated
+LEFM-based estimate of~$\delta$ regularizes the finite cohesive problem in a
+quantitatively controlled manner. Third, the selected kink angle
+$\theta_2^\ast$ varies only weakly with~$\rho$ within each sweep. Thus, once
+the process zone is represented consistently, moderate changes in the
+stiffness-to-strength ratio primarily rescale the finite cohesive length while
+affecting the directional prediction only slightly.
 
 \begin{table}[t]
 	\centering
-	\caption{Results of the $\eta$-sweep with adaptive estimation of $\delta$ for different initial angles $\theta_1$.}
-	\label{tab:eta_sweep_all}
-	\begin{tabular}{c|ccc|ccc|ccc}
+	\small
+	\setlength{\tabcolsep}{4pt}
+	\caption{Results of the $\rho$-sweep with calibrated adaptive estimation of $\delta$
+		for different initial crack orientations~$\theta_1$. Here $\theta_2^\ast$
+		denotes the selected CZM kink angle.}
+	\label{tab:rho_sweep_all}
+	\begin{tabular}{c ccc ccc ccc}
 		\toprule
-		& \multicolumn{3}{c|}{$\theta_1=-30^\circ$}
-		& \multicolumn{3}{c|}{$\theta_1=-40^\circ$}
+		& \multicolumn{3}{c}{$\theta_1=-30^\circ$}
+		& \multicolumn{3}{c}{$\theta_1=-40^\circ$}
 		& \multicolumn{3}{c}{$\theta_1=-50^\circ$} \\
-		\cmidrule(lr){2-4} \cmidrule(lr){5-7} \cmidrule(lr){8-10}
-		$\eta$
+		\cmidrule(lr){2-4}\cmidrule(lr){5-7}\cmidrule(lr){8-10}
+		$\rho$
 		& $\delta/a$ & $\beta/\delta$ & $\theta_2^\ast$
 		& $\delta/a$ & $\beta/\delta$ & $\theta_2^\ast$
 		& $\delta/a$ & $\beta/\delta$ & $\theta_2^\ast$ \\
@@ -2133,28 +2225,84 @@ This procedure gives the algorithm a predictor--corrector structure. The LEFM fi
 	\end{tabular}
 \end{table}
 
-Three observations follow directly from Table~\ref{tab:eta_sweep_all}. First, the normalized trial length $\delta/a$ increases monotonically with $\eta$ for all three initial crack orientations. This trend is consistent with the Dugdale-type scaling $\delta\propto r_D\propto K_{\mathrm{eff}}^2/(\sigma_n^{\max})^2$: since $E$ is fixed and $\sigma_n^{\max}=E/\eta$, increasing $\eta$ reduces the cohesive strength and enlarges the expected process-zone size. The adaptive procedure therefore assigns a longer auxiliary cohesive leg as $\eta$ increases.
 
-Second, although the absolute value of $\delta/a$ changes substantially across the sweep, the ratio $\beta/\delta$ remains nearly constant. For $\theta_1=-30^\circ$, it is exactly $0.9000$ throughout. For $\theta_1=-40^\circ$, it lies in the narrow interval $0.9125$--$0.9375$, and for $\theta_1=-50^\circ$ it also remains within $0.9125$--$0.9375$. This stability shows that the LEFM-based estimate of $\delta$ regularizes the finite cohesive problem in a quantitatively controlled manner: the active cohesive zone remains well contained within the trial segment over the entire investigated parameter range.
+The robustness of these trends was checked by repeating the same
+\(\rho\)-sweeps on the coarser mesh
+\[
+n_{\mathrm{coh}}=40,\qquad B/h_{\max}=40,\qquad h_{\mathrm{grad}}=1.15,
+\]
+and comparing the results with the production calculations reported in
+Table~\ref{tab:rho_sweep_all}, obtained on the finer mesh
+\[
+n_{\mathrm{coh}}=80,\qquad B/h_{\max}=80,\qquad h_{\mathrm{grad}}=1.15.
+\]
+This comparison shows that \(\delta/a\) remains unchanged to the reported
+precision for all parameter points. The ratio \(\beta/\delta\) is likewise
+unchanged except for a single isolated difference of \(-0.0125\) at
+\(\theta_1=-50^\circ\), \(\rho=115\). The corresponding changes in the
+predicted angle \(\theta_2^\ast\) are small throughout: the maximum absolute
+difference is \(0.0064^\circ\) for \(\theta_1=-30^\circ\),
+\(0.0069^\circ\) for \(\theta_1=-40^\circ\), and \(0.0311^\circ\) for
+\(\theta_1=-50^\circ\). These differences are much smaller than the total
+variation of \(\theta_2^\ast\) across each \(\rho\)-sweep and do not modify
+any of the trends discussed above. The weak dependence of the selected kink
+angle on \(\rho\) in the present range therefore cannot be attributed to the
+particular mesh used for the production runs.
 
-Third, the selected angle $\theta_2^\ast$ exhibits only weak sensitivity to the change in $\delta$ induced by the Dugdale-based estimate. Over the full range $\eta=80$--$120$, the total variation of $\theta_2^\ast$ is about $0.053^\circ$ for $\theta_1=-30^\circ$, about $0.083^\circ$ for $\theta_1=-40^\circ$, and about $0.298^\circ$ for $\theta_1=-50^\circ$. Thus, within the tested range, varying $\eta$ primarily rescales the process-zone size, whereas the predicted propagation direction remains governed mainly by the local mixed-mode state.
+These observations do not imply that the kinking direction is generally
+independent of cohesive parameters. They show only that, within the present
+quasi-static mixed-mode setting and for the class of cohesive laws considered
+here, the calibrated predictor--corrector choice of the auxiliary cohesive
+length provides a numerically stable basis for comparing directional
+predictions across a family of parameter values.
 
-This point is important for interpreting the role of the cohesive parameters. The purpose of the $\eta$-sweep is not to claim that the direction is strictly independent of the cohesive law. Rather, it shows that, once the process zone is resolved in a consistent way through adaptive selection of $\delta$, the directional prediction is comparatively insensitive to moderate changes in $\eta$, while the finite cohesive length scale itself changes substantially. In this sense, the additional Dugdale-based calculations do not remove the intrinsic limitation associated with the auxiliary cohesive-leg length, but they do quantify and control it.
 
-To assess whether the trends in Table~\ref{tab:eta_sweep_all} are artifacts of the baseline discretization, the calculations were repeated on a denser mesh. The refined computations leave the main conclusions unchanged. The values of $\delta/a$ remain unchanged to the reported precision, and $\beta/\delta$ is unchanged except for one isolated shift of $0.0125$ at $\theta_1=-50^\circ$, $\eta=115$. The largest absolute changes in the predicted angle $\theta_2^\ast$ remain small: they do not exceed $0.0064^\circ$ for $\theta_1=-30^\circ$, $0.0069^\circ$ for $\theta_1=-40^\circ$, and $0.0311^\circ$ for $\theta_1=-50^\circ$. These differences are an order of magnitude smaller than the total variation of $\theta_2^\ast$ across the full $\eta$-range and do not alter any of the trends discussed above. The refined-mesh recalculation therefore supports the numerical robustness of the reported conclusions.
 
-\subsection{Limitations and range of applicability}
 
-The present formulation is intended as an incipient-kinking model in a near-LEFM regime, that is, for situations in which the fracture-process zone remains small compared with the characteristic geometric dimensions of the body and is fully contained within the prescribed cohesive continuation. In this setting, the method provides a regularized and energetically consistent way to determine the critical load and compare competing kink directions without introducing singular crack-tip fields.
+\subsection{Relation to LEFM, applicability, and potential failure modes}
+\label{subsec:scope_failure_modes}
 
-Accordingly, the proposed approach should not be interpreted as a general crack-propagation framework. The trial cohesive leg is introduced as an auxiliary numerical construct for direction selection, not as a physically evolved crack segment, and its length must be chosen sufficiently large so that the active cohesive zone does not reach the artificial tip. If this condition is violated, the process zone is truncated and both the critical load and the selected direction may become dependent on the chosen trial length. The method is therefore applicable only when the consistency condition $\beta < \delta$ is satisfied with adequate margin.
+The present results should be interpreted relative to LEFM with care. In
+classical LEFM, the propagation criterion is evaluated at a mathematical crack
+tip and depends only on asymptotic quantities such as $K_I$ and $K_{II}$. In
+the present CZM framework, by contrast, the propagation direction is inferred
+from a finite cohesive segment carrying distributed tractions. For this
+reason, exact agreement with LEFM criteria is not expected in general, even
+when the trends are similar. The two descriptions coincide only in an
+asymptotic regime in which the process zone becomes vanishingly small
+compared with all geometric scales. That limit is not established here.
+Accordingly, the present method should be viewed as a finite-process-zone
+formulation whose relation to LEFM is asymptotic rather than exact.
 
-A second limitation concerns the constitutive structure of the cohesive law. The present mixed-mode law is potential-based and was adopted because it guarantees energetic consistency and a symmetric algorithmic tangent, which are advantageous for robust Newton iterations. However, this same energetic coupling implies that the traction components are not degraded independently. As a result, small residual normal tractions may persist when the tangential mode is dominant, and vice versa. This feature is well known for potential-based mixed-mode cohesive laws and should be kept in mind when interpreting local traction fields, especially at strong mode mixity.
+Within that interpretation, the method is expected to be most reliable for
+quasi-static mixed-mode crack growth in quasi-brittle solids when the
+fracture-process zone remains small compared with the ligament size and the
+other structural dimensions. Outside this regime, several failure modes should
+be anticipated. If the traction--separation law departs strongly from the
+present class of laws, for example through pronounced tension--shear
+asymmetry, strong rate dependence, or markedly different softening structure,
+the Dugdale-type predictor for $\delta$ may cease to keep $\beta/\delta$
+approximately constant and may require a different calibration or an
+additional adaptive loop. If the process zone becomes comparable with the
+structural dimensions, the local interpretation of the cohesive segment as a
+short directional probe loses validity, and the predicted direction may then
+reflect the imposed probe geometry as much as the underlying fracture
+physics. If the interface discretization is insufficient, both the activated
+length~$\beta$ and the directional diagnostic itself may be distorted. The
+adaptive estimate of $\delta$ mitigates this difficulty but does not remove
+the need for mesh verification. Finally, the present formulation does not
+include inertia, large-scale plasticity, or fully developed viscoelastic
+fracture; dynamic fracture, highly ductile response, and hereditary
+constitutive effects therefore lie outside the validated scope of the present
+study.
 
-The present study is also restricted to quasi-static loading, homogeneous isotropic elasticity, and a prescribed two-leg geometry. The conclusions regarding the close agreement between CZM and LEFM for the kink direction should therefore be understood within this scope. In particular, the recalculated parameter sweeps show that, over the investigated range, increasing the ratio $E/\sigma_n^{\max}$ mainly enlarges the cohesive-zone scale, while the predicted kink angle changes only weakly. This supports the conclusion that the deflection direction remains primarily controlled by the surrounding elastic mixed-mode field, whereas the critical load is more sensitive to the finite cohesive-zone structure. Outside this regime, for example when the process zone is not small compared with the crack length or nearby geometric features, larger deviations from LEFM should be expected.
-
-Finally, the method does not by itself resolve crack growth beyond onset. Extending the formulation to incremental propagation would require repeated updating of the crack path and local remeshing around the advancing front. The present results should therefore be viewed as validating a robust initiation-and-kinking procedure rather than as a complete simulation framework for arbitrary crack evolution.
-
+Taken together, these observations define the meaning of the present
+validation more precisely. The results do not establish universal agreement
+with LEFM, nor do they show parameter-independence of the CZM direction in a
+general sense. They show, rather, that within the targeted quasi-static
+quasi-brittle regime, the predictor--corrector choice of the auxiliary
+cohesive length provides a consistent and numerically robust basis for
+comparing directional predictions across a family of cohesive parameters.
 
 \section{Conclusions}
 \label{sec:conclusions}
