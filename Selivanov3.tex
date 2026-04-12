@@ -1062,316 +1062,482 @@ paths.
 \section{Cohesive interface discretization and consistent linearization}
 \label{sec:construction}
 
-We discretize the cohesive interface $\Gamma_{\mathrm{cz}}$ by keeping the two
-faces of Leg~2 kinematically distinct and pairing coincident node triplets
-along a thin channel (Section~\ref{sec:mesh}).  The element operators below are
-given for a \emph{quadratic} interface segment $e$ with coincident
-\emph{top} nodes $(i^+,j^+,k^+)$ and \emph{bottom} nodes $(i^-,j^-,k^-)$.
-The segment is oriented from $i$ (mouth) to $k$ (tip). A local orthonormal
-frame $\QQ=[\bt^\top;\bn^\top]$ is attached tangentially (mouth$\to$tip) and
-normally (lower$\to$upper), see Fig.~\ref{fig:coh-tri}. Within each interface segment, $\QQ$ is taken constant and evaluated from the segment chord (mouth$\to$tip).
-
+We discretize the cohesive interface \(\Gamma_{\mathrm{cz}}\) by keeping the
+two faces of Leg~2 kinematically distinct and pairing coincident node
+triplets along the thin channel introduced in Section~\ref{sec:mesh}. The
+element operators below are written for a quadratic interface segment \(e\)
+with coincident top nodes \((i^+,j^+,k^+)\) and bottom nodes
+\((i^-,j^-,k^-)\). The segment is oriented from \(i\) (mouth) to \(k\)
+(tip), and a local orthonormal frame
+\(\QQ=[\bt^\top;\bn^\top]\) is attached to it tangentially
+(mouth\(\to\)tip) and normally (lower\(\to\)upper), as shown in
+Fig.~\ref{fig:coh-tri}. Within each interface segment, \(\QQ\) is taken
+constant and evaluated from the segment chord.
 
 \begin{figure}[!h]
 	\centering
 	\includegraphics[width=.58\textwidth]{Fig4}
 	\caption{Quadratic interface segment with coincident node triplets
-		$(i^\pm,j^\pm,k^\pm)$.  The top edge is $(i^+,j^+,k^+)$; the bottom edge is
-		numbered CCW as $(k^-,j^-,i^-)$.
-		Local frame $\QQ=[\bt^\top;\bn^\top]$ is attached to the segment.}
+		\((i^\pm,j^\pm,k^\pm)\). The top edge is \((i^+,j^+,k^+)\); the bottom edge
+		is numbered counterclockwise as \((k^-,j^-,i^-)\). The local frame
+		\(\QQ=[\bt^\top;\bn^\top]\) is attached to the segment.}
 	\label{fig:coh-tri}
 \end{figure}
 
 \paragraph{Unknown ordering, shape rows, and edge permutation.}
-We stack unknowns as \emph{top then bottom}, with the bottom group reversed
-to follow the lower element’s CCW edge order:
+The element displacement vector is assembled by stacking the top-face degrees
+of freedom first and the bottom-face degrees of freedom second, with the
+bottom ordering reversed so that it follows the counterclockwise edge order
+of the lower bulk element:
 \begin{align}
-	\vb U_e&=\big[\ \vb U_e^{+}\ \ \vb U_e^{-}\ \big]^\top\in\mathbb{R}^{12}, \label{eq:seg-Ue}\\
-	\vb U_e^{+}&=\big[\,u_{i^+x}\ u_{i^+y}\ u_{j^+x}\ u_{j^+y}\ u_{k^+x}\ u_{k^+y}\,\big]^\top,\notag\\
-	\vb U_e^{-}&=\big[\,u_{k^-x}\ u_{k^-y}\ u_{j^-x}\ u_{j^-y}\ u_{i^-x}\ u_{i^-y}\,\big]^\top.\notag
+	\vb U_e&=
+	\big[\ \vb U_e^{+}\ \ \vb U_e^{-}\ \big]^\top
+	\in\mathbb{R}^{12},
+	\label{eq:seg-Ue}
+	\\
+	\vb U_e^{+}&=
+	\big[
+	u_{i^+x}\ u_{i^+y}\ 
+	u_{j^+x}\ u_{j^+y}\ 
+	u_{k^+x}\ u_{k^+y}
+	\big]^\top,
+	\nonumber\\
+	\vb U_e^{-}&=
+	\big[
+	u_{k^-x}\ u_{k^-y}\ 
+	u_{j^-x}\ u_{j^-y}\ 
+	u_{i^-x}\ u_{i^-y}
+	\big]^\top.
+	\nonumber
 \end{align}
+
 Let
 \[
-N=\begin{bmatrix}N(\xi_i)\\ N(\xi_j)\\ N(\xi_k)\end{bmatrix},\qquad
-N(\xi_\ell)=\big[N_i(\xi_\ell)\ \ N_j(\xi_\ell)\ \ N_k(\xi_\ell)\big],\quad
+N=
+\begin{bmatrix}
+	N(\xi_i)\\
+	N(\xi_j)\\
+	N(\xi_k)
+\end{bmatrix},
+\qquad
+N(\xi_\ell)=
+\big[
+N_i(\xi_\ell)\ \ N_j(\xi_\ell)\ \ N_k(\xi_\ell)
+\big],
+\qquad
 \ell\in\{i,j,k\},
 \]
-be the stacked scalar quadratic shape rows, and define the node-order
-reversal
-\begin{equation*}
-	\mat P_e=\begin{bmatrix}0&0&1\\0&1&0\\1&0&0\end{bmatrix},
-	\qquad (i,j,k)\mapsto(k,j,i).
+denote the stacked scalar quadratic shape rows evaluated at the three
+quadratic stations. To account for the reversed bottom-face ordering, we
+introduce the node-permutation matrix
+\begin{equation}
+	\mat P_e=
+	\begin{bmatrix}
+		0&0&1\\
+		0&1&0\\
+		1&0&0
+	\end{bmatrix},
+	\qquad
+	(i,j,k)\mapsto(k,j,i).
 	\label{eq:seg-Pi}
-\end{equation*}
+\end{equation}
 
 \paragraph{Explicit jump operator.}
-Stack the local openings at the three segment nodes as
-\(\bd_e=[\,d_{t,i}\ d_{n,i}\ d_{t,j}\ d_{n,j}\ d_{t,k}\ d_{n,k}\,]^\top\in\mathbb{R}^6\).
-With the CCW ordering in Eq.~\eqref{eq:seg-Ue}, the nodal jump map is
-\begin{align}
-	&\bd_e=\mat B_e\,\vb U_e,\qquad
-	\mat B_e=\big[\,\mat B_e^{+}\ \ \mat B_e^{-}\,\big], \label{eq:seg-Be}\\
-	&\mat B_e^{+}=(\mat I_3\otimes\QQ)\,(N\otimes \mat I_2),\qquad
-	\mat B_e^{-}=-(\mat I_3\otimes\QQ)\,\big((N\mat P_e)\otimes \mat I_2\big), \notag
-\end{align}
-with $B_e$ extracting the opening displacement across the interface. In block form (each entry $2{\times}2$),
+The nodal openings along the interface segment are collected in
 \[
-\mat B_e=
-\begin{bmatrix}
-	N_i(\xi_i)\QQ & N_j(\xi_i)\QQ & N_k(\xi_i)\QQ & -N_k(\xi_i)\QQ & -N_j(\xi_i)\QQ & -N_i(\xi_i)\QQ\\
-	N_i(\xi_j)\QQ & N_j(\xi_j)\QQ & N_k(\xi_j)\QQ & -N_k(\xi_j)\QQ & -N_j(\xi_j)\QQ & -N_i(\xi_j)\QQ\\
-	N_i(\xi_k)\QQ & N_j(\xi_k)\QQ & N_k(\xi_k)\QQ & -N_k(\xi_k)\QQ & -N_j(\xi_k)\QQ & -N_i(\xi_k)\QQ
-\end{bmatrix}.
+\bd_e=
+\big[
+d_{t,i}\ d_{n,i}\ 
+d_{t,j}\ d_{n,j}\ 
+d_{t,k}\ d_{n,k}
+\big]^\top
+\in\mathbb{R}^6.
 \]
-\emph{Lobatto nodal integration used in the implementation}  (evaluation at $\xi\in\{\xi_i,\xi_j,\xi_k\}$, hence $N=\mat I_3$):
-\[
-\mat B_e=
-\begin{bmatrix}
-	\QQ & \bm 0 & \bm 0 & \bm 0 & \bm 0 & -\QQ\\
-	\bm 0 & \QQ & \bm 0 & \bm 0 & -\QQ & \bm 0\\
-	\bm 0 & \bm 0 & \QQ & -\QQ & \bm 0 & \bm 0
-\end{bmatrix}.
-\]
-
-\paragraph{Line integration, rotation, and action–reaction.}
-Let $\xi\in[0,1]$ denote the parent coordinate along the segment and $l_e$ its physical length.
-With the segment’s consistent line “mass’’
+With the ordering defined in Eq.~\eqref{eq:seg-Ue}, these openings are
+obtained from the element displacement vector through the jump relation
 \begin{equation}
-	\mat R=l_e\!\int_0^1\!N(\xi)^\top N(\xi)\,\dd\xi
-	=\frac{l_e}{30}
-	\begin{bmatrix}
-		4&2&-1\\[2pt]
-		2&16&2\\[2pt]
-		-1&2&4
-	\end{bmatrix},
+	\bd_e=\mat B_e\,\vb U_e,
+	\qquad
+	\mat B_e=
+	\big[
+	\mat B_e^{+}\ \ \mat B_e^{-}
+	\big],
+	\label{eq:seg-Be}
 \end{equation}
-the \emph{top-face} nodal resultants are
-\[
-\vb t_e^{+}=(\mat R\otimes \QQ^\top)\,\vb s_e\in\mathbb{R}^{6},
-\]
-\chg{R2C7}{where
-	$\vb s_e=\big[\,\sigma_{t,i}\ \sigma_{n,i}\ \sigma_{t,j}\ \sigma_{n,j}\ \sigma_{t,k}\ \sigma_{n,k}\,\big]^\top$
-	stacks the six local cohesive tractions at the three evaluation stations (chosen as the Lobatto nodes in the implementation).
-	These tractions are obtained from the corresponding local displacement jumps
-	via the nonlinear traction--separation mapping
-	$\mathcal T:\mathbb{R}^6\to\mathbb{R}^6$, i.e. 
-	\begin{equation}
-	\vb s_e=\mathcal T(\bd_e).
-		\end{equation}
-	}
-At each node $\ell\in\{i,j,k\}$ we use the pointwise traction map (see Eq.~\eqref{eq:Tcz_mixed} from
-		Section~\ref{sec:tsl}):
-		\begin{align}
-			\label{eq:seg-TSL-point}
-			&\begin{bmatrix}\sigma_{t,\ell}\\[2pt]\sigma_{n,\ell}\end{bmatrix}
-			= \bTcz \big(\bar d_{n,\ell},\,\bar d_{t,\ell};\,s_{t,\ell}\big),\\
-			&\bar d_{t,\ell}=\frac{|d_{t,\ell}|}{d_t^{\max}},\quad
-			\bar d_{n,\ell}=\frac{d_{n,\ell}}{d_n^{\max}},\qquad
-		s_{t,\ell}=\operatorname{sgn}_0(d_{t,\ell}).
-		\notag
-		\end{align}
+where
+\begin{equation}
+	\mat B_e^{+}
+	=
+	(\mat I_3\otimes\QQ)\,(N\otimes\mat I_2),
+	\qquad
+	\mat B_e^{-}
+	=
+	-(\mat I_3\otimes\QQ)\,\big((N\mat P_e)\otimes\mat I_2\big).
+	\label{eq:seg-Be-pm}
+\end{equation}
+Thus, \(\mat B_e\) first forms the displacement jump between the top and
+bottom faces and then rotates it into the local Leg--2 frame.
 
-The \emph{bottom-face} resultants, equal and opposite but stored in the
-flipped order $(k^-,j^-,i^-)$, are
+In block form, each entry being a \(2\times2\) matrix, the jump operator can
+be written as
 \[
-\vb t_e^{-}=-\,(\mat P_e\otimes \mat I_2)\,\vb t_e^{+}.
+\mat B_e=
+\begin{bmatrix}
+	N_i(\xi_i)\QQ & N_j(\xi_i)\QQ & N_k(\xi_i)\QQ &
+	-\,N_k(\xi_i)\QQ & -\,N_j(\xi_i)\QQ & -\,N_i(\xi_i)\QQ
+	\\
+	N_i(\xi_j)\QQ & N_j(\xi_j)\QQ & N_k(\xi_j)\QQ &
+	-\,N_k(\xi_j)\QQ & -\,N_j(\xi_j)\QQ & -\,N_i(\xi_j)\QQ
+	\\
+	N_i(\xi_k)\QQ & N_j(\xi_k)\QQ & N_k(\xi_k)\QQ &
+	-\,N_k(\xi_k)\QQ & -\,N_j(\xi_k)\QQ & -\,N_i(\xi_k)\QQ
+\end{bmatrix}.
 \]
-Stacking both faces yields the $12$-component element residual; using the
-traction–separation mapping $\mathcal T$ and the jump $\bd_e=\mat B_e\vb U_e$:
+In the implementation, the quadratic cohesive segment is evaluated at the
+Lobatto nodes, so that \(N=\mat I_3\). In that case the jump operator
+reduces to the nodal form
+\[
+\mat B_e=
+\begin{bmatrix}
+	\QQ & 0 & 0 & 0 & 0 & -\QQ\\
+	0 & \QQ & 0 & 0 & -\QQ & 0\\
+	0 & 0 & \QQ & -\QQ & 0 & 0
+\end{bmatrix},
+\]
+which makes the local openings at the three segment nodes available
+directly from the nodal displacement vector.
+
+\paragraph{Line integration, traction map, and element residual.}
+Let \(\xi\in[0,1]\) denote the parent coordinate along the segment and
+\(l_e\) its physical length. The consistent line-integration matrix for the
+quadratic segment is
+\begin{equation}
+	\mat R
+	=
+	l_e\int_0^1 N(\xi)^\top N(\xi)\,\mathrm d\xi
+	=
+	\frac{l_e}{30}
+	\begin{bmatrix}
+		4 & 2 & -1\\
+		2 & 16 & 2\\
+		-1 & 2 & 4
+	\end{bmatrix}.
+	\label{eq:seg-R}
+\end{equation}
+The cohesive tractions evaluated at the three quadratic stations are stacked
+in the local vector
+\begin{equation}
+	\vb s_e
+	=
+	\big[
+	\sigma_{t,i}\ \sigma_{n,i}\ 
+	\sigma_{t,j}\ \sigma_{n,j}\ 
+	\sigma_{t,k}\ \sigma_{n,k}
+	\big]^\top
+	\in\mathbb R^6.
+	\label{eq:seg-se}
+\end{equation}
+These tractions are obtained pointwise from the local openings
+\(\bd_e\) through the traction map
+\begin{equation}
+	\vb s_e=\mathcal T(\bd_e),
+	\label{eq:seg-Te}
+\end{equation}
+where \(\mathcal T\) is built from the mixed-mode law
+Eq.~\eqref{eq:Tcz_mixed}. At each node
+\(\ell\in\{i,j,k\}\),
+\begin{equation}
+	\begin{bmatrix}
+		\sigma_{t,\ell}\\[3pt]
+		\sigma_{n,\ell}
+	\end{bmatrix}
+	=
+	\mathbf{T}_{\mathrm{cz}}
+	\!\left(
+	\bar d_{n,\ell},\bar d_{t,\ell};\,\operatorname{sgn}_0(d_{t,\ell})
+	\right),
+	\qquad
+	\bar d_{t,\ell}=\frac{|d_{t,\ell}|}{d_t^{\max}},
+	\qquad
+	\bar d_{n,\ell}=\frac{d_{n,\ell}}{d_n^{\max}}.
+	\label{eq:seg-node-traction}
+\end{equation}
+
+The corresponding nodal resultants on the top face are obtained by line
+integration in the local frame followed by rotation to the global frame:
+\begin{equation}
+	\vb r_e^{+}
+	=
+	(\mat R\otimes \QQ^\top)\,\vb s_e
+	\in\mathbb R^6.
+	\label{eq:seg-rplus}
+\end{equation}
+The bottom-face resultants are equal and opposite, but must be stored in the
+reversed node order \((k^-,j^-,i^-)\). Therefore,
+\begin{equation}
+	\vb r_e^{-}
+	=
+	-(\mat P_e\otimes \mat I_2)\,\vb r_e^{+}.
+	\label{eq:seg-rminus}
+\end{equation}
+Stacking the two faces gives the cohesive element residual
 \begin{equation}
 	\vb f_e
 	=
-	\underbrace{\begin{bmatrix} \mat I_6\\[2pt]-\,(\mat P_e\otimes \mat I_2)\end{bmatrix}(\mat R\otimes \QQ^\top)}_{\displaystyle \mat A_e}
-	\;
-	\underbrace{\mathcal T\!\big(\mat B_e\,\vb U_e\big)}_{\displaystyle \vb s_e}
-	\ \in\ \mathbb{R}^{12}.
+	\begin{bmatrix}
+		\mat I_6\\
+		-(\mat P_e\otimes \mat I_2)
+	\end{bmatrix}
+	(\mat R\otimes \QQ^\top)\,\vb s_e
+	=
+	\mat A_e\,\vb s_e
+	=
+	\mat A_e\,\mathcal T(\bd_e)
+	=
+	\mat A_e\,\mathcal T(\mat B_e\vb U_e),
 	\label{eq:seg-res}
 \end{equation}
-Here $\mat A_e$ collects the line weighting $\mat R$, rotation $\QQ^\top$, and the action--reaction stacking of the two faces.
+where
+\begin{equation}
+	\mat A_e
+	=
+	\begin{bmatrix}
+		\mat I_6\\
+		-(\mat P_e\otimes \mat I_2)
+	\end{bmatrix}
+	(\mat R\otimes \QQ^\top)
+	\in\mathbb R^{12\times 6}.
+	\label{eq:seg-Ae}
+\end{equation}
+Equation~\eqref{eq:seg-res} makes the element construction explicit:
+nodal displacements first generate the local openings through
+\(\mat B_e\), these openings are converted into nodal cohesive tractions by
+\(\mathcal T\), and the resulting local tractions are then integrated and
+assembled into equal-and-opposite face resultants.
 
-
-
-\paragraph{Consistent linearization (Jacobian).}
-From the residual composition in Eq.~\eqref{eq:seg-res}, the chain rule yields
-the cohesive element tangent
+\paragraph{Consistent linearization.}
+The cohesive element tangent follows directly from the chain rule applied to
+Eq.~\eqref{eq:seg-res}:
 \begin{equation}
 	\mat K_e
-	=\frac{\partial \vb f_e}{\partial \vb U_e}
 	=
-	\underbrace{\frac{\partial \vb f_e}{\partial \vb s_e}}_{\displaystyle \mat A_e}
-	\underbrace{\frac{\partial \vb s_e}{\partial \bd_e}}_{\displaystyle \mat K_{\rm loc}}
-	\underbrace{\frac{\partial (\mat B_e \vb U_e)}{\partial \vb U_e}}_{\displaystyle \mat B_e}
-	\;=\;
-	\mat A_e\,\mat K_{\rm loc}\,\mat B_e
-	\;\in\;\mathbb{R}^{12\times12}.
-	\label{eq:seg-J}
+	\frac{\partial \vb f_e}{\partial \vb U_e}
+	=
+	\frac{\partial \vb f_e}{\partial \vb s_e}
+	\frac{\partial \vb s_e}{\partial \bd_e}
+	\frac{\partial \bd_e}{\partial \vb U_e}
+	=
+	\mat A_e\,\mat K_{\mathrm{loc},e}\,\mat B_e
+	\in\mathbb R^{12\times 12},
+	\label{eq:seg-Ke}
 \end{equation}
-The block-diagonal local tangent collects the pointwise contributions at the
-quadratic cohesive stations,
-\[
-\mat K_{\rm loc}
-=
-\operatorname{blkdiag}(\mat K_i,\mat K_j,\mat K_k),
-\]
-The pointwise tangent \(\mat K_\ell\) follows from the
-potential-based cohesive law described in Section~\ref{sec:tsl}.
-The use of a scalar cohesive potential guarantees that the local core tangent
-is symmetric, and this symmetry is preserved in the assembled element Jacobian
-away from the shear sign switch at \(d_t=0\).
+where
+\begin{equation}
+	\mat K_{\mathrm{loc},e}
+	=
+	\operatorname{blkdiag}
+	\!\left(
+	\mathbf K_{\mathrm{loc},i},
+	\mathbf K_{\mathrm{loc},j},
+	\mathbf K_{\mathrm{loc},k}
+	\right)
+	\in\mathbb R^{6\times 6}.
+	\label{eq:seg-Kloc}
+\end{equation}
+Here \(\mathbf K_{\mathrm{loc},\ell}\) is the \(2\times2\) local tangent at
+station \(\ell\), obtained from the Hessian of the mixed-mode potential as
+described in Section~\ref{sec:tsl}. Because the constitutive law is
+potential-based, each block \(\mathbf K_{\mathrm{loc},\ell}\) is symmetric,
+and this symmetry is inherited by the element Jacobian away from the sign
+switch at \(d_t=0\).
 
+\paragraph{Global assembly and augmented equilibrium.}
+Assembling the element contributions \(\vb f_e\) and \(\mat K_e\) over all
+cohesive segments yields the global cohesive residual
+\(\vb F_{\mathrm{coh}}(\vb u)\) and the corresponding global tangent
+\(\partial\vb F_{\mathrm{coh}}/\partial\vb u\). Let \(\mat K\) denote the
+bulk elastic stiffness matrix and \(\vb F_{\mathrm{ext}}\) the unit external
+load vector associated with the applied boundary tractions. The unknowns of
+the nonlinear problem are the global displacement vector \(\vb u\) and the
+scalar load amplitude \(\sigma\).
 
-
-\paragraph{Global assembly.}
-Assembling the element vectors $\vb f_e$ and Jacobians $\mat K_e$
-over all interface segments yields the global cohesive residual and tangent
-\[
-\vb F_{\mathrm{coh}}(\vb u)\in\mathbb{R}^{n_{\mathrm{dof}}},
-\qquad
-\frac{\partial \vb F_{\mathrm{coh}}}{\partial \vb u}
-\in\mathbb{R}^{n_{\mathrm{dof}}\times n_{\mathrm{dof}}}.
-\]
-The bulk stiffness $\mat K$ enters additively in the equilibrium block.
-
-\paragraph{Augmented equilibrium and Jacobian.}
-We solve for the displacement vector
-$\vb u\in\mathbb{R}^{n_{\mathrm{dof}}}$ and the scalar load amplitude
-$\sigma\in\mathbb{R}$ from the augmented system
-\[
-\vb F_{\mathrm{aug}}(\vb u,\sigma)=
-\begin{bmatrix}
-	\vb R(\vb u,\sigma)\\[4pt] g(\vb u)
-\end{bmatrix}
-=\chg{R2C8}{
+For a prescribed trial orientation of Leg~2, the critical state is defined by
+the condition that the normal opening at the cohesive tip reaches its
+critical value \(d_n^{\max}\). The corresponding augmented system is written
+as
+\begin{equation}
+	\vb F_{\mathrm{aug}}(\vb u,\sigma)
+	=
 	\begin{bmatrix}
-		\{\mat K\,\vb u - \sigma\,\vb F_{\mathrm{ext}} - \vb F_{\mathrm{coh}}(\vb u)\\[4pt]
-		d_n^{\text{tip}} - d_n^{\max}
-	\end{bmatrix}=\vb 0,}
-\]
-where $\vb F_{\mathrm{ext}}\in\mathbb{R}^{n_{\mathrm{dof}}}$ is the unit load pattern and
-$g:\mathbb{R}^{n_{\mathrm{dof}}}\!\to\mathbb{R}$ extracts the normal opening
-$d_n^{\text{tip}}$ at the cohesive tip (with four nonzero entries corresponding
-to the two tip nodes).
+		\vb R(\vb u,\sigma)\\[3pt]
+		g(\vb u)
+	\end{bmatrix}
+	=
+	\begin{bmatrix}
+		\mat K\,\vb u-\sigma\,\vb F_{\mathrm{ext}}-\vb F_{\mathrm{coh}}(\vb u)\\[6pt]
+		d_n^{\mathrm{tip}}(\vb u)-d_n^{\max}
+	\end{bmatrix}
+	=
+	\vb 0.
+	\label{eq:aug-res}
+\end{equation}
+Here \(d_n^{\mathrm{tip}}(\vb u)\) is the normal opening of the two tip nodes
+of the cohesive continuation, extracted in the local Leg--2 frame.
 
-The Newton Jacobian has the block form
+The Jacobian of the augmented system has the block structure
+\begin{equation}
+	\mat J_{\mathrm{aug}}
+	=
+	\frac{\partial \vb F_{\mathrm{aug}}}{\partial(\vb u,\sigma)}
+	=
+	\begin{bmatrix}
+		\mat K-\dfrac{\partial\vb F_{\mathrm{coh}}}{\partial\vb u}
+		&
+		-\vb F_{\mathrm{ext}}
+		\\[10pt]
+		\dfrac{\partial g}{\partial\vb u}
+		&
+		0
+	\end{bmatrix}.
+	\label{eq:aug-J}
+\end{equation}
+The row vector \(\partial g/\partial\vb u\) contains only four nonzero
+entries, corresponding to the two tip nodes on the upper and lower faces of
+Leg~2. If \(\bn\) denotes the local normal of the final cohesive segment,
+then
 \[
-\mat J_{\mathrm{aug}}=
-\frac{\partial \vb F_{\mathrm{aug}}}{\partial(\vb u,\sigma)}=
-\begin{bmatrix}
-	\displaystyle \mat K - \frac{\partial \vb F_{\mathrm{coh}}}{\partial \vb u}
-	& \displaystyle -\,\vb F_{\mathrm{ext}}\\[10pt]
-	\displaystyle \frac{\partial g}{\partial \vb u} & 0
-\end{bmatrix}
-\in \mathbb{R}^{(n_{\mathrm{dof}}+1)\times(n_{\mathrm{dof}}+1)}.
+\frac{\partial g}{\partial\vb u}
+=
+\big[
+\cdots\ \bn^\top\ \cdots\ -\bn^\top\ \cdots
+\big].
 \]
-Here $\dfrac{\partial g}{\partial \vb u}\in\mathbb{R}^{1\times n_{\mathrm{dof}}}$
-has four nonzeros,
+
+At Newton iteration \(m\), the correction
+\((\Delta\vb u,\Delta\sigma)\) is obtained from
+\begin{equation}
+	\mat J_{\mathrm{aug}}(\vb u^{(m)},\sigma^{(m)})
+	\begin{bmatrix}
+		\Delta\vb u\\
+		\Delta\sigma
+	\end{bmatrix}
+	=
+	-
+	\vb F_{\mathrm{aug}}(\vb u^{(m)},\sigma^{(m)}),
+	\label{eq:newton-aug}
+\end{equation}
+followed by the update
 \[
-\frac{\partial g}{\partial \vb u} =
-\begin{bmatrix}
-	\cdots\; \bn^{\!\top}\; \cdots\; -\bn^{\!\top}\; \cdots
-\end{bmatrix},
+\vb u^{(m+1)}=\vb u^{(m)}+\Delta\vb u,
 \qquad
-\bn=\text{(local normal)}=\text{row }2\text{ of }\QQ\in\mathbb{R}^{2\times 2}.
+\sigma^{(m+1)}=\sigma^{(m)}+\Delta\sigma.
 \]
+The iterations are stopped once the residual norm and the cohesive-traction
+corrections fall below the prescribed tolerances.
 
-\paragraph{Newton update.}
-At iteration $k$, we solve
-\[
-\mat J_{\mathrm{aug}}(\vb u^{(k)},\sigma^{(k)})
-\begin{bmatrix}\Delta\vb u\\ \Delta\sigma\end{bmatrix}
-= -\,\vb F_{\mathrm{aug}}(\vb u^{(k)},\sigma^{(k)}),
-\]
-and update
-$\vb u^{(k+1)}=\vb u^{(k)}+\Delta\vb u$,
-$\sigma^{(k+1)}=\sigma^{(k)}+\Delta\sigma$,
-until the relative residual norm and the cohesive traction norm fall below the
-prescribed tolerances.
-
-
-\paragraph{Concluding notes.}
-The interface formulation separates, by design, (i) the kinematic jump map
-$\mat B_e$, (ii) the local cohesive evaluation $\mathcal T$, and (iii) the
-symmetric, potential-consistent tangent $\mat K_{\rm loc}=\partial\bTcz/\partial\bd$,
-assembled via $\mat K_e=\mat A_e\,\mat K_{\rm loc}\,\mat B_e$.
-This modular structure makes it straightforward to swap traction–separation
-variants or add rate effects without altering the FE scaffolding, while the
-Hessian form of $\mat K_{\rm loc}$ guarantees symmetry and robust Newton
-convergence.
-With the element operators defined, we now specify how the two-leg path is
-embedded into the domain mesh—channel width, seeding of Leg~2, and graded
-sizes—in Section~\ref{sec:mesh}.
+This construction separates the interface formulation into three distinct
+layers: the kinematic jump operator \(\mat B_e\), the constitutive traction
+map \(\mathcal T\), and the consistent local tangent assembled through
+\(\mat K_e=\mat A_e\mat K_{\mathrm{loc},e}\mat B_e\). This modular form is
+useful both conceptually and computationally: it makes the finite-element
+implementation transparent and allows the cohesive law to be modified without
+changing the underlying interface assembly. With the discrete interface
+operators now defined, the next section turns to the generation of the
+channel-based mesh and its collapse to a zero-thickness cohesive interface.
 
 \section{Mesh creation}
 \label{sec:mesh}
 
 The mesh must resolve the narrow cohesive segment (Leg~2) while keeping the
-global model compact. We generate a thin channel solely to drive \emph{triangular} (T3) refinement
-along the two-leg path; after meshing, we convert to quadratic (T6) elements
-and collapse the channel to obtain a zero-thickness crack with collocated
-top/bottom nodes.
-
+global model compact. We generate a thin channel solely to drive triangular
+(T3) refinement along the prescribed two-leg path; after meshing, we convert
+to quadratic (T6) elements and collapse the channel to obtain a
+zero-thickness crack with collocated top/bottom nodes. In the baseline
+calculations considered in Sections~\ref{sec:results} and
+\ref{sec:LEFM-comparison}, the mesh is constructed for a prescribed trial
+cohesive length \(\delta\). Section~\ref{sec:scope_limitations} considers a
+separate parametric study in which this auxiliary length is selected
+adaptively before meshing.
 
 \paragraph{Channel geometry and face topology (for T3 meshing).}
-A narrow channel is built around $\Gamma_{\mathrm{cr}}\cup\Gamma_{\mathrm{cz}}$
-solely for T3 mesh generation. Its half-width is tied to the interface
-resolution,
+A narrow channel is built around
+\(\Gamma_{\mathrm{cr}}\cup\Gamma_{\mathrm{cz}}\) solely for T3 mesh
+generation. Its half-width is tied to the interface resolution,
 \[
 w_c=\frac{h_{\min}}{16},
 \]
 chosen empirically to balance refinement enforcement and element quality.
- Along Leg~2 the two inner faces are \emph{not merged} during
-T3 generation; they are meshed as coincident edges with separate node sets so
-that the displacement jump $\bd=\QQ\,\jump{\uu}$ is well defined at nodes.
+Along Leg~2, the two inner faces are \emph{not merged} during T3 generation;
+they are meshed as coincident edges with separate node sets so that the
+displacement jump
+\[
+\bd=\QQ\,\jump{\uu}
+\]
+is well defined at the interface nodes.
 
 \paragraph{Target sizing and uniform seeding of Leg~2.}
-Leg~2 is uniformly seeded into $n_{\mathrm{coh}}$ stations, which fixes the
+Leg~2 is uniformly seeded into \(n_{\mathrm{coh}}\) stations, which fixes the
 near-interface target size
-\(
-h_{\min}={\delta}/{n_{\mathrm{coh}}}.
-\)
+\[
+h_{\min}=\frac{\delta}{n_{\mathrm{coh}}}.
+\]
 The physical crack (Leg~1) is seeded consistently with the adjacent bulk
-resolution to make the transition into the cohesive segment smooth.
+resolution so that the transition into the cohesive continuation remains
+smooth.
 
-\paragraph{Graded size field and far field cap.}
-Away from the channel, the target element size grows geometrically with factor
-$h_{\mathrm{grad}}>1$ up to a far-field cap $h_{\max}$. This produces a smooth
-gradation from fine elements near Leg~2 to coarser elements in the outer
-regions, avoiding stiffness jumps and keeping the system size moderate.
+\paragraph{Graded size field and far-field cap.}
+Away from the channel, the target element size grows geometrically with
+factor \(h_{\mathrm{grad}}>1\) up to a far-field cap \(h_{\max}\). This
+produces a smooth gradation from fine elements near Leg~2 to coarser
+elements in the outer regions, avoids abrupt stiffness changes, and keeps
+the system size moderate.
 
 \paragraph{T3\,$\to$\,T6 conversion and channel collapse.}
-After T3 generation, all bulk triangles are upgraded to T6. The narrow channel
-is then \emph{collapsed} to the polyline midline so that the two faces along
-Leg~2 coincide geometrically while remaining kinematically distinct via
-coincident node pairs (top/bottom). Interface segments use quadratic elements with Lobatto nodal evaluation
-($N=\mat I_3$), matching the operators of Section~\ref{sec:construction}
-so that $\bd_e=\mat B_e\vb U_e$ and tractions are evaluated pointwise at
-segment nodes.
-
+After T3 generation, all bulk triangles are upgraded to T6. The narrow
+channel is then collapsed to the polyline midline so that the two faces
+along Leg~2 coincide geometrically while remaining kinematically distinct
+through coincident top/bottom node pairs. Interface segments use quadratic
+elements with Lobatto nodal evaluation (\(N=\mat I_3\)), matching the
+operators of Section~\ref{sec:construction} so that
+\[
+\bd_e=\mat B_e\vb U_e
+\]
+and the cohesive tractions are evaluated pointwise at the segment nodes.
 
 \paragraph{Quality and topology checks.}
-The band is refined to maintain acceptable aspect ratios and to avoid slivers
-near the knee $V_1$. Face orientation is enforced so the local frame
-$\QQ=[\bt^\top;\bn^\top]$ points from lower to upper consistently
-(mouth$\to$tip along $\bt$). Coincident node pairing along Leg~2 is verified
-prior to assembly to guarantee one-to-one cohesive linkage. 
+The refinement band is constructed so as to maintain acceptable aspect
+ratios and to avoid sliver elements near the knee \(V_1\). Face orientation
+is enforced so that the local frame
+\(\QQ=[\bt^\top;\bn^\top]\) points consistently from lower to upper, with
+\(\bt\) directed from mouth to tip. Coincident node pairing along Leg~2 is
+verified prior to assembly to ensure one-to-one cohesive linkage.
 
-\paragraph{Verification and default parameters.}
-Mesh independence is assessed by halving $h_{\min}$ (and, if needed, adjusting
-$h_{\max}$ proportionally) while keeping $h_{\mathrm{grad}}$ fixed. The
-critical load $\sigma_{\mathrm{cr}}$ and kink angle $\theta_2$ are deemed
-converged when relative changes between successive refinements are below $1\%$.
-We use $w_c=h_{\min}/16$ with
-$h_{\min}=\delta/n_{\mathrm{coh}}$.
+\paragraph{Mesh-convergence criteria.}
+Mesh independence is assessed by halving \(h_{\min}\) and, if needed,
+adjusting \(h_{\max}\) proportionally while keeping \(h_{\mathrm{grad}}\)
+fixed. The critical load \(\sigma_{\mathrm{cr}}\) and kink angle \(\theta_2\)
+are deemed converged when the relative changes between successive
+refinements fall below \(1\%\). Throughout the construction,
+\(w_c=h_{\min}/16\) is used.
 
 \paragraph{Illustration.}
-\chg{R2C9}{
-	Figure~\ref{fig:mesh:a} shows the pre-collapse thin channel constructed around
-	the prescribed two-leg polyline, which enforces local mesh refinement along the
-	intended cohesive path.
-}
-Figure~\ref{fig:mesh:b} shows the post-collapse zero-thickness crack with collocated top/bottom nodes and quadratic edges.
-In the example we use $n_{\text{coh}}=20$ (so $h_{\min}=\delta/n_{\text{coh}}$), $\delta=0.06\,a$, $h_{\mathrm{grad}}=1.2$,
-and $h_{\max}=B/5$ ($B$ is the plate half-height).
+Figure~\ref{fig:mesh:a} shows the pre-collapse thin channel constructed
+around the prescribed two-leg polyline, which enforces local mesh
+refinement along the intended cohesive path. Figure~\ref{fig:mesh:b} shows
+the corresponding post-collapse zero-thickness crack with collocated
+top/bottom nodes and quadratic edges. The figure illustrates one
+representative baseline mesh used for the fixed-\(\delta\) benchmark
+calculations; in this example
+\[
+n_{\mathrm{coh}}=20,
+\qquad
+\delta=0.06\,a,
+\qquad
+h_{\mathrm{grad}}=1.2,
+\qquad
+h_{\max}=B/5,
+\]
+so that \(h_{\min}=\delta/n_{\mathrm{coh}}\).
 
 \begin{figure}[h!]
 	\centering
@@ -1391,33 +1557,33 @@ and $h_{\max}=B/5$ ($B$ is the plate half-height).
 	\label{fig:mesh}
 \end{figure}
 
-\chg{R1C1}{
-    \paragraph{Remark on channel collapse versus split-node insertion.}
-    The present channel-collapse strategy is closely related in spirit to standard
-    split-node procedures for introducing zero-thickness cohesive interfaces, but
-    differs in the stage at which mesh resolution is enforced.
-    In classical split-node approaches, the interface is created \emph{after}
-    meshing by duplicating nodes and modifying element connectivity along a
-    prescribed path; while effective for simple, straight cracks, this does not
-    by itself control the resolution of bulk fields normal to the interface and
-    often requires additional local remeshing.
-    In contrast, the channel-collapse approach constructs the mesh \emph{a priori}
-    with a thin refinement band aligned with the intended cohesive leg, so that the
-    interface discretization and the surrounding bulk gradation are governed
-    simultaneously through the size field parameters
-    $(h_{\min},h_{\mathrm{grad}},h_{\max})$.
-    The subsequent collapse step produces a zero-thickness interface with
-    coincident node pairs and ordered topology without explicit mesh surgery.
-    This entails a modest preprocessing effort to define the channel geometry, but
-    provides improved robustness, reproducibility, and resolution control in
-    systematic crack-kinking studies involving multiple trial paths.
-}
-
+\paragraph{Remark on channel collapse versus split-node insertion.}
+The present channel-collapse strategy is closely related in spirit to
+standard split-node procedures for introducing zero-thickness cohesive
+interfaces, but differs in the stage at which mesh resolution is enforced.
+In classical split-node approaches, the interface is created \emph{after}
+meshing by duplicating nodes and modifying element connectivity along a
+prescribed path. While effective for simple, straight cracks, this does not
+by itself control the resolution of bulk fields normal to the interface and
+often requires additional local remeshing. In contrast, the channel-collapse
+approach constructs the mesh \emph{a priori} with a thin refinement band
+aligned with the intended cohesive leg, so that the interface
+discretization and the surrounding bulk gradation are governed
+simultaneously through the size-field parameters
+\((h_{\min},h_{\mathrm{grad}},h_{\max})\). The subsequent collapse step
+produces a zero-thickness interface with coincident node pairs and ordered
+topology without explicit mesh surgery. This entails a modest preprocessing
+effort to define the channel geometry, but provides improved robustness,
+reproducibility, and resolution control in systematic crack-kinking studies
+involving multiple trial paths.
 
 \paragraph{Transition to results.}
-With the interface operators (Section~\ref{sec:construction}) and the graded,
-collapsed mesh defined here, the next section reports verification, mesh
-convergence, and kink-angle selection under mixed-mode loading.
+With the interface operators (Section~\ref{sec:construction}) and the
+graded, collapsed mesh defined here, the next section reports verification,
+mesh convergence, and kink-angle selection under mixed-mode loading. The
+sensitivity of the directional prediction to the auxiliary choice of
+\(\delta\) is examined separately in
+Section~\ref{sec:scope_limitations}.
 
 \section{Results}
 \label{sec:results}
