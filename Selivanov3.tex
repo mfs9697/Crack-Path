@@ -1,0 +1,2270 @@
+% arara: pdflatex
+% arara: biber
+% arara: pdflatex
+% arara: pdflatex
+
+\documentclass[smallextended]{svjour3}       % onecolumn (second format)
+\smartqed  % flush right qed marks, e.g. at end of proof
+\usepackage{graphicx}
+
+% ---------- Math & symbols ----------
+\usepackage{amsmath,amssymb,bm,mathtools}
+\usepackage{stmaryrd}   % \llbracket,\rrbracket
+
+% ---------- Figures & tables ----------
+\usepackage{graphicx}
+\usepackage{subcaption}
+\usepackage{tabularx}
+\usepackage{booktabs}
+\usepackage{array,longtable}
+\setlength{\LTcapwidth}{\textwidth} % longtable captions full width
+
+% ---------- References & hyperlinks ----------
+\usepackage{xcolor}
+\usepackage{hyperref}
+\hypersetup{
+	colorlinks=true,
+	linkcolor=blue,
+	citecolor=violet,
+	urlcolor=teal
+}
+
+\usepackage[backend=biber,style=numeric,sorting=none]{biblatex}
+\addbibresource{Selivanov.bib}
+
+\journalname{International Journal of Fracture}
+
+% ===================== Notation layer  =====================
+
+% --- Vectors & 2nd-order tensors: bold italic ---
+\newcommand{\vb}[1]{\bm{#1}}      % generic vector-like (also 2nd-order tensors)
+%\newcommand{\tens}[1]{\bm{#1}}    % alias for clarity in code
+
+% --- Keep access to arrowed vectors; make \vec bold-italic by default ---
+\let\arrowvec\vec                  % save the original arrowed \vec
+\renewcommand{\vec}[1]{\bm{#1}}    % now \vec{x} -> bold-italic x
+
+% --- Upright bold matrices / discrete operators ---
+\newcommand{\mat}[1]{\mathbf{#1}}  % e.g., \mat{K}, \mat{M}
+
+% --- 4th-order tensors (blackboard) ---
+\newcommand{\four}[1]{\mathbb{#1}} % e.g., \four{D}
+
+% --- Unit vectors & local frame ---
+\newcommand{\ex}{\vb{e}_x}
+\newcommand{\ey}{\vb{e}_y}
+\newcommand{\tvec}{\vb{t}}
+\newcommand{\nvec}{\vb{n}}
+\newcommand{\QQ}{\mat{Q}}          % Leg-2 local frame matrix [t^T; n^T]
+% (No conflict with \mathbb{Q}; that remains available as is.)
+
+% --- Common fields ---
+\newcommand{\uu}{\vb{u}}
+\newcommand{\eps}{\tens{\varepsilon}}
+\newcommand{\sig}{\tens{\sigma}}
+
+% --- Jumps & averages (starred version auto-sizes) ---
+\DeclarePairedDelimiter{\jump}{\llbracket}{\rrbracket}
+\DeclarePairedDelimiter{\avg}{\langle}{\rangle}
+% Usage: \jump{u}, \jump*{u};  \avg{\cdot}, \avg*{\cdot}
+
+% --- Other handy paired delimiters ---
+\DeclarePairedDelimiter{\abs}{\lvert}{\rvert}
+\DeclarePairedDelimiter{\norm}{\lVert}{\rVert}
+
+% --- Operators (proper spacing in math) ---
+\DeclareMathOperator{\sgn}{sgn}
+\DeclareMathOperator{\tr}{tr}
+\DeclareMathOperator{\sym}{sym}
+\DeclareMathOperator{\skw}{skw}
+\newcommand{\diver}{\operatorname{div}}
+\newcommand{\grad}{\nabla}
+
+% --- Differential and helpers ---
+\newcommand{\dd}{\mathop{}\!\mathrm{d}}  % correct spacing: \int f\,\dd x
+\newcommand{\nrm}[1]{\overline{#1}}      % normalized quantities (bar)
+
+% --- Backward-compatibility (new-or-renew without @) ---
+% \providecommand defines if undefined; \renewcommand then overwrites if needed.
+\providecommand{\bt}{\tvec}
+\renewcommand{\bt}{\tvec}
+
+\providecommand{\bn}{\nvec}
+\renewcommand{\bn}{\nvec}
+
+\providecommand{\bmU}{\uu}
+\renewcommand{\bmU}{\uu}
+
+\providecommand{\bd}{\vb d}
+\renewcommand{\bd}{\vb d}
+
+\providecommand{\bTcz}{\vb{T}_{\mathrm{cz}}}
+\renewcommand{\bTcz}{\vb{T}_{\mathrm{cz}}}
+
+\providecommand{\be}{\vb e}
+\renewcommand{\be}{\vb e}
+
+\providecommand{\DD}{\four D}
+\renewcommand{\DD}{\four D}
+
+\providecommand{\mm}{\QQ}
+\renewcommand{\mm}{\QQ}
+% =================== End Notation layer ====================
+
+	\include{changes.tex}
+
+\begin{document}
+
+
+
+\title{Potential-Based Cohesive Modeling of Mixed-Mode Crack Kinking.}
+
+\author{Viacheslav Bogdanov          \and
+	Danylo Selivanov %etc.
+}
+
+%\authorrunning{Short form of author list} % if too long for running head
+
+\institute{Viacheslav Bogdanov \at
+	S.P. Timoshenko Institute of Mechanics, NAS of Ukraine, 3 Nesterov Street, Kyiv, 03057, Ukraine \\
+	\email{bogdanov@nas.gov.ua}   \\
+	\and
+	Danylo Selivanov \at
+	S.P. Timoshenko Institute of Mechanics, NAS of Ukraine, 3 Nesterov Street, Kyiv, 03057, Ukraine
+	\\
+	\email{fract@inmech.kyiv.ua}
+}
+
+\date{Received: date / Accepted: date}
+% The correct dates will be entered by the editor
+
+
+\maketitle
+
+\begin{abstract}
+	We present a compact finite-element framework for crack kinking in plane strain that augments the physical crack with a short, zero-thickness cohesive continuation. A thin auxiliary channel is used to generate a refined T3 mesh and is collapsed after T6 conversion, so the analysis is performed on the physical interface with coincident node pairs. The interface law is potential-based, differentiable, and bounded in both normal and tangential directions; its cohesive potential yields an energetically consistent formulation with a symmetric Hessian tangent, enabling robust Newton convergence. Local openings are evaluated in a frame attached to the trial leg and rotated to the global frame for assembly. We detail the construction of interface degrees of freedom, the jump operator and rotation, and a mode-mix-aware procedure to select the kink direction.
+	Numerical studies show stable determination of the kink angle, rapid convergence of the critical load, and reproducible energy measures across independently generated meshes. With moderate far-field caps and interface resolution, the critical load is mesh-independent to near machine precision, and bulk tractions on the faces match cohesive tractions reconstructed from jumps along almost the entire leg. We also compare a global load-based selector with a local energetic mouth criterion, highlighting their complementary behavior. The framework is designed as a practical, mesh-robust tool for simulating initiation and early growth of kinking cracks under mixed-mode conditions.
+	\keywords{Mixed-mode fracture \and Cohesive zone model \and Traction--separation law \and Potential-based cohesive interface}
+	% \PACS{PACS code1 \and PACS code2 \and more}
+	%\subclass{MSC code1 \and MSC code2 \and more}
+\end{abstract}
+
+\section{Introduction}
+
+Accurate prediction of how and where cracks deflect is essential in many
+engineering systems, from layered composites and adhesive joints to
+microelectronic packages and structural components subjected to non-uniform
+loading. Even small deviations in crack trajectory can alter load-carrying
+capacity, trigger delamination, or precipitate catastrophic failure.
+Classical Linear Elastic Fracture Mechanics (LEFM) provides canonical
+predictions of the incipient kink direction, notably via the maximum
+circumferential (hoop) stress criterion and related energy-based arguments
+\cite{ErdoganSih1963}.
+Path conditions such as enforcing $K_{\rm II}=0$ at an advancing crack tip
+\cite{CotterellRice1980} provide equivalent selection principles.
+For cracks interacting with material interfaces, early analyses established
+when a crack continues along the interface or kinks into an adjacent medium,
+highlighting the dominant role of the mixed-mode elastic field in steering the
+initial deflection \cite{HeHutchinson1989}.
+
+Cohesive-zone formulations complement LEFM by embedding fracture processes
+directly in traction--separation relations (TSLs), thereby linking intact
+material response with complete decohesion without explicitly tracking the
+crack.
+Foundational models idealised the process zone using simple cohesive laws
+\cite{Barenblatt1962,Dugdale1960}, and subsequent finite-element
+implementations showed that such laws can robustly capture initiation,
+deflection, branching, and arrest in brittle and quasi-brittle materials
+\cite{CamachoOrtiz1996}.
+Cohesive laws have also been central to interpreting and predicting resistance
+curves \cite{TvergaardHutchinson1992} and to modelling dynamic crack growth
+with intrinsic interface behaviour \cite{XuNeedleman1994}.
+
+\paragraph{Mixed-mode fracture and cohesive laws.}
+A comprehensive review by \chg{R1C7}{Park and Paulino} \cite{Park2011Review}
+distinguishes two broad families of mixed-mode models:
+\emph{energy-based} criteria and \emph{traction-based} cohesive laws.
+Energy-based sche\-mes—such as the widely used Benzeggagh--Kenane (BK) criterion
+\cite{BenzeggaghKenane1996}—prescribe a mode-dependent fracture toughness but
+do not supply interface tractions and cannot be derived from a single
+potential.
+Traction-based cohesive laws, initiated by Xu and Needleman
+\cite{XuNeedleman1994}, define an explicit mixed-mode potential
+$\Psi(d_n,d_t)$ whose derivatives give the physical tractions.
+Subsequent extensions introduced polynomial, power-law, exponential, and
+asymmetric couplings, allowing the mode transition and shear sensitivity to be
+tuned to the material system.
+Such potential-based cohesive laws ensure thermodynamic consistency and yield
+symmetric algorithmic tangents—properties advantageous for implicit finite
+elements and essential for analysing mixed-mode initiation, kinking, and
+propagation, which is the focus of the present work.
+
+The importance of accurately describing the near-tip fracture process zone
+(FPZ) has motivated several recent modelling developments.
+Najmeddine, Gupta and Moini \cite{NajmeddineGuptaMoini2025} coupled a phase-field
+description of bulk fracture with a PPR cohesive interface to capture
+deflection, penetration and toughening mechanisms in multi-material systems,
+while Shabrou and Daneshjoo \cite{ShabrouDaneshjoo2025} proposed mixed-mode
+criteria for orthotropic materials that incorporate FPZ effects and T-stress,
+improving directional predictions over classical LEFM criteria.
+Analytical progress has likewise sharpened the understanding of mixed-mode
+fields: Liu and Wei derived a closed-form stress field for finitely kinked
+cracks \cite{Liu2021KinkedStressFields} and later a semi-analytical SIF
+framework for branched cracks \cite{Liu2023BranchedSIF}, Si and Wei extended
+these ideas to kinked edge cracks in a half-space \cite{Si2024KinkedEdge}, and
+Shi and Xu obtained explicit SIFs for infinitesimal kinks in orthotropic
+solids \cite{Shi2025OrthotropicKinkSIF}.
+Parallel cohesive-zone studies have clarified how mode mixity, cohesive
+strength and interface toughness compete to determine crack deflection versus
+penetration \cite{ParmigianiThouless2006CZMDeflection,Alam2016IncidentAngleCZM,
+	Tankasala2017KinkingOrthotropic,ChenDeBorst2022PFRCZM}.
+
+\paragraph{Motivating example: why cohesive models remain essential.}
+Even in configurations where LEFM is nominally applicable, cohesive-zone
+effects can produce measurable changes in the predicted critical load.
+For a mode-I crack of half-length $a$ in an infinite plate, LEFM predicts
+onset of fracture when $K_{\mathrm{I}}=\sigma\sqrt{\pi a}$ reaches the
+toughness $K_{\mathrm{Ic}}$, giving
+$\sigma_{\mathrm{cr}}^{\mathrm{LEFM}} = K_{\mathrm{Ic}}/\sqrt{\pi a}$.
+A cohesive-zone representation such as the Dugdale model replaces the
+singular elastic field by a finite process zone of length $\ell_{\mathrm{p}}$,
+and consequently yields a slightly smaller critical load.
+
+Even when the process-zone size is only about 5\% of the crack half-length
+—a regime that is typically regarded as safely within the domain of LEFM—
+the cohesive prediction remains 2–3\% lower than the LEFM
+estimate.  This modest but systematic deviation demonstrates that the
+presence of a finite process zone influences not just near-tip fields,
+but also global quantities such as the critical load.
+
+This example highlights a central theme of the present work:
+while the \emph{kink direction} is governed almost exclusively by the
+mixed-mode elastic field, the \emph{critical load} retains a clear
+signature of the traction–separation law and of the finite FPZ.
+
+\paragraph{Aim and modelling philosophy.}
+Our aim is to isolate, in the cleanest possible setting, how mode mixity,
+cohesive strength, and crack orientation conspire to determine the kink
+direction under mixed-mode loading, and how this choice manifests in the
+critical load.
+To this end, we employ a deliberately minimal plane-strain finite-element
+formulation in which the physical crack is extended by a short,
+zero-thickness cohesive continuation.
+A slender auxiliary channel is introduced solely to control mesh resolution
+and is collapsed prior to loading, ensuring that all tractions and boundary
+conditions apply directly to the true crack faces.
+For each trial orientation, we compute a \emph{critical state} dictated solely
+by the prescribed traction--separation law and examine two complementary
+selectors for the kink direction: a global load-based criterion and a local,
+cohesive-energetic criterion at the mouth.
+This philosophy avoids remeshing, enrichment, or geometry-specific heuristics
+and reveals, with high transparency, which aspects of the cohesive law
+influence the kink direction and which enter only through the evolution of the
+fracture process zone and the critical load.
+
+
+\paragraph{Structure of the paper.}
+Section~\ref{sec:problem} introduces the problem statement, geometry and notation.
+Section~\ref{sec:governing} presents the governing equations of the elastic bulk.
+Section~\ref{sec:tsl} develops the cohesive interface formulation, mixed-mode potential,
+and consistent linearisation.
+Section~\ref{sec:construction} describes interface operators and assembly.
+Section~\ref{sec:mesh} outlines mesh construction, channel collapse, and refinement.
+Section~\ref{sec:results} reports numerical results, including field plots, convergence
+studies, and kink selection.
+Section~\ref{sec:LEFM-comparison} compares cohesive predictions with LEFM benchmarks.
+Section~\ref{sec:conclusions} summarises the findings and future directions.
+
+
+
+
+{\small
+	\begin{longtable}{@{}>{\raggedright\arraybackslash}p{0.22\textwidth}%
+			>{\raggedright\arraybackslash}p{0.64\textwidth}%
+			>{\raggedleft\arraybackslash}p{0.08\textwidth}@{}}
+		\caption{Notation used throughout. Subscripts $n,t$ denote normal and tangential components in the Leg~2 frame $\mat Q=[\bt^\top;\bn^\top]$.}
+		\label{tab:notation}\\
+		\toprule
+		\textbf{Symbol} & \textbf{Meaning} & \textbf{Units}\\
+		\midrule
+		\endfirsthead
+		\multicolumn{3}{@{}l@{}}{\small\textit{Table \thetable\ (continued)}}\\
+		\toprule
+		\textbf{Symbol} & \textbf{Meaning} & \textbf{Units}\\
+		\midrule
+		\endhead
+		\midrule
+		\multicolumn{3}{r}{\small\textit{Continued on next page}}\\
+		\endfoot
+		\bottomrule
+		\endlastfoot
+
+		\multicolumn{3}{@{}l@{}}{\textbf{Geometry and loading}}\\
+		\midrule
+		$A,\,B$ & Plate width and half-height ($x\in[0,A],\,y\in[-B,B]$) & m\\
+		$V_0,\,V_1,\,V_2$ & Mouth, knee, and tip coordinates of the two-leg path & m\\
+		$a$ & Physical leg length (Leg~1): $|V_1{-}V_0|$ & m\\
+		$\delta$ & Prescribed cohesive length (Leg~2, trial leg) & m\\
+		$\beta$ & Active cohesive sublength on Leg~2 & m\\
+		$\theta_1,\,\theta_2$ & Absolute orientations of Leg~1/2 (from $+x$) & rad\\
+		$\Delta\theta$ & Signed kink angle $\operatorname{wrap}_{(-\pi,\pi]}(\theta_2-\theta_1)$ & rad\\
+		$\bt,\,\bn$ & Unit tangent (knee$\to$tip) and unit normal (lower$\to$upper) & --\\
+		$\mat Q=[\bt^\top;\bn^\top]$ & Local $2{\times}2$ frame attached to Leg~2 & --\\
+		$s,\,r$ & Local coordinates along $\bt$ and $\bn$ & m\\
+		$\sigma$ & Magnitude of the applied tractions on the top and bottom plate faces (equal in magnitude, opposite in sign) & MPa\\[2pt]
+
+		\multicolumn{3}{@{}l@{}}{\textbf{Bulk kinematics and material}}\\
+		\midrule
+		$\vec u$ & Displacement field & m\\
+		$\jump{\vec u}$ & Displacement jump across Leg~2: $\vec u^{(+)}-\vec u^{(-)}$ & m\\
+		$\boldsymbol\varepsilon(\vec u)$ & Small strain $\tfrac12(\nabla\vec u+\nabla\vec u^\top)$ & --\\
+		$\boldsymbol\sigma$ & Cauchy stress & Pa\\
+		$\mat D$ & Elasticity tensor (plane strain) & Pa\\
+		$E,\ \nu,\ G$ & Young’s modulus, Poisson’s ratio, shear modulus ($G=E/[2(1+\nu)]$) & Pa, --, Pa\\[2pt]
+
+		\multicolumn{3}{@{}l@{}}{\textbf{Mesh and interface}}\\
+		\midrule
+		$n_{\mathrm{coh}}$ & Equal segments on Leg~2 (interface resolution) & --\\
+		$h_{\min}$ & Target near-interface size $=\delta/n_{\mathrm{coh}}$ & m\\
+		$h_{\mathrm{grad}}$ & Geometric growth factor away from the band & --\\
+		$h_{\max}$ & Far-field size cap & m\\
+		$w$ & Channel half-width (mesh only; collapsed before solve) & m\\[2pt]
+
+		\multicolumn{3}{@{}l@{}}{\textbf{Cohesive variables and TSL}}\\
+		\midrule
+		$\vec d=(d_t,d_n)$ & Local sliding/opening in $(\bt,\bn)$: $\vec d=\mat Q\,\jump{\vec u}$ & m\\
+		$d_n^{\max},\,d_t^{\max}$ & Critical separations (normal, tangential) & m\\
+		$\bar d_n,\,\bar d_t$ & Normalized separations: $d_n/d_n^{\max}$, $|d_t|/d_t^{\max}$ & --\\
+		$\vec T_{\rm cz}=(\sigma_t,\sigma_n)$ & Local cohesive traction (action–reaction on faces) & Pa\\
+		$\sigma_n^{\max},\,\sigma_t^{\max}$ & Cohesive strengths (normal, shear) & Pa\\
+		$\bar\sigma_n,\,\bar\sigma_t$ & Normalized tractions $\sigma_\alpha/\sigma_\alpha^{\max}$ & --\\
+		$\phi_n,\,\phi_t$ & Mode~I/II fracture energies (areas under TSL branches) & J\,m$^{-2}$\\
+		$F,t,g$ & Normalized cohesive potential and its derivatives
+		($t=F'$, $g=t'$), with saturation \chg{R2C3}{$F(1)=c$} & --\\
+		\chg{R2C3}{$c$} & \chg{R2C3}{Dimensionless TSL shape parameter ($c=\int_0^1 t(\xi)\,\mathrm d\xi$)} & --\\
+		\chg{R2C3}{$\chi_\alpha$} &
+		\chg{R2C3}{Mode-wise energetic prefactor of the cohesive law,
+		$\chi_\alpha=\sigma_\alpha^{\max} d_\alpha^{\max}
+		=\phi_\alpha/c_\alpha$}
+		&
+		J\,m$^{-2}$\\
+		$a_1,\,a_2$ & TSL shape switches (end of strengthening branch; onset of softening) & --\\
+		
+		$\kappa$ & Dimensionless compression penalty (e.g., $2/a_1$) & --\\
+		$k_c$ & Contact slope $k_c=\kappa\,\sigma_n^{\max}/d_n^{\max}$ & Pa\,m$^{-1}$\\
+		$r$ & Mixed-mode energetic coupling parameter ($0\le r\le r^{\max}$) & --\\[2pt]
+
+		\multicolumn{3}{@{}l@{}}{\textbf{Discrete interface operators (assembly)}}\\
+		\midrule
+		$\mathcal T$ & Nodewise TSL map, $\vb s_e=\mathcal T(\vec d_e)$ & --\\
+		$\mat R$ & Consistent line “mass’’: $\mat R=l_e\!\int_0^1\!N^\top N\,\mathrm d\xi$ & m\\
+		$\mat A_e$ & Face assembly/rotation: $\vec f_e=\mat A_e\,\vb s_e$ (action–reaction) & --\\
+		$\mat B_e$ &
+		Element jump operator mapping nodal displacements to local displacement jumps,
+		$\bd_e=\mat B_e\vb U_e$
+		&
+		--\\
+		$\mat P_e$ & Node-order reversal $(i,j,k)\mapsto(k,j,i)$ & --\\
+		$\mat K_{\rm loc}$ & Local $2\times2$ tangent & Pa\,m$^{-1}$\\[2pt]
+
+		\multicolumn{3}{@{}l@{}}{\textbf{Outputs and selectors}}\\
+		\midrule
+		$\sigma_{\mathrm{cr}}$ & Critical load at the critical state & Pa\\
+		$\Psi_{\mathrm{crit}},\ \hat\Psi_{\mathrm{crit}}$ & Mouth work on Leg~2; $\hat\Psi_{\mathrm{crit}}=\Psi_{\mathrm{crit}}/\phi_n$ & J\,m$^{-2}$, --\\
+		$\theta_2^{\sigma},\,\theta_2^{\Psi}$ & Kink angles from load-based and mouth-energy criteria & deg\\
+		$\sigma_\infty$ & Extrapolated critical load (Richardson/Aitken) & Pa\\
+		$p,\ \epsilon$ & Observed order and finest-mesh relative error & --\\
+	\end{longtable}
+}
+
+
+\section{Problem statement}
+\label{sec:problem}
+
+We consider a two-dimensional body in plane strain containing a predefined
+two-leg crack path that serves as the basis for studying mixed-mode crack kinking under steady-state conditions. The problem setup, geometry, local frames, and representative
+traction–separation law are summarized in Fig.~\ref{fig:statement}.
+
+The body, shown in Fig.~\ref{fig:stmt:a}, is a rectangular domain
+subjected to uniform tensile tractions on its top and bottom edges, while the
+vertical sides remain free of external loads. The internal discontinuity consists of two consecutive legs forming a polyline.
+The first leg (Leg~1) represents the existing physical crack of a given length and orientation,
+and the second leg (Leg~2) is a short fictitious extension used to realize a cohesive interface
+where kinking may occur.
+\chg{R2C1}{We denote by $\Gamma_{\mathrm{cr}}$ the boundary of the physical crack (Leg~1), and by
+	$\Gamma_{\mathrm{cz}}$ the boundary of the cohesive extension (Leg~2).}
+The kink originates at the common junction point of the two legs, here referred to as the \emph{knee},
+and ends at the trial cohesive tip. The orientation of the second leg with respect to
+the first defines the kink angle. The domain is homogeneous and isotropic,
+and plane-strain conditions are assumed throughout.
+
+A closer view of the two-leg configuration is presented in
+Fig.~\ref{fig:stmt:b}. The physical crack, Leg~1, is traction-free,
+whereas Leg~2 carries cohesive tractions acting on its two opposing faces.
+These tractions depend on the local relative displacements between the upper
+and lower surfaces, which are expressed in a local coordinate system rigidly attached
+to Leg~2. The local frame comprises a tangential direction, aligned with the
+cohesive segment, and a normal direction, pointing from the lower to the upper
+face. The associated tractions form a pair of equal and opposite vectors
+acting on the two sides of the cohesive zone.
+
+The distribution of these tractions and the corresponding relative openings
+are sketched in Fig.~\ref{fig:stmt:c}. Along the cohesive leg, the normal
+opening and tangential sliding evolve according to the adopted
+TSL. The region of active cohesive interaction is
+bounded by the physical crack tip and the cohesive tip, while the rest of the
+crack faces remain traction-free. The local coordinate axes $(s,r)$ are used
+to describe variations of the opening and the traction along and across the
+interface.
+
+\paragraph{Choice of Cohesive Leg Length $\delta$.}
+The cohesive leg length $\delta$ is an input parameter that defines the available extent for the process zone to develop. For the approach to regularize the singular elastic stress field and achieve a finite cohesive traction profile, $\delta$ must be sufficiently long to accommodate the full cohesive zone. Choosing $\delta$ too short artificially truncates the process zone, leaving a residual stress singularity at the cohesive tip—precisely the behavior that CZMs are designed to avoid. While larger $\delta$ values slightly increase computational cost, they do not affect the solution provided the active cohesive segment $\beta$ remains less than $\delta$. Accordingly, $\delta$ plays the role of a numerical regularization length rather than a
+material parameter.
+
+For trapezoidal cohesive laws, including the piecewise-smooth law used here, a practical estimate of the required $\delta$ can be obtained from the Dugdale model. In this idealization, the cohesive zone length $\ell_p$ scales with the crack size $a$ as
+\[
+\ell_p = 2 \pi a \left(\sigma_{\text{LEFM}}^{\text{cr}} / \sigma_{\max}\right)^2.
+\]
+For practical use, a value of $\delta = 2 \ell_p$ is generally sufficient to regularize the near-tip fields. This estimate applies generically to trapezoidal cohesive laws. For exponential or power-law potentials, similar estimates can be derived. The numerical examples in this work use $\delta/a = 0.06$, which falls well within this guideline and has been verified to yield fully developed, mesh-independent process zones.
+
+\medskip
+
+Figure~\ref{fig:stmt:d} shows the mode-wise traction–separation laws used in the
+cohesive formulation.  In each pure mode, the traction increases from zero to the
+cohesive strength and then decays smoothly to zero at complete decohesion.  The
+initial rising segment is not intended to represent material hardening; instead, it
+regularises the near-tip behaviour of the FPZ.  Without this strengthening
+branch, imposing a constant plateau traction from $d_n=0$ would generate a jump in
+stress at the point where the cohesive zone meets the traction-free crack faces,
+leading to an unphysical stress singularity at the FPZ tip.  The rising
+branch ensures that the traction smoothly approaches its maximum value, thereby
+providing a finite-stress condition at the cohesive-zone tip and enabling a
+geometrically smooth closure of the cohesive zone.  Because the extent of the FPZ is not known a priori, this regularisation also allows its length to emerge
+naturally as part of the solution.
+
+
+The main objective of the analysis is to determine the steady-state direction of crack
+advance, or equivalently the kink angle, that develops in response to the applied mixed-mode
+loading, by evaluating competing trial kink directions through the cohesive formulation.
+ To this end, the subsequent sections formulate
+the governing equations, define the cohesive law quantitatively, and describe
+the finite-element implementation that enables numerical evaluation of the
+critical state.
+
+\begin{figure}[h!]
+	\centering
+	% Row 1: global geometry + local frame
+	\begin{subfigure}[t]{0.32\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{Fig1a}
+		\caption{Geometry \& loading}
+		\label{fig:stmt:a}
+	\end{subfigure}\hspace{0.05\textwidth}
+	\begin{subfigure}[t]{0.25\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{Fig1b}
+		\caption{Local cohesive frame}
+		\label{fig:stmt:b}
+	\end{subfigure}
+
+	\vspace{0.6em}
+
+	% Row 2: mode-I cohesive geometry + 1D TSL curve
+	\begin{subfigure}[t]{0.25\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{Fig1c}
+		\caption{Mode-I cohesive geometry}
+		\label{fig:stmt:c}
+	\end{subfigure}\hspace{0.05\textwidth}
+	\begin{subfigure}[t]{0.25\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{Fig1d}
+		\caption{Normalized 1D TSL}
+		\label{fig:stmt:d}
+	\end{subfigure}
+
+	\caption{Two-leg crack. (a) Global geometry and uniform loading. (b) Leg--2 local frame and interface variables. (c) Pure mode-I cohesive geometry along Leg~2 with active length $\beta\le\delta$ and opening $d_n(s)$. (d) Normalized traction–separation law $\bar\sigma$ vs.\ $\bar d$ with thresholds $a_1,a_2$.}
+	\label{fig:statement}
+\end{figure}
+
+\section{Governing equations}
+\label{sec:governing}
+
+The displacement field
+$\uu:\,\Omega\setminus(\Gamma_{\mathrm{cr}}\cup\Gamma_{\mathrm{cz}})\to\mathbb{R}^2$
+is the primary unknown of the boundary-value problem.
+The body is treated as a homogeneous, isotropic, linear-elastic solid in
+plane strain, and equilibrium is assumed under quasi-static loading conditions.
+
+\paragraph{Kinematics and constitutive law.}
+The infinitesimal strain tensor and Cauchy stress tensor are related by the
+linear elastic law
+\begin{equation}
+	\eps(\uu)
+	=\tfrac12(\nabla\uu+\nabla\uu^\top),
+	\qquad
+	\sig=\four D:\eps(\uu),
+	\label{eq:constitutive}
+\end{equation}
+where $\four D$ is the fourth-order isotropic elasticity tensor defined by
+the Young’s modulus~$E$ and Poisson’s ratio~$\nu$.
+Under plane-strain conditions the out-of-plane stress satisfies
+$\sigma_{zz}=\nu(\sigma_{xx}+\sigma_{yy})$,
+and the shear modulus is $G=E/[2(1+\nu)]$.
+
+
+\paragraph{Equilibrium equations.}
+In the absence of body forces, the equilibrium of stresses in the bulk
+domain reads
+\begin{equation}
+	\nabla\!\cdot\!\sig=\vec 0
+	\qquad
+	\text{in } \Omega\setminus(\Gamma_{\mathrm{cr}}\cup\Gamma_{\mathrm{cz}}),
+	\label{eq:equilibrium}
+\end{equation}
+where $\nabla\!\cdot(\cdot)$ denotes the row-wise divergence of a second-order
+tensor.  Equation~\eqref{eq:equilibrium} governs the elastic field in all
+regions of the body except along the discontinuity surfaces.
+
+\paragraph{Boundary and interface conditions.}
+Let $\vb n_b$ denote the outward unit normal to $\partial\Omega$.
+Uniform tractions are applied on the horizontal edges (Fig.~\ref{fig:stmt:a}),
+\[
+\sig\,\vb n_b=
+\begin{cases}
+	+\sigma\,\vb e_y,& y=+B,\\
+	-\sigma\,\vb e_y,& y=-B,
+\end{cases}
+\qquad\text{and}\qquad
+\sig\,\vb n_b=\vb 0 \ \ \text{on } x=0 \text{ and } x=A,
+\]
+where the scalar $\sigma$ is the prescribed far-field load factor.
+To suppress rigid-body motion we impose the minimal point constraints
+\[
+\uu(A,0)\!\cdot\!\vb e_y=0,\qquad
+\uu(0,B)\!\cdot\!\vb e_x=0,\qquad
+\uu(0,-B)\!\cdot\!\vb e_x=0,
+\]
+which fix one vertical and two horizontal degrees of freedom without otherwise
+restricting the solution.
+
+Across the faces of the physical crack $\Gamma_{\mathrm{cr}}$ the tractions
+vanish:
+\[
+\sig\,\bn=\vb 0 \quad \text{on } \quad \Gamma_{\mathrm{cr}}^{\pm}.
+\]
+Along the cohesive segment $\Gamma_{\mathrm{cz}}$,
+the displacement jump and cohesive traction satisfy the local interface relations
+\begin{equation}
+	\bd=\mat Q\,\jump{\uu},\qquad
+	\bTcz=\bTcz(\bd) \in\mathbb{R}^2,
+	\label{eq:cohesive_relations}
+\end{equation}
+\chg{R2C2}{Here, $\bTcz$ denotes the cohesive traction vector expressed as a nonlinear,
+	history-independent function of the displacement jump $\bd$ across the interface,}
+ $\mat Q=[\bt^\top;\bn^\top]$ is the local orthonormal frame attached to
+Leg~2 (introduced in Section~\ref{sec:problem}),
+$\bd=(d_t,d_n)$ are the local tangential sliding and normal opening displacements,
+and $\bTcz=(\sigma_t,\sigma_n)$ are the corresponding cohesive tractions.
+Traction continuity implies $\bTcz^{(+)}=-\,\bTcz^{(-)}$ along the interface,
+and the functional dependence $\bTcz(\bd)$ is given by the potential-based
+mixed-mode TSL in Section~\ref{sec:tsl}.
+
+
+\paragraph{Weak form.}
+Multiplying the equilibrium equation~\eqref{eq:equilibrium} by an admissible
+virtual displacement field~$\delta\uu$ and integrating by parts yields the
+variational (weak) form of equilibrium:
+\begin{equation}
+	\int_{\Omega\setminus(\Gamma_{\mathrm{cr}}\cup\Gamma_{\mathrm{cz}})}
+	\eps(\delta\uu):\sig\,\dd\Omega
+	-
+	\int_{\Gamma_{\mathrm{cz}}}
+	\delta\bd^\top\,\bTcz\,\dd s
+	=
+	\int_{\partial_t\Omega}
+	\delta\uu^\top\,\sig\bn\,\dd s .
+	\label{eq:weak_form}
+\end{equation}
+The first integral represents the bulk elastic contribution, while the second
+integral accounts for the work of cohesive tractions over the displacement
+jumps along $\Gamma_{\mathrm{cz}}$.  The right-hand side is the external work
+of the applied tractions.  Equation~\eqref{eq:weak_form} constitutes the
+starting point for the finite-element discretization developed in
+Section~\ref{sec:construction}.
+
+\paragraph{Remarks.}
+The weak form separates the elastic and cohesive contributions explicitly,
+making it possible to linearize the coupled system consistently with respect
+to the interface degrees of freedom.  The cohesive-zone influence enters only
+through the surface integral over $\Gamma_{\mathrm{cz}}$, which naturally
+vanishes once the interface is fully degraded and the crack has propagated.
+This formulation thus ensures a smooth transition from the intact to the
+fully separated state without discontinuities in stiffness or traction fields.
+
+\section{Cohesive interface and traction–separation law}
+\label{sec:tsl}
+
+The cohesive behavior along $\Gamma_{\mathrm{cz}}$ is governed by a
+potential-based TSL. Local quantities are expressed
+in the Leg--2 frame $\QQ=[\bt^\top;\bn^\top]$ introduced in
+Section~\ref{sec:problem}. The face-to-face displacement jump resolves as
+$\bd=(d_t,d_n)^\top=\QQ\,\jump{\uu}$, with normalized openings
+$\bar d_t=|d_t|/d_t^{\max}$ and $\bar d_n=d_n/d_n^{\max}$.
+Cohesive strengths are $\sigma_t^{\max}$ and $\sigma_n^{\max}$.
+\chg{R2C3}{
+	Together with the fracture energies $\phi_\alpha$
+	($\alpha\in\{n,t\}$), the cohesive strengths $\sigma_\alpha^{\max}$
+	constitute the independent fracture parameters.
+	The critical openings $d_\alpha^{\max}$ are introduced as characteristic
+	length scales and are determined from the fracture--energy condition
+}
+\begin{equation*}
+	\mathcolor{Blue}{
+		\phi_\alpha
+		= \sigma_\alpha^{\max} d_\alpha^{\max} \, c_\alpha,
+		\qquad
+		c_\alpha = F_\alpha(1),
+		\qquad
+		F_\alpha(\xi)=\int_0^\xi t_\alpha(s)\,\mathrm{d}s .
+	}
+\end{equation*}
+\chg{R2C3}{
+	We further introduce the energetic prefactors
+	\(
+	\chi_\alpha := \sigma_\alpha^{\max} d_\alpha^{\max},
+	\)
+	which set the mode-wise energy scale of the cohesive potential.
+	These quantities are not independent material parameters but follow
+	directly from $(\sigma_\alpha^{\max},\phi_\alpha)$ and the chosen TSL shape.
+}
+\chg{R2C3}{
+	Here $t_\alpha(\xi)$ denotes the normalized traction--separation law,
+	$F_\alpha(\xi)$ the associated dimensionless potential, and
+	$c_\alpha$ a dimensionless shape parameter that depends solely on the
+	chosen TSL form and its parameters.
+	For notational brevity, once the pure-mode traction--separation laws have
+	been specified, we subsequently write $F(\cdot)$ and $t(\cdot)$ for the
+	mode-dependent functions, with the active mode $\alpha$ uniquely determined
+	by the argument and the associated parameter set
+	$(\sigma_\alpha^{\max},\phi_\alpha,$ and the TSL shape parameters).
+	No additional functional assumptions are implied by this notation.
+}
+
+
+
+
+\paragraph{Mode-wise (one-dimensional) law.}
+The shape of the one-dimensional cohesive traction--separation response has a
+direct influence on fracture behaviour. A cohesive law typically consists of a
+rising branch, a peak traction, and a softening segment. Each part contributes
+to the overall fracture process in a distinct manner: the initial strengthening
+branch regularises the transition from contact to opening; the peak traction
+governs crack initiation and the size of the FPZ; and the softening segment
+controls the rate of energy dissipation and the interaction with the surrounding
+elastic material. As emphasised by Shet and Chandra~\cite{ShetChandra2003}, the FPZ
+embodies micromechanisms that are intrinsic to the material, so the
+\emph{shape} of the traction--separation law, not merely the total energy or peak
+traction, is a material parameter in its own right. To retain control over these
+features while preserving smoothness and differentiability, we employ a
+normalized traction $t(\xi)$ with a strengthening segment, a plateau, and a
+softening branch.
+
+\chg{R2C3}{
+	The normalized traction--separation law $t$, its slope
+	$g=t'$ and the associated potential $F$ are controlled by the parameters
+	$0<a_1<a_2<1$, which define the end of the strengthening branch and the onset
+	of softening, respectively. In applications, $a_1$ and $a_2$ (and hence the
+	shape parameter $c$) may be chosen mode-wise; the subscript is suppressed here
+	for brevity.
+}
+
+For the \emph{normal (tensile)} cohesive mode, a linear penalty is introduced in
+compression to regularise contact, together with a $C^1$ contact--opening
+transition enforced by $\kappa=2/a_1$. The resulting pure-mode law reads
+
+\begin{multline}
+	\label{eq:TSL-pure-mode}
+	\mathcolor{Blue}{
+	(F,t,g)(\xi)= \\
+	\begin{cases}
+		\big(\tfrac{\kappa}{2}\,\xi^2,\ \kappa\,\xi,\ \kappa\big),
+		& \xi\le 0,\\[2pt]
+		\big(\tfrac{\xi^2}{a_1}\bigl(1-\tfrac{\xi}{3a_1}\bigr),\
+		\tfrac{\xi}{a_1}\bigl(2-\tfrac{\xi}{a_1}\bigr),\
+		\tfrac{2}{a_1}\bigl(1-\tfrac{\xi}{a_1}\bigr)\big),
+		& 0<\xi<a_1,\\[4pt]
+		(\xi-\tfrac{a_1}{3},\ 1,\ 0),
+		& a_1\le \xi<a_2,\\[4pt]
+		\Big(
+		c-\!\!\int_{\xi}^{1}\! t(s)\,\mathrm ds,\\
+		\qquad\frac{(1+2\xi-3a_2)(1-\xi)^2}{(1-a_2)^3},\
+		-\frac{6(1-\xi)(\xi-a_2)}{(1-a_2)^3}
+		\Big),
+		& a_2\le\xi\le 1,\\[8pt]
+		(c,\ 0,\ 0),
+		& \xi>1.
+	\end{cases}
+}
+\end{multline}
+\chg{R2C3}{Here $c=\tfrac{1}{6}(3-2a_1+3a_2)$ is the dimensionless area under the	normalized traction--separation law.
+}
+Choosing $\kappa=2/a_1$ yields $t(0^-)=t(0^+)=0$ and
+$g(0^-)=g(0^+)=2/a_1$, i.e., a $C^1$ traction across the
+contact--opening transition.
+
+
+
+The dimensional pure-mode laws are written in terms of the normalized openings $\bar d_n$ and $\bar d_t$.
+For the normal mode we use a tensile cohesive law with a contact penalty in
+compression,
+\[
+\sigma_n(d_n)=
+\begin{cases}
+	\sigma_n^{\max}\,t(\bar d_n), & d_n\ge 0,\\[2pt]
+	k_c\,d_n, & d_n<0,
+\end{cases}
+\qquad
+k_c=\kappa\,\dfrac{\sigma_n^{\max}}{d_n^{\max}} .
+\]
+For the tangential mode we define the shear magnitude and the signed traction as
+\[
+|\sigma_t|(d_t)=\sigma_t^{\max}\,t(\bar d_t),
+\qquad
+\sigma_t(d_t)=|\sigma_t|(d_t)\,\operatorname{sgn}_0(d_t),
+\]
+where $\operatorname{sgn}_0(0)=0$.
+
+\noindent Their (one-dimensional) tangents are
+\[
+\frac{\dd\sigma_n}{\dd d_n}=
+\begin{cases}
+	\displaystyle \dfrac{\sigma_n^{\max}}{d_n^{\max}}\,g(\bar d_n), & d_n>0,\\[6pt]
+	k_c, & d_n<0,
+\end{cases}
+\qquad
+\frac{\dd|\sigma_t|}{\dd |d_t|}=
+\dfrac{\sigma_t^{\max}}{d_t^{\max}}\,g(\bar d_t).
+\]
+
+\chg{R2C3}{
+\noindent The corresponding pure-mode potentials are taken as
+\begin{equation*}
+	\Psi_\alpha(d_\alpha)
+	=\chi_\alpha\,F(\bar d_\alpha)
+	=\frac{\phi_\alpha}{c_\alpha}\,F(\bar d_\alpha),
+	\qquad \alpha\in\{n,t\}.
+\end{equation*}
+}
+
+\paragraph{Potential-based mixed-mode coupling.}
+The conservative mixed-mode cohesive response is formulated in terms of a single
+scalar potential. \chg{R2C3}{ Building on the pure-mode energetic contributions
+$\chi_\alpha F(\bar d_\alpha)$, the mixed-mode potential is defined as
+\begin{equation}
+	\label{eq:psi_mixed}
+	\Psi(d_n,d_t)=
+	\chi_n F(\bar d_n)
+	+\chi_t F(\bar d_t)
+	- r\,\sqrt{\chi_n\chi_t}\,
+	F(\bar d_n)F(\bar d_t),
+\end{equation}
+The dimensionless parameter $r$ controls the strength of the mixed-mode
+interaction. Similar multiplicative energetic couplings have been widely adopted in
+potential-based mixed-mode cohesive formulations.
+Admissibility of the cohesive law requires the multiplicative degradation
+factors in the resulting tractions to remain non-negative over the admissible
+range $0\le F(\xi)\le c_\alpha$. This yields the bound
+\[
+0\le r \le r^{\max}
+=\min\!\Bigg(
+\frac{1}{c_n}\sqrt{\frac{\chi_n}{\chi_t}},
+\frac{1}{c_t}\sqrt{\frac{\chi_t}{\chi_n}}
+\Bigg).
+\]
+}
+
+\chg{R2C5}{
+	The form \eqref{eq:psi_mixed} constitutes a minimal energetic extension of
+	the pure-mode cohesive laws. It is derived from a single scalar potential,
+	ensures variational consistency, and exactly recovers the uncoupled normal or
+	tangential response when the complementary separation vanishes.
+}
+
+The cohesive tractions follow from
+$\bTcz=\partial\Psi/\partial\bd
+=(\sigma_t,\sigma_n)^\top$ as
+\chg{R2C3}{
+\begin{align}
+	\label{eq:tractions_mixed}
+	\begin{bmatrix}\sigma_t\\[2pt]\sigma_n\end{bmatrix}
+	&=
+	\begin{bmatrix}
+		\sigma_t^{\max}
+		\!\left(
+		1-r\sqrt{\dfrac{\chi_n}{\chi_t}}\,F(\bar d_n)
+		\right)
+		t(\bar d_t)\,\operatorname{sgn}_0(d_t)
+		\\[10pt]
+		\sigma_n^{\max}
+		\!\left(
+		1-r\sqrt{\dfrac{\chi_t}{\chi_n}}\,F(\bar d_t)
+		\right)
+		t(\bar d_n)
+	\end{bmatrix}.
+\end{align}
+}
+\paragraph{Consistent tangent (local stiffness).}
+Because $\Psi$ is a scalar potential, the consistent local tangent is the
+symmetric Hessian
+$\mat K_{\rm loc}=\partial\bTcz/\partial\bd$.
+It admits the exact symmetric diagonal factorization
+\begin{equation}
+	\label{eq:Kloc-factor}
+	\mat K_{\rm loc}=\mat S\,\mat M(\bar d_n,\bar d_t)\,\mat S,
+	\qquad
+	\mat S=\operatorname{diag}\!\left(
+	\sqrt{\tfrac{\sigma_t^{\max}}{d_t^{\max}}},\
+	\sqrt{\tfrac{\sigma_n^{\max}}{d_n^{\max}}}
+	\right),
+\end{equation}
+where the dimensionless symmetric \emph{core} depends only on the normalized
+openings:
+\chg{R2C3}{
+\begin{equation}
+	\label{eq:Kcore}
+	\mat M(\bar d_n,\bar d_t)=
+	\begin{bmatrix}
+		\Big[1-r\sqrt{\tfrac{\chi_n}{\chi_t}}\,F(\bar d_n)\Big]\,g(\bar d_t)
+		&
+		-\,r\,t(\bar d_t)\,t(\bar d_n)
+		\\[6pt]
+		-\,r\,t(\bar d_t)\,t(\bar d_n)
+		&
+		\Big[1-r\sqrt{\tfrac{\chi_t}{\chi_n}}\,F(\bar d_t)\Big]\,g(\bar d_n)
+	\end{bmatrix}.
+\end{equation}
+}
+This structure is key: the tangent is symmetric by construction (as the Hessian
+of a potential), which improves robustness and supports quadratic convergence in
+the Newton iterations used later.
+
+
+
+\paragraph{Coupled response illustration.}
+The coupling effects introduced by Eq.~\eqref{eq:psi_mixed} are illustrated in
+Figs.~\ref{fig:tsl_2d} and~\ref{fig:tsl_3d}.
+Figure~\ref{fig:tsl_2d} shows the normalized normal and tangential tractions
+for several fixed values of the companion separation. As the tangential
+separation $\bar d_t$ increases, the normal traction $\bar\sigma_n$ is reduced,
+and vice versa, indicating gradual degradation of the complementary mode.
+Figure~\ref{fig:tsl_3d} presents the mixed-mode cohesive potential in normalized
+form,
+\[
+\hat\Psi(\bar d_n,\bar d_t)=\Psi(\bar d_n,\bar d_t)/\sqrt{\chi_n\chi_t},
+\]
+together with the corresponding tractions and the components of the local
+tangent matrix~$\mat K_{\rm loc}$. This normalization is used for visualization only and does not enter the
+governing equations or the numerical implementation.
+The coupling between the normal and tangential directions appears as the
+nonzero off-diagonal term~$K_{nt}$.
+
+
+
+
+\begin{figure}[t]
+	\centering
+	\includegraphics[width=0.98\textwidth]{Fig2New}
+	\caption{Mode coupling in the potential-based TSL.
+		Left: variation of normalized normal traction~$\bar\sigma_n$ with~$\bar d_n$
+		for fixed~$\bar d_t$.
+		Right: variation of normalized tangential traction~$\bar\sigma_t$
+		with~$\bar d_t$ for fixed~$\bar d_n$.
+		Increasing separation in one mode reduces the cohesive resistance in the
+		other.}
+	\label{fig:tsl_2d}
+\end{figure}
+
+\begin{figure}[t]
+	\centering
+	\includegraphics[width=\textwidth]{Fig3New}
+	\caption{Potential-based mixed-mode traction–separation law.
+		Top: cohesive potential~$\Psi(\bar d_n,\bar d_t)$ and normalized tractions.
+		Bottom: components of the local tangent stiffness matrix~$\mat K_{\rm loc}$,
+		showing both the diagonal terms and the coupling~$K_{nt}$.}
+	\label{fig:tsl_3d}
+\end{figure}
+
+\paragraph{Parameters used in Figs.~\ref{fig:tsl_2d}–\ref{fig:tsl_3d}.}
+We take the \emph{dimensionless} TSL shape and coupling parameters
+\[
+a_1=0.2,\qquad a_{2n}=0.6,\qquad a_{2t}=0.3,\qquad r=0.40,
+\]
+and the following \emph{dimensional} material/TSL scales:
+\[
+\sigma_n^{\max}=40~\text{MPa},\quad \sigma_t^{\max}=16~\text{MPa},\quad
+\phi_n = 800~\text{J\,m}^{-2},\quad \phi_t = 1200~\text{J\,m}^{-2}.
+\]
+
+For the normalized law \eqref{eq:TSL-pure-mode}, the dimensionless areas under
+$t(\xi)$ are
+\[
+c_n=\frac{1}{6}\bigl(3-2a_1+3a_{2n}\bigr)=0.7333,
+\qquad
+c_t=\frac{1}{6}\bigl(3-2a_1+3a_{2t}\bigr)=0.5833.
+\]
+
+The critical openings follow from the fracture--energy condition
+$d_\alpha^{\max}= \phi_\alpha/(\sigma_\alpha^{\max}c_\alpha)$, yielding
+\[
+d_n^{\max}\approx 27.3~\mu\text{m},
+\qquad
+d_t^{\max}\approx 129~\mu\text{m}.
+\]
+
+The mixed-mode coupling parameter is admissible under the bound
+$r\le r^{\max}\approx 1.25$; thus $r=0.40$ is admissible.
+
+The $C^1$ compression--opening switch on the normal branch uses the
+(dimensionless) penalty
+\(
+\kappa={2}/{a_1}=10,
+\)
+which corresponds to the dimensional contact slope
+$k_c=\kappa\,\sigma_n^{\max}/d_n^{\max}$ (units: Pa\,m$^{-1}$), applied only for $d_n<0$.
+All figure fields are displayed in normalized form, i.e., tractions scaled by
+$(\sigma_n^{\max},\sigma_t^{\max})$ and openings by $(d_n^{\max},d_t^{\max})$,
+while the parameters above retain their physical units.
+
+
+
+
+
+\paragraph{Remark on the choice of $a_{1}$.}
+The parameter $a_{1}$ controls the end of the strengthening branch of the
+traction--separation law and therefore sets the initial crack opening over
+which cohesive tractions rise to their peak value.
+In Section~\ref{sec:tsl}, a comparatively large value was used for clarity of
+presentation, but such values are not representative of real materials: if
+$a_{1}$ is too large, the apparent process-zone opening becomes unrealistically
+extended.
+In practice, $a_{1}$ should be chosen as small as possible while still
+ensuring rapid and stable convergence of the nonlinear solver.
+\chg{R1C2}{
+    For the range of values considered in this work, no locking effects or spurious
+    stiffening were observed as $a_{1}$ was reduced, including under global mesh
+    refinement; the primary effect of decreasing $a_{1}$ is an increase in the
+    number of Newton iterations required to reach convergence.
+}
+The high-resolution studies in Section~\ref{sec:results} show that
+$a_{1}\lesssim 0.01$ provides accurate traction reconstruction and fast
+convergence, whereas larger values artificially enlarge the crack opening
+across the strengthening interval (the $(\beta,\delta)$ portion of the cohesive
+zone, see Fig.~\ref{fig:stmt:c}).
+\chg{R1C2}{
+    The potential-based formulation employed here yields a symmetric and consistent
+    algorithmic tangent, which stabilizes the Newton process and reduces sensitivity
+    to the specific choice of $a_{1}$ compared to non-potential-based cohesive laws.
+}
+
+
+
+\paragraph{Discussion of coupling effects.}
+The potential~\eqref{eq:psi_mixed} ensures energy consistency and a symmetric
+tangent matrix; however, the coupling it introduces also generates certain
+nonphysical features.
+When the tangential separation becomes critical while the normal opening
+remains small, the model still produces finite normal cohesive tractions.
+Conversely, when the interface opens completely in the normal direction,
+tangential tractions do not vanish entirely.
+This residual stress field is a known limitation of potential-based TSLs
+because energy coupling prevents either traction component from reaching zero
+independently.  In practice, the effect is small for moderate~$r$
+($r\le0.3$), but it should be considered when interpreting mixed-mode
+crack-path predictions.
+
+\paragraph{Significance of the potential.}
+The cohesive potential provides a single, smooth energetic surface from which
+all tractions and tangent moduli follow by differentiation.
+Its existence guarantees that the interface response is conservative and
+thermodynamically consistent, and that the linearization used in
+Section~\ref{sec:construction} yields a symmetric tangent operator.
+This symmetry improves numerical stability and ensures quadratic convergence
+of Newton iterations while maintaining a physically consistent distribution of
+cohesive energy among modes.
+
+\chg{R1C6}{
+	\paragraph{Relation to stabilized and energetically consistent CZM formulations.}
+	Numerical robustness and energetic consistency of cohesive-zone formulations
+	have been extensively studied in the literature.
+	Stabilized interface-element approaches have been proposed, for example by
+	Ghosh et al.~\cite{Ghosh2019StabilizedCZM,Ghosh2021RobustnessCZM}, to address
+	convergence difficulties arising in delamination analyses when very stiff,
+	penalty-like cohesive laws are employed.
+	From a complementary perspective, Dimitri et al.~\cite{Dimitri2014ConsistencyCZM}
+	emphasized the importance of thermodynamic consistency and potential-based
+	formulations in mixed-mode cohesive models to avoid non-conservative or
+	path-dependent responses.
+	The present work aligns with this latter viewpoint: robustness is achieved
+	intrinsically through a unified potential-based cohesive law with a symmetric
+	Hessian tangent, rather than through additional stabilization terms or extreme
+	penalty stiffness.
+	This guarantees consistent energetic coupling between modes and stable Newton
+	iterations while retaining a clear physical interpretation of the cohesive
+	parameters.
+}
+
+
+\section{Cohesive interface discretization and consistent linearization}
+\label{sec:construction}
+
+We discretize the cohesive interface $\Gamma_{\mathrm{cz}}$ by keeping the two
+faces of Leg~2 kinematically distinct and pairing coincident node triplets
+along a thin channel (Section~\ref{sec:mesh}).  The element operators below are
+given for a \emph{quadratic} interface segment $e$ with coincident
+\emph{top} nodes $(i^+,j^+,k^+)$ and \emph{bottom} nodes $(i^-,j^-,k^-)$.
+The segment is oriented from $i$ (mouth) to $k$ (tip). A local orthonormal
+frame $\QQ=[\bt^\top;\bn^\top]$ is attached tangentially (mouth$\to$tip) and
+normally (lower$\to$upper), see Fig.~\ref{fig:coh-tri}. Within each interface segment, $\QQ$ is taken constant and evaluated from the segment chord (mouth$\to$tip).
+
+
+\begin{figure}[!h]
+	\centering
+	\includegraphics[width=.58\textwidth]{Fig4}
+	\caption{Quadratic interface segment with coincident node triplets
+		$(i^\pm,j^\pm,k^\pm)$.  The top edge is $(i^+,j^+,k^+)$; the bottom edge is
+		numbered CCW as $(k^-,j^-,i^-)$.
+		Local frame $\QQ=[\bt^\top;\bn^\top]$ is attached to the segment.}
+	\label{fig:coh-tri}
+\end{figure}
+
+\paragraph{Unknown ordering, shape rows, and edge permutation.}
+We stack unknowns as \emph{top then bottom}, with the bottom group reversed
+to follow the lower element’s CCW edge order:
+\begin{align}
+	\vb U_e&=\big[\ \vb U_e^{+}\ \ \vb U_e^{-}\ \big]^\top\in\mathbb{R}^{12}, \label{eq:seg-Ue}\\
+	\vb U_e^{+}&=\big[\,u_{i^+x}\ u_{i^+y}\ u_{j^+x}\ u_{j^+y}\ u_{k^+x}\ u_{k^+y}\,\big]^\top,\notag\\
+	\vb U_e^{-}&=\big[\,u_{k^-x}\ u_{k^-y}\ u_{j^-x}\ u_{j^-y}\ u_{i^-x}\ u_{i^-y}\,\big]^\top.\notag
+\end{align}
+Let
+\[
+N=\begin{bmatrix}N(\xi_i)\\ N(\xi_j)\\ N(\xi_k)\end{bmatrix},\qquad
+N(\xi_\ell)=\big[N_i(\xi_\ell)\ \ N_j(\xi_\ell)\ \ N_k(\xi_\ell)\big],\quad
+\ell\in\{i,j,k\},
+\]
+be the stacked scalar quadratic shape rows, and define the node-order
+reversal
+\begin{equation*}
+	\mat P_e=\begin{bmatrix}0&0&1\\0&1&0\\1&0&0\end{bmatrix},
+	\qquad (i,j,k)\mapsto(k,j,i).
+	\label{eq:seg-Pi}
+\end{equation*}
+
+\paragraph{Explicit jump operator.}
+Stack the local openings at the three segment nodes as
+\(\bd_e=[\,d_{t,i}\ d_{n,i}\ d_{t,j}\ d_{n,j}\ d_{t,k}\ d_{n,k}\,]^\top\in\mathbb{R}^6\).
+With the CCW ordering in Eq.~\eqref{eq:seg-Ue}, the nodal jump map is
+\begin{align}
+	&\bd_e=\mat B_e\,\vb U_e,\qquad
+	\mat B_e=\big[\,\mat B_e^{+}\ \ \mat B_e^{-}\,\big], \label{eq:seg-Be}\\
+	&\mat B_e^{+}=(\mat I_3\otimes\QQ)\,(N\otimes \mat I_2),\qquad
+	\mat B_e^{-}=-(\mat I_3\otimes\QQ)\,\big((N\mat P_e)\otimes \mat I_2\big), \notag
+\end{align}
+with $B_e$ extracting the opening displacement across the interface. In block form (each entry $2{\times}2$),
+\[
+\mat B_e=
+\begin{bmatrix}
+	N_i(\xi_i)\QQ & N_j(\xi_i)\QQ & N_k(\xi_i)\QQ & -N_k(\xi_i)\QQ & -N_j(\xi_i)\QQ & -N_i(\xi_i)\QQ\\
+	N_i(\xi_j)\QQ & N_j(\xi_j)\QQ & N_k(\xi_j)\QQ & -N_k(\xi_j)\QQ & -N_j(\xi_j)\QQ & -N_i(\xi_j)\QQ\\
+	N_i(\xi_k)\QQ & N_j(\xi_k)\QQ & N_k(\xi_k)\QQ & -N_k(\xi_k)\QQ & -N_j(\xi_k)\QQ & -N_i(\xi_k)\QQ
+\end{bmatrix}.
+\]
+\emph{Lobatto nodal integration used in the implementation}  (evaluation at $\xi\in\{\xi_i,\xi_j,\xi_k\}$, hence $N=\mat I_3$):
+\[
+\mat B_e=
+\begin{bmatrix}
+	\QQ & \bm 0 & \bm 0 & \bm 0 & \bm 0 & -\QQ\\
+	\bm 0 & \QQ & \bm 0 & \bm 0 & -\QQ & \bm 0\\
+	\bm 0 & \bm 0 & \QQ & -\QQ & \bm 0 & \bm 0
+\end{bmatrix}.
+\]
+
+\paragraph{Line integration, rotation, and action–reaction.}
+Let $\xi\in[0,1]$ denote the parent coordinate along the segment and $l_e$ its physical length.
+With the segment’s consistent line “mass’’
+\begin{equation}
+	\mat R=l_e\!\int_0^1\!N(\xi)^\top N(\xi)\,\dd\xi
+	=\frac{l_e}{30}
+	\begin{bmatrix}
+		4&2&-1\\[2pt]
+		2&16&2\\[2pt]
+		-1&2&4
+	\end{bmatrix},
+\end{equation}
+the \emph{top-face} nodal resultants are
+\[
+\vb t_e^{+}=(\mat R\otimes \QQ^\top)\,\vb s_e\in\mathbb{R}^{6},
+\]
+\chg{R2C7}{where
+	$\vb s_e=\big[\,\sigma_{t,i}\ \sigma_{n,i}\ \sigma_{t,j}\ \sigma_{n,j}\ \sigma_{t,k}\ \sigma_{n,k}\,\big]^\top$
+	stacks the six local cohesive tractions at the three evaluation stations (chosen as the Lobatto nodes in the implementation).
+	These tractions are obtained from the corresponding local displacement jumps
+	via the nonlinear traction--separation mapping
+	$\mathcal T:\mathbb{R}^6\to\mathbb{R}^6$, i.e. 
+	\begin{equation}
+	\vb s_e=\mathcal T(\bd_e).
+		\end{equation}
+	}
+At each node $\ell\in\{i,j,k\}$ we use the pointwise traction map (see Eq.~\eqref{eq:tractions_mixed} from
+		Section~\ref{sec:tsl}):
+		\begin{align}
+			\label{eq:seg-TSL-point}
+			&\begin{bmatrix}\sigma_{t,\ell}\\[2pt]\sigma_{n,\ell}\end{bmatrix}
+			= \bTcz \big(\bar d_{n,\ell},\,\bar d_{t,\ell};\,s_{t,\ell}\big),\\
+			&\bar d_{t,\ell}=\frac{|d_{t,\ell}|}{d_t^{\max}},\quad
+			\bar d_{n,\ell}=\frac{d_{n,\ell}}{d_n^{\max}},\qquad
+		s_{t,\ell}=\operatorname{sgn}_0(d_{t,\ell}).
+		\notag
+		\end{align}
+
+The \emph{bottom-face} resultants, equal and opposite but stored in the
+flipped order $(k^-,j^-,i^-)$, are
+\[
+\vb t_e^{-}=-\,(\mat P_e\otimes \mat I_2)\,\vb t_e^{+}.
+\]
+Stacking both faces yields the $12$-component element residual; using the
+traction–separation mapping $\mathcal T$ and the jump $\bd_e=\mat B_e\vb U_e$:
+\begin{equation}
+	\vb f_e
+	=
+	\underbrace{\begin{bmatrix} \mat I_6\\[2pt]-\,(\mat P_e\otimes \mat I_2)\end{bmatrix}(\mat R\otimes \QQ^\top)}_{\displaystyle \mat A_e}
+	\;
+	\underbrace{\mathcal T\!\big(\mat B_e\,\vb U_e\big)}_{\displaystyle \vb s_e}
+	\ \in\ \mathbb{R}^{12}.
+	\label{eq:seg-res}
+\end{equation}
+Here $\mat A_e$ collects the line weighting $\mat R$, rotation $\QQ^\top$, and the action--reaction stacking of the two faces.
+
+
+
+\paragraph{Consistent linearization (Jacobian).}
+From the residual composition in Eq.~\eqref{eq:seg-res}, the chain rule yields
+the cohesive element tangent
+\begin{equation}
+	\mat K_e
+	=\frac{\partial \vb f_e}{\partial \vb U_e}
+	=
+	\underbrace{\frac{\partial \vb f_e}{\partial \vb s_e}}_{\displaystyle \mat A_e}
+	\underbrace{\frac{\partial \vb s_e}{\partial \bd_e}}_{\displaystyle \mat K_{\rm loc}}
+	\underbrace{\frac{\partial (\mat B_e \vb U_e)}{\partial \vb U_e}}_{\displaystyle \mat B_e}
+	\;=\;
+	\mat A_e\,\mat K_{\rm loc}\,\mat B_e
+	\;\in\;\mathbb{R}^{12\times12}.
+	\label{eq:seg-J}
+\end{equation}
+The block-diagonal local tangent collects the pointwise contributions at the
+quadratic cohesive stations,
+\[
+\mat K_{\rm loc}
+=
+\operatorname{blkdiag}(\mat K_i,\mat K_j,\mat K_k),
+\]
+The pointwise tangent \(\mat K_\ell\) follows from the
+potential-based cohesive law described in Section~\ref{sec:tsl}.
+The use of a scalar cohesive potential guarantees that the local core tangent
+is symmetric, and this symmetry is preserved in the assembled element Jacobian
+away from the shear sign switch at \(d_t=0\).
+
+
+
+\paragraph{Global assembly.}
+Assembling the element vectors $\vb f_e$ and Jacobians $\mat K_e$
+over all interface segments yields the global cohesive residual and tangent
+\[
+\vb F_{\mathrm{coh}}(\vb u)\in\mathbb{R}^{n_{\mathrm{dof}}},
+\qquad
+\frac{\partial \vb F_{\mathrm{coh}}}{\partial \vb u}
+\in\mathbb{R}^{n_{\mathrm{dof}}\times n_{\mathrm{dof}}}.
+\]
+The bulk stiffness $\mat K$ enters additively in the equilibrium block.
+
+\paragraph{Augmented equilibrium and Jacobian.}
+We solve for the displacement vector
+$\vb u\in\mathbb{R}^{n_{\mathrm{dof}}}$ and the scalar load amplitude
+$\sigma\in\mathbb{R}$ from the augmented system
+\[
+\vb F_{\mathrm{aug}}(\vb u,\sigma)=
+\begin{bmatrix}
+	\vb R(\vb u,\sigma)\\[4pt] g(\vb u)
+\end{bmatrix}
+=\chg{R2C8}{
+	\begin{bmatrix}
+		\{\mat K\,\vb u - \sigma\,\vb F_{\mathrm{ext}} - \vb F_{\mathrm{coh}}(\vb u)\\[4pt]
+		d_n^{\text{tip}} - d_n^{\max}
+	\end{bmatrix}=\vb 0,}
+\]
+where $\vb F_{\mathrm{ext}}\in\mathbb{R}^{n_{\mathrm{dof}}}$ is the unit load pattern and
+$g:\mathbb{R}^{n_{\mathrm{dof}}}\!\to\mathbb{R}$ extracts the normal opening
+$d_n^{\text{tip}}$ at the cohesive tip (with four nonzero entries corresponding
+to the two tip nodes).
+
+The Newton Jacobian has the block form
+\[
+\mat J_{\mathrm{aug}}=
+\frac{\partial \vb F_{\mathrm{aug}}}{\partial(\vb u,\sigma)}=
+\begin{bmatrix}
+	\displaystyle \mat K - \frac{\partial \vb F_{\mathrm{coh}}}{\partial \vb u}
+	& \displaystyle -\,\vb F_{\mathrm{ext}}\\[10pt]
+	\displaystyle \frac{\partial g}{\partial \vb u} & 0
+\end{bmatrix}
+\in \mathbb{R}^{(n_{\mathrm{dof}}+1)\times(n_{\mathrm{dof}}+1)}.
+\]
+Here $\dfrac{\partial g}{\partial \vb u}\in\mathbb{R}^{1\times n_{\mathrm{dof}}}$
+has four nonzeros,
+\[
+\frac{\partial g}{\partial \vb u} =
+\begin{bmatrix}
+	\cdots\; \bn^{\!\top}\; \cdots\; -\bn^{\!\top}\; \cdots
+\end{bmatrix},
+\qquad
+\bn=\text{(local normal)}=\text{row }2\text{ of }\QQ\in\mathbb{R}^{2\times 2}.
+\]
+
+\paragraph{Newton update.}
+At iteration $k$, we solve
+\[
+\mat J_{\mathrm{aug}}(\vb u^{(k)},\sigma^{(k)})
+\begin{bmatrix}\Delta\vb u\\ \Delta\sigma\end{bmatrix}
+= -\,\vb F_{\mathrm{aug}}(\vb u^{(k)},\sigma^{(k)}),
+\]
+and update
+$\vb u^{(k+1)}=\vb u^{(k)}+\Delta\vb u$,
+$\sigma^{(k+1)}=\sigma^{(k)}+\Delta\sigma$,
+until the relative residual norm and the cohesive traction norm fall below the
+prescribed tolerances.
+
+
+\paragraph{Concluding notes.}
+The interface formulation separates, by design, (i) the kinematic jump map
+$\mat B_e$, (ii) the local cohesive evaluation $\mathcal T$, and (iii) the
+symmetric, potential-consistent tangent $\mat K_{\rm loc}=\partial\bTcz/\partial\bd$,
+assembled via $\mat K_e=\mat A_e\,\mat K_{\rm loc}\,\mat B_e$.
+This modular structure makes it straightforward to swap traction–separation
+variants or add rate effects without altering the FE scaffolding, while the
+Hessian form of $\mat K_{\rm loc}$ guarantees symmetry and robust Newton
+convergence.
+With the element operators defined, we now specify how the two-leg path is
+embedded into the domain mesh—channel width, seeding of Leg~2, and graded
+sizes—in Section~\ref{sec:mesh}.
+
+\section{Mesh creation}
+\label{sec:mesh}
+
+The mesh must resolve the narrow cohesive segment (Leg~2) while keeping the
+global model compact. We generate a thin channel solely to drive \emph{triangular} (T3) refinement
+along the two-leg path; after meshing, we convert to quadratic (T6) elements
+and collapse the channel to obtain a zero-thickness crack with collocated
+top/bottom nodes.
+
+
+\paragraph{Channel geometry and face topology (for T3 meshing).}
+A narrow channel is built around $\Gamma_{\mathrm{cr}}\cup\Gamma_{\mathrm{cz}}$
+solely for T3 mesh generation. Its half-width is tied to the interface
+resolution,
+\[
+w_c=\frac{h_{\min}}{16},
+\]
+chosen empirically to balance refinement enforcement and element quality.
+ Along Leg~2 the two inner faces are \emph{not merged} during
+T3 generation; they are meshed as coincident edges with separate node sets so
+that the displacement jump $\bd=\QQ\,\jump{\uu}$ is well defined at nodes.
+
+\paragraph{Target sizing and uniform seeding of Leg~2.}
+Leg~2 is uniformly seeded into $n_{\mathrm{coh}}$ stations, which fixes the
+near-interface target size
+\(
+h_{\min}={\delta}/{n_{\mathrm{coh}}}.
+\)
+The physical crack (Leg~1) is seeded consistently with the adjacent bulk
+resolution to make the transition into the cohesive segment smooth.
+
+\paragraph{Graded size field and far field cap.}
+Away from the channel, the target element size grows geometrically with factor
+$h_{\mathrm{grad}}>1$ up to a far-field cap $h_{\max}$. This produces a smooth
+gradation from fine elements near Leg~2 to coarser elements in the outer
+regions, avoiding stiffness jumps and keeping the system size moderate.
+
+\paragraph{T3\,$\to$\,T6 conversion and channel collapse.}
+After T3 generation, all bulk triangles are upgraded to T6. The narrow channel
+is then \emph{collapsed} to the polyline midline so that the two faces along
+Leg~2 coincide geometrically while remaining kinematically distinct via
+coincident node pairs (top/bottom). Interface segments use quadratic elements with Lobatto nodal evaluation
+($N=\mat I_3$), matching the operators of Section~\ref{sec:construction}
+so that $\bd_e=\mat B_e\vb U_e$ and tractions are evaluated pointwise at
+segment nodes.
+
+
+\paragraph{Quality and topology checks.}
+The band is refined to maintain acceptable aspect ratios and to avoid slivers
+near the knee $V_1$. Face orientation is enforced so the local frame
+$\QQ=[\bt^\top;\bn^\top]$ points from lower to upper consistently
+(mouth$\to$tip along $\bt$). Coincident node pairing along Leg~2 is verified
+prior to assembly to guarantee one-to-one cohesive linkage. 
+
+\paragraph{Verification and default parameters.}
+Mesh independence is assessed by halving $h_{\min}$ (and, if needed, adjusting
+$h_{\max}$ proportionally) while keeping $h_{\mathrm{grad}}$ fixed. The
+critical load $\sigma_{\mathrm{cr}}$ and kink angle $\theta_2$ are deemed
+converged when relative changes between successive refinements are below $1\%$.
+We use $w_c=h_{\min}/16$ with
+$h_{\min}=\delta/n_{\mathrm{coh}}$.
+
+\paragraph{Illustration.}
+\chg{R2C9}{
+	Figure~\ref{fig:mesh:a} shows the pre-collapse thin channel constructed around
+	the prescribed two-leg polyline, which enforces local mesh refinement along the
+	intended cohesive path.
+}
+Figure~\ref{fig:mesh:b} shows the post-collapse zero-thickness crack with collocated top/bottom nodes and quadratic edges.
+In the example we use $n_{\text{coh}}=20$ (so $h_{\min}=\delta/n_{\text{coh}}$), $\delta=0.06\,a$, $h_{\mathrm{grad}}=1.2$,
+and $h_{\max}=B/5$ ($B$ is the plate half-height).
+
+\begin{figure}[h!]
+	\centering
+	\begin{subfigure}[t]{0.48\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{Fig5a.jpg}
+		\caption{Pre-collapse thin channel (refinement band).}
+		\label{fig:mesh:a}
+	\end{subfigure}\hfill
+	\begin{subfigure}[t]{0.48\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{Fig5b.jpg}
+		\caption{Post-collapse zero-thickness crack (T6).}
+		\label{fig:mesh:b}
+	\end{subfigure}
+	\caption{Mesh near the two-leg crack before and after channel collapse.}
+	\label{fig:mesh}
+\end{figure}
+
+\chg{R1C1}{
+    \paragraph{Remark on channel collapse versus split-node insertion.}
+    The present channel-collapse strategy is closely related in spirit to standard
+    split-node procedures for introducing zero-thickness cohesive interfaces, but
+    differs in the stage at which mesh resolution is enforced.
+    In classical split-node approaches, the interface is created \emph{after}
+    meshing by duplicating nodes and modifying element connectivity along a
+    prescribed path; while effective for simple, straight cracks, this does not
+    by itself control the resolution of bulk fields normal to the interface and
+    often requires additional local remeshing.
+    In contrast, the channel-collapse approach constructs the mesh \emph{a priori}
+    with a thin refinement band aligned with the intended cohesive leg, so that the
+    interface discretization and the surrounding bulk gradation are governed
+    simultaneously through the size field parameters
+    $(h_{\min},h_{\mathrm{grad}},h_{\max})$.
+    The subsequent collapse step produces a zero-thickness interface with
+    coincident node pairs and ordered topology without explicit mesh surgery.
+    This entails a modest preprocessing effort to define the channel geometry, but
+    provides improved robustness, reproducibility, and resolution control in
+    systematic crack-kinking studies involving multiple trial paths.
+}
+
+
+\paragraph{Transition to results.}
+With the interface operators (Section~\ref{sec:construction}) and the graded,
+collapsed mesh defined here, the next section reports verification, mesh
+convergence, and kink-angle selection under mixed-mode loading.
+
+\section{Results}
+\label{sec:results}
+
+For each trial direction $\theta_2$ of Leg~2 we solve the augmented system
+to the \emph{critical state}, defined by the Leg--2 mouth reaching the normal
+critical separation $d_n^{\max}$. Newton iterations employ the consistent
+cohesive tangent from Section~\ref{sec:tsl}. Interface fields are post-processed
+in the local frame $(\bt,\bn)$ attached to Leg~2. Field plots use normalized variables
+$\bar\sigma_{n,t}=\sigma_{n,t}/\sigma_{n,t}^{\max}$ and
+$(\bar d_n,\bar d_t)=(d_n/d_n^{\max},\,|d_t|/d_t^{\max})$.
+The \emph{critical load} $\sigma_{\mathrm{cr}}$ reported in tables and sweeps
+is dimensional (MPa).
+
+\paragraph{Parameters.}
+The angle of the physical crack is $\theta_1=-20^\circ$.
+Plane strain is assumed with $E=4$\,GPa and $\nu=0.3$.
+Cohesive strengths
+$(\sigma_n^{\max},\sigma_t^{\max})=(40,\ 15.4)$\,MPa
+(from $\sigma_n^{\max}=E/100$ and $\sigma_t^{\max}=G/100$ with
+$G=E/[2(1+\nu)]$).
+The prescribed fracture energies are
+$(\phi_n,\phi_t)=(800,\ 1200)$\,J\,m$^{-2}$,
+with coupling parameter $r=0.4$.
+One-dimensional TSL shape parameters are $a_1=0.002$,
+$a_{2n}=0.9$, and $a_{2t}=0.5$.
+\chg{R2C3}{Using the corresponding shape parameter $c$ for each mode,
+the resulting critical openings are
+$d_n^{\max}\approx 23.6\,\mu\text{m}$ and
+$d_t^{\max}\approx104\,\mu\text{m}$.
+}
+
+\subsection{Convergence}
+\label{sec:conv}
+
+Convergence is assessed with respect to the interface resolution
+$n_{\mathrm{coh}}$, such that the minimum characteristic length along the
+cohesive leg is $h_{\min}=\delta/n_{\mathrm{coh}}$.
+Two complementary studies are performed:
+(i) refinement of the cohesive discretization at fixed far-field truncation,
+and (ii) refinement of the far-field cap at fixed interface resolution.
+All results reported in this section correspond to a representative mixed-mode
+configuration with $\theta_2=20^\circ$.
+
+\paragraph{Interface refinement.}
+At fixed far-field cap $B/h_{\max}=80$, the cohesive interface is refined as
+$n_{\mathrm{coh}}=\{10,20,40,80\}$.
+\chg{R1C3}{ Table~\ref{tab:conv_far80} reports the number of degrees of freedom, the critical
+load $\sigma_{\mathrm{cr}}$, and the ratio between mesh-generation time and
+nonlinear solution time, $t_{\mathrm{mesh}}/t_{\mathrm{solve}}$.
+This ratio provides a direct measure of the relative cost of remeshing compared
+to solving the nonlinear equilibrium problem.}
+
+With increasing $n_{\mathrm{coh}}$, the critical load rapidly stabilises.
+Applying a three-level Richardson/Aitken extrapolation to the finest three
+levels yields an asymptotic limit
+$\sigma_\infty = 5.875349$~MPa and a finest-mesh relative error
+\[
+\epsilon
+=
+\frac{\big|\sigma_{\mathrm{cr}}^{\text{(finest)}}-\sigma_\infty\big|}
+{\big|\sigma_\infty\big|}
+\simeq 1.8\times10^{-6},
+\]
+indicating that the calculation has entered the asymptotic regime with respect
+to interface refinement.
+\chg{R1C3}{Over the full range of resolutions considered, the cost of remeshing remains
+comparable to, but does not exceed, the cost of the nonlinear solve.}
+
+\begin{table}[h!]
+	\centering
+	\caption{Convergence with interface refinement at fixed far-field cap
+		$B/h_{\max}=80$ and $\theta_2=20^\circ$.}
+	\label{tab:conv_far80}
+	\begin{tabular}{rcccc}
+		\toprule
+		$n_{\mathrm{coh}}$ & DOFs & $\sigma_{\mathrm{cr}}$ [MPa]
+		& $t_{\mathrm{mesh}}/t_{\mathrm{solve}}$ & iters \\
+		\midrule
+		10 & 120{,}962 & 5.81448 & 1.09 & 17 \\
+		20 & 123{,}446 & 5.90673 & 1.15 & 16 \\
+		40 & 127{,}162 & 5.87593 & 1.05 & 17 \\
+		80 & 133{,}184 & 5.87536 & 1.21 & 17 \\
+		\bottomrule
+	\end{tabular}
+\end{table}
+
+\paragraph{Far-field truncation.}
+To assess sensitivity to the outer boundary, a second sweep is performed by
+varying the far-field cap
+$B/h_{\max}\in\{10,20,40,80\}$ while keeping the cohesive resolution fixed at
+$n_{\mathrm{coh}}=80$.
+The results are summarised in Table~\ref{tab:farfield_sweep}.
+
+As the far-field cap is increased, the critical load decreases monotonically
+and converges towards the same asymptotic value obtained in the interface
+refinement study.
+The difference between $B/h_{\max}=40$ and $80$ is below $1.3\times10^{-4}$~MPa,
+confirming that far-field truncation effects are negligible for
+$B/h_{\max}\ge40$.
+The iteration counts remain nearly constant across the sweep, \chg{R1C3}{and the ratio
+$t_{\mathrm{mesh}}/t_{\mathrm{solve}}$ increases moderately with problem size,
+reflecting the expected growth of meshing cost relative to the nonlinear solve.}
+
+\begin{table}[h!]
+	\centering
+	\caption{Far-field cap sensitivity at fixed interface resolution
+		$n_{\mathrm{coh}}=80$ and $\theta_2=20^\circ$.}
+	\label{tab:farfield_sweep}
+	\begin{tabular}{rcccc}
+		\toprule
+		$B/h_{\max}$ & DOFs & $\sigma_{\mathrm{cr}}$ [MPa]
+		& $t_{\mathrm{mesh}}/t_{\mathrm{solve}}$ & iters \\
+		\midrule
+		10 & 14{,}952  & 5.88913 & 0.72 & 18 \\
+		20 & 21{,}216  & 5.87796 & 0.59 & 18 \\
+		40 & 45{,}356  & 5.87548 & 0.63 & 17 \\
+		80 & 133{,}184 & 5.87536 & 1.14 & 17 \\
+		\bottomrule
+	\end{tabular}
+\end{table}
+
+Based on these results, production simulations adopt
+$n_{\mathrm{coh}}\ge40$ together with $B/h_{\max}\ge40$.
+Under these conditions, the critical load is converged to within
+$\epsilon\lesssim10^{-6}$, and further refinement of either the cohesive
+discretization or the far-field truncation does not affect the results in a
+meaningful way.
+
+
+\subsection{Selection of the kink angle}
+\label{sec:kink-angle}
+
+\chg{R3C3}{
+	\paragraph{On the definition of the critical state and the role of selection criteria.}
+	In the present framework, the critical state is defined uniquely and
+	independently of any directional selection.
+	For each prescribed trial orientation of the cohesive continuation, the
+	critical state is reached when the normal separation at the mouth of the
+	cohesive zone attains its critical value, $d_n = d_n^{\max}$, corresponding to
+	the exhaustion of normal cohesive resistance.
+	The criteria introduced below do not redefine this failure condition.
+	Instead, they provide alternative \emph{selection measures} for identifying
+	the preferred kink direction, all evaluated at the same critical state.
+	Accordingly, they should be interpreted as complementary diagnostics probing
+	different aspects of the critical configuration rather than as competing
+	failure criteria.
+}
+
+\paragraph{Load-based selector.}
+For a trial direction $\theta_2$, the critical state is solved and the
+corresponding critical load $\sigma_{\mathrm{cr}}(\theta_2)$ is recorded.
+The kink angle is defined as
+\[
+\theta_2^{\sigma}
+=
+\operatorname*{arg\,min}_{\theta_2 \in \Theta}
+\ \sigma_{\mathrm{cr}}(\theta_2),
+\]
+where $\Theta$ denotes the prescribed search set of global angles.
+Numerically, the minimum is first localized on a coarse sweep and subsequently
+refined on a fine sweep; the reported minimizer corresponds to the vertex of a
+three--point parabolic interpolation through the discrete minimum and its two
+nearest neighbors.
+
+With $(n_{\mathrm{coh}}, B/h_{\max}) = (40,40)$ and $h_{\mathrm{grad}}=1.15$, the
+coarse sweep yields
+$\min \sigma_{\mathrm{cr}} = 5.65160\,\text{MPa}$ at
+$\theta_2 \simeq 1.833^\circ$.
+Refinement to $(n_{\mathrm{coh}}, B/h_{\max}) = (80,80)$ gives
+$\min \sigma_{\mathrm{cr}} = 5.65151\,\text{MPa}$ at
+$\theta_2 \simeq 1.727^\circ$,
+corresponding to an angular shift of $0.106^\circ$.
+The corresponding coarse and refined curves are shown in
+Fig.~\ref{fig:kink-sweeps}, where diamonds mark the parabolic vertex and dashed
+lines indicate its position.
+
+\begin{figure}[t]
+	\centering
+	\begin{subfigure}[t]{0.48\linewidth}\centering
+		\includegraphics[width=\linewidth]{Fig6aNew}
+		\caption{Coarse sweep ($n_{\mathrm{coh}}=40$, $B/h_{\max}=40$).}
+		\label{fig:kink-sweeps:a}
+	\end{subfigure}\hfill
+	\begin{subfigure}[t]{0.49\linewidth}\centering
+		\includegraphics[width=\linewidth]{Fig6bNew}
+		\caption{Fine sweep ($n_{\mathrm{coh}}=80$, $B/h_{\max}=80$).}
+		\label{fig:kink-sweeps:b}
+	\end{subfigure}
+	\caption{Critical load $\sigma_{\mathrm{cr}}$ versus global cohesive-leg angle
+		$\theta_2$. Diamonds denote the three--point parabolic vertex; dashed lines
+		pass through the vertex.}
+	\label{fig:kink-sweeps}
+\end{figure}
+
+\paragraph{Energetic selector.}
+As a local alternative, we minimize the mixed-mode cohesive energy stored at
+the mouth of Leg~2 in the critical state, normalized by the mode~I fracture
+energy:
+\begin{equation}
+	\theta_2^{\Psi}
+	=
+	\operatorname*{arg\,min}_{\theta_2 \in \Theta}
+	\bigl(\hat\Psi_{\mathrm{crit}}(\theta_2)-1\bigr),
+	\qquad
+	\hat\Psi_{\mathrm{crit}}=\Psi_{\mathrm{crit}}/\phi_n .
+\end{equation}
+Here \(\Psi_{\mathrm{crit}}\) denotes the mixed-mode cohesive potential evaluated
+at the mouth at the onset of instability.
+
+For the trapezoidal traction--separation laws employed in this work,
+the normal opening at the mouth satisfies \(\bar d_n=1\) at the critical state,
+so that \chg{R2C3}{\(F(\bar d_n=1)=c_n\)}. Substituting into the mixed-mode potential yields
+\[
+\hat\Psi_{\mathrm{crit}}
+=
+1
++
+\left(
+\frac{\phi_t}{\phi_n}\frac{1}{c_t}
+-
+r\sqrt{\frac{\phi_t}{\phi_n}}
+\sqrt{\frac{c_n}{c_t}}
+\right)
+F(\bar d_t).
+\]
+The energetic excess \(\hat\Psi_{\mathrm{crit}}-1\) is therefore proportional to
+the tangential cohesive potential \(F(\bar d_t)\). Minimizing this quantity is
+thus equivalent to minimizing the shear opening at the mouth.
+
+
+Applying the same two--stage sweep and parabolic vertex refinement strategy, the
+coarse mesh yields
+$\theta_2^{\Psi} \simeq 3.536^\circ$ with
+$\min(\hat\Psi_{\mathrm{crit}}-1) \approx -1.876\times10^{-8}$.
+The refined sweep gives
+$\theta_2^{\Psi} \simeq 3.586^\circ$ with
+$\min(\hat\Psi_{\mathrm{crit}}-1) \approx -6.131\times10^{-9}$,
+corresponding to an angular shift of $0.05^\circ$.
+The near--zero values confirm numerical consistency of the energetic diagnostic.
+The corresponding results are shown in Fig.~\ref{fig:kink-psi}.
+
+\begin{figure}[h!]
+	\centering
+	\begin{subfigure}[t]{0.48\textwidth}\centering
+		\includegraphics[width=\linewidth]{Fig7aNew}
+		\caption{Coarse sweep ($n_{\mathrm{coh}}=40$, $B/h_{\max}=40$).}
+		\label{fig:kink-psi:a}
+	\end{subfigure}\hfill
+	\begin{subfigure}[t]{0.48\textwidth}\centering
+		\includegraphics[width=\linewidth]{Fig7bNew}
+		\caption{Fine sweep ($n_{\mathrm{coh}}=80$, $B/h_{\max}=80$).}
+		\label{fig:kink-psi:b}
+	\end{subfigure}
+	\caption{Energetic mouth diagnostic
+		$\hat\Psi_{\mathrm{crit}}-1$ versus global angle $\theta_2$.
+		Diamonds indicate the parabolic vertex; dashed lines mark its position.}
+	\label{fig:kink-psi}
+\end{figure}
+
+
+\paragraph{Critical-state fields.}
+We illustrate the critical configuration for a representative coarse discretization
+($n_{\mathrm{coh}}=40$, $h_{\mathrm{grad}}=1.15$, $B/h_{\max}=40$),
+using the energetic selector $\theta_2 \approx 3.586^\circ$ for Leg~2.
+Figure~\ref{fig:crit-results:stress} shows the normalized bulk stress component
+$\sigma_{yy}/\sigma_n^{\max}$, exhibiting the expected near-interface concentration
+and smooth spatial decay.
+The underlying mesh is shown explicitly, confirming that the stress field remains
+well resolved in the graded region adjacent to the cohesive leg.
+
+Figure~\ref{fig:crit-results:profiles} reports profiles sampled along the cohesive leg
+from the knee to the tip.
+The top panel shows the normalized openings $\bar d_n$ and $\bar d_t$, indicating that
+the normal separation is already close to its critical value near the knee, with
+negligible tangential opening.
+The middle and bottom panels compare the bulk tractions
+(Cauchy stress projected onto $\pm\mathbf n$) on the upper and lower faces with the
+TSL tractions reconstructed from the local displacement jump.
+
+Excellent agreement is observed along most of the cohesive leg, \emph{excluding} a short
+segment near the knee that lies on the softening branch of the cohesive law, with the
+correct action--reaction symmetry (top $\bar\sigma_n \approx -1$, bottom
+$\bar\sigma_n \approx +1$, and $\bar\sigma_t \approx 0$).
+Small discrepancies are confined to the first few cohesive elements measured from the
+knee and are associated with the early part of the softening branch.
+These deviations are attributed to nodal stress recovery effects in the graded mesh
+and do not affect the global consistency between bulk stresses and the imposed cohesive
+traction--separation law.
+
+
+\begin{figure}[!h]
+	\centering
+	\begin{subfigure}[t]{0.53\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{Fig8aNew}
+		\caption{Normalized bulk $\sigma_{yy}$ near the cohesive leg (critical state). The deformed mesh is shown at 30× scale.}
+		\label{fig:crit-results:stress}
+	\end{subfigure}\hfill
+	\begin{subfigure}[t]{0.45\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{Fig8bNew}
+		\caption{Along-leg profiles: $\bar d_n,\bar d_t$ (top) and bulk vs.\ TSL tractions on the upper (middle) and lower (bottom) faces.}
+		\label{fig:crit-results:profiles}
+	\end{subfigure}
+	\caption{Critical-state fields for the two-leg crack with a short cohesive continuation.
+		Bulk tractions satisfy the cohesive boundary conditions and match the TSL prediction; minor
+		differences are restricted to the first six cohesive elements from the knee.}
+	\label{fig:crit-results}
+\end{figure}
+
+\chg{R1C4}{
+	\paragraph{Conditioning of the load-based selector.}
+	As illustrated in Fig.~\ref{fig:kink-sweeps}, the function
+	$\sigma_{\mathrm{cr}}(\theta_2)$ exhibits a very shallow minimum in the
+	vicinity of $\theta_2 \approx 1.6$--$1.9^\circ$.
+	Although the minimum can be localized reliably using parabolic refinement in
+	the present deterministic setting, the pronounced flatness of
+	$\sigma_{\mathrm{cr}}(\theta_2)$ indicates that the load-based criterion is
+	only weakly conditioned with respect to the kink angle.
+	Consequently, in analyses affected by numerical noise (e.g., discretization
+	errors or solver tolerances), or in materials characterized by a more
+	extended fracture process zone, small perturbations may lead to noticeable
+	variations in the estimated minimizing angle.
+	This sensitivity motivates the use of complementary selection measures.
+	In contrast to the load-based response, the energetic mouth diagnostic
+	$\hat{\Psi}_{\mathrm{crit}}(\theta_2)-1$ exhibits a distinctly steeper and
+	better-localized minimum, thereby providing improved numerical robustness
+	when the global critical load is nearly insensitive to the kink direction.
+}
+
+
+
+\subsection{Discussion}
+The two selectors probe different facets of the critical state and therefore
+need not coincide.
+The load-based criterion is \emph{global}, as it reflects equilibrium and the
+mixed-mode response of the entire structure at the critical state.
+In the present calculations, it yields
+$\theta_2^{\sigma} \approx 1.6$--$1.9^\circ$, and the function
+$\sigma_{\mathrm{cr}}(\theta_2)$ exhibits an extremely shallow minimum in this
+vicinity.
+As a result, the load-based selector is only weakly conditioned with respect
+to the kink angle, and its minimizer is sensitive to discretization details
+and solver tolerances.
+
+By contrast, the energetic mouth criterion is inherently \emph{local}.
+At the critical state, the normal opening at the mouth satisfies
+$\bar d_n=1$, so that the normal cohesive response is already on its plateau
+or early softening branch.
+The energetic excess $\hat{\Psi}_{\mathrm{crit}}-1$ therefore scales with the
+tangential contribution, which remains small and leads to a rapidly vanishing
+value.
+This produces a steeper and better-localized minimum of
+$\hat{\Psi}_{\mathrm{crit}}(\theta_2)-1$, yielding
+$\theta_2^{\Psi} \approx 3.586^\circ$.
+The resulting difference between the two selectors is approximately
+$1.86^\circ$.
+
+In practice, the energetic diagnostic exhibits a pronounced U-shaped profile,
+making the parabolic vertex fit robust even on relatively coarse angular
+sweeps.
+In contrast, the much flatter minimum of $\sigma_{\mathrm{cr}}(\theta_2)$
+benefits significantly from refinement and tight bracketing of the search
+interval.
+If a single selector is desired, a natural compromise is to minimize the
+\emph{integrated} cohesive work along Leg~2 rather than its mouth value alone,
+or to employ a composite objective that balances load capacity against cohesive
+dissipation, thereby accounting for the response of the full interface.
+
+
+\chg{R3C1}{
+	\paragraph{Remark on cohesive-law regularization and modeling scope.}
+	The interpretation of the above results is closely tied to the adopted cohesive
+	regularization.
+	The present framework employs a smooth, potential-based traction--separation
+	law, with the displacement jump as the primary kinematic variable and cohesive
+	tractions obtained as its energetic conjugate.
+	This choice is motivated by numerical robustness and the availability of a
+	symmetric algorithmic tangent in mixed-mode problems.
+	Within this setting, the extent of the \emph{active} cohesive zone is not
+	prescribed a priori, but emerges implicitly from the solution as the portion of
+	the interface undergoing separation.
+	Formulations in which the cohesive-zone length is treated as an explicit
+	unknown correspond to free-boundary cohesive crack models and require a
+	different mathematical setting, which is beyond the scope of the present
+	finite-element CZM approach.
+}
+
+\chg{R3C2}{
+	\paragraph{Remark on the role of crack and trial-leg lengths.}
+	Consistent with this modeling scope, both the initial crack and the kinked
+	segment are introduced here as given geometrical inputs in the incipient-kinking
+	analysis.
+	The length of the kinked segment should be regarded as an auxiliary numerical
+	parameter rather than as a physical crack length.
+	The physically relevant quantity is the \emph{active} cohesive-zone extent,
+	which emerges from the solution as the portion of the trial interface that
+	experiences separation.
+	Accordingly, the trial leg is chosen sufficiently long so that the active
+	cohesive zone remains strictly contained within it; once this consistency
+	condition is satisfied, the predicted kink direction and critical load are
+	insensitive to the selected trial-leg length.
+	The estimate $\ell_p$ serves as a classical scaling guideline to ensure that
+	the fracture-process zone can fully develop without artificial truncation; it
+	does not prescribe the cohesive-zone length and is not a constitutive
+	assumption.
+	Treating the cohesive crack length as a true free parameter requires a
+	free-boundary or incremental propagation formulation, which lies beyond the
+	scope of the present incipient-kinking study.
+}
+
+\chg{R1C3}{
+	\paragraph{Remark on a possible extension to crack propagation.}
+	While the present study is restricted to the determination of the kinking
+	direction and associated critical load for a predefined trial leg, the proposed
+	framework naturally lends itself to extension toward incremental crack
+	propagation.
+	In such a setting, the crack path would be updated step by step, and a new
+	cohesive segment would be activated at each increment.
+	The thin-channel construction and subsequent collapse would then be repeated
+	for the updated crack geometry, implying regeneration of the mesh only in the
+	vicinity of the advancing crack.
+	Although this introduces additional computational cost, the channel-based
+	meshing procedure is fully automated, local to the crack region, and does not
+	require explicit mesh surgery or global topological modifications; the
+	interface operators and nonlinear solution strategy remain unchanged.
+	The parametric kinking studies reported here indicate that the cost of mesh
+	generation is comparable to that of the nonlinear solve and scales smoothly
+	with interface refinement, suggesting that multi-step crack-growth simulations
+	can be carried out without a prohibitive increase in computational effort.
+}
+
+
+\section{Comparison with LEFM predictors}
+\label{sec:LEFM-comparison}
+
+This section compares the crack-kinking direction obtained from the cohesive-zone
+framework with the classical LEFM prediction.
+The goal is to quantify how mode mixity, encoded in the orientation $\theta_{1}$ of the
+physical leg, influences the preferred deflection angle and to assess whether the cohesive
+continuation modifies the geometric kink condition.
+
+\subsection{Relative angle definition}
+Throughout the paper, the kink angle is measured as the signed relative rotation
+between the two legs, consistent with the notation introduced in Table~\ref{tab:notation},
+\begin{equation}
+	\Delta\theta = \operatorname{wrap}_{(-\pi,\pi]}\!\left( \theta_{2} - \theta_{1} \right).
+\end{equation}
+This wrapping operation ensures that $\Delta\theta$ is always reported in the interval $(-\pi,\pi]$, preserving the correct direction of kinking (e.g., clockwise vs. counterclockwise). In plots, angles are reported in degrees, with $\Delta\theta$ obtained from the
+wrapped value converted accordingly.
+
+In the comparison below, we use two decorated forms of the same quantity:
+\[
+\Delta\theta_{\mathrm{LEFM}}, \qquad
+\Delta\theta_{\mathrm{CZM}}
+= \operatorname{wrap}_{(-\pi,\pi]}\!\left( \theta_{2} - \theta_{1} \right),
+\]
+where $\Delta\theta_{\mathrm{LEFM}}$ is obtained from the
+maximum tangential stress (MTS) criterion, and $\Delta\theta_{\mathrm{CZM}}$ from the
+cohesive critical state.
+
+
+\subsection{LEFM predictor}
+\label{sec:LEFM-predictor}
+
+For a given inclination $\theta_{1}$ of the physical crack, the classical prediction
+of the kinking direction within LEFM is obtained from the mixed-mode
+stress intensity factors $(K_{\rm I},K_{\rm II})$ associated with
+Leg~1 and the maximum--tangential--stress (MTS) criterion.  For inclined edge
+cracks under uniform loading, closed-form approximations for
+$(K_{\rm I},K_{\rm II})$ and the corresponding kink angle exist and provide
+convenient engineering estimates.  In this work, however, all mixed-mode
+quantities are computed directly by mode-separating the $J$-integral.
+
+\paragraph{Single-contour $J$-integral and mirror-point mode decomposition.}
+A circular contour of radius $r_{\rm I}$ is placed around the crack tip, and the
+near-tip fields are sampled at pairs of mirror-symmetric points
+\[
+P(\theta) = \bigl(r_{\rm I}\cos\theta, \; r_{\rm I}\sin\theta\bigr),\qquad
+Q(\theta) = \bigl(r_{\rm I}\cos\theta, \; -r_{\rm I}\sin\theta\bigr),
+\qquad \theta\in(0,\pi).
+\]
+Let $\boldsymbol{\varepsilon}_{P}$, $\boldsymbol{\sigma}_{P}$ and
+$\partial\mathbf{u}_{P}/\partial x_{1}$ denote the strain, stress, and directional
+displacement gradient at~$P(\theta)$ in the local coordinates $(x_{1},x_{2})$ aligned
+with the crack.  Their counterparts at $Q(\theta)$ are constructed analogously.
+Following the mirror-point formulation of Ishikawa, Kitagawa and Okamura
+(see Kuna~\cite{Kuna2013}), symmetric and antisymmetric combinations yield the
+mode I and mode II components:
+\[
+\begin{aligned}
+	\boldsymbol{\varepsilon}^{\rm I}
+	&= \tfrac12\bigl[\varepsilon_{P,11} + \varepsilon_{Q,11},\;
+	\varepsilon_{P,22} + \varepsilon_{Q,22},\;
+	\gamma_{P,12} - \gamma_{Q,12}\bigr]^{T},\\[3pt]
+	\boldsymbol{\varepsilon}^{\rm II}
+	&= \tfrac12\bigl[\varepsilon_{P,11} - \varepsilon_{Q,11},\;
+	\varepsilon_{P,22} - \varepsilon_{Q,22},\;
+	\gamma_{P,12} + \gamma_{Q,12}\bigr]^{T},
+\end{aligned}
+\]
+\[
+\begin{aligned}
+	\boldsymbol{\sigma}^{\rm I}
+	&= \tfrac12\bigl[\sigma_{P,11} + \sigma_{Q,11},\;
+	\sigma_{P,22} + \sigma_{Q,22},\;
+	\sigma_{P,12} - \sigma_{Q,12}\bigr]^{T},\\[3pt]
+	\boldsymbol{\sigma}^{\rm II}
+	&= \tfrac12\bigl[\sigma_{P,11} - \sigma_{Q,11},\;
+	\sigma_{P,22} - \sigma_{Q,22},\;
+	\sigma_{P,12} + \sigma_{Q,12}\bigr]^{T}.
+\end{aligned}
+\]
+Here $\gamma_{12}=2\varepsilon_{12}$ denotes the engineering shear strain.
+
+
+The corresponding directional displacement gradients are
+$\partial\mathbf{u}^{\rm I}/\partial x_{1}$ and
+$\partial\mathbf{u}^{\rm II}/\partial x_{1}$.
+The elastic energy densities are
+\[
+U_{\rm I} = \tfrac12\,\boldsymbol{\sigma}^{\rm I}\!:\boldsymbol{\varepsilon}^{\rm I},
+\qquad
+U_{\rm II} = \tfrac12\,\boldsymbol{\sigma}^{\rm II}\!:\boldsymbol{\varepsilon}^{\rm II}.
+\]
+
+\paragraph{Mode-separated $J$-integrals.}
+Let $\mathbf{n}=(\cos\theta,\sin\theta)$ denote the outward normal at $P(\theta)$.
+With $\mathbf{t}^{\rm I}=\boldsymbol{\sigma}^{\rm I}\mathbf{n}$ and
+$\mathbf{t}^{\rm II}=\boldsymbol{\sigma}^{\rm II}\mathbf{n}$, the mode-separated
+$J$-integrands projected onto~$x_{1}$ are
+\[
+f_{\rm I}(\theta)
+= U_{\rm I} n_{1}
+- \mathbf{t}^{\rm I}\!\cdot\!
+\frac{\partial\mathbf{u}^{\rm I}}{\partial x_{1}},
+\qquad
+f_{\rm II}(\theta)
+= U_{\rm II} n_{1}
+- \mathbf{t}^{\rm II}\!\cdot\!
+\frac{\partial\mathbf{u}^{\rm II}}{\partial x_{1}}.
+\]
+Integration over the upper semicircle and doubling for symmetry gives
+\[
+J_{\rm I}  = 2r_{\rm I}\!\int_{0}^{\pi} f_{\rm I}(\theta)\,d\theta,
+\qquad
+J_{\rm II} = 2r_{\rm I}\!\int_{0}^{\pi} f_{\rm II}(\theta)\,d\theta.
+\]
+
+\paragraph{Stress intensity factors and MTS kink angle.}
+Using the plane-strain modulus $E' = E/(1-\nu^{2})$, the mode-separated
+stress intensity factors follow from the energetic identities
+\[
+K_{\rm I} = \sqrt{E'J_{\rm I}},\qquad
+K_{\rm II} = \operatorname{sign}(J_{\rm II})\sqrt{E'|J_{\rm II}|}.
+\]
+The LEFM kink angle is then obtained from the MTS condition
+\[
+\Delta\theta_{\rm LEFM}
+= \arg\max_{\theta}\,\sigma_{\theta\theta}(K_{\rm I},K_{\rm II},\theta),
+\]
+where $\sigma_{\theta\theta}$ is the LEFM near-tip circumferential stress.
+
+\paragraph{Critical load: Quadratic energetic criterion.}
+For critical-load predictions, the mode-separated energy-release rates at a
+reference load $\sigma_{0}$ are
+\[
+G_{\rm I}(\sigma_{0}) = \frac{K_{\rm I}^{2}}{E'}, \qquad
+G_{\rm II}(\sigma_{0}) = \frac{K_{\rm II}^{2}}{E'}.
+\]
+Since $G\propto \sigma^{2}$ for fixed geometry,
+\[
+G_{\rm I}(\sigma)
+= G_{\rm I}(\sigma_{0})\bigl(\tfrac{\sigma}{\sigma_{0}}\bigr)^{2},\qquad
+G_{\rm II}(\sigma)
+= G_{\rm II}(\sigma_{0})\bigl(\tfrac{\sigma}{\sigma_{0}}\bigr)^{2}.
+\]
+The quadratic mixed-mode criterion
+\[
+\frac{G_{\rm I}}{G_{\rm Ic}}
++ \frac{G_{\rm II}}{G_{\rm IIc}} = 1
+\]
+then yields the LEFM critical load
+\[
+\sigma_{\rm cr}^{\rm (quad)}
+= \frac{\sigma_{0}}
+{\sqrt{\dfrac{G_{\rm I}(\sigma_{0})}{G_{\rm Ic}}
+		+ \dfrac{G_{\rm II}(\sigma_{0})}{G_{\rm IIc}}}}.
+\]
+
+\paragraph{Critical load: Benzeggagh--Kenane (BK) criterion.}
+The BK criterion \cite{BenzeggaghKenane1996} is an energy-based mixed-mode
+fracture model that prescribes an effective fracture toughness
+\[
+G_{\rm c}(\beta)
+= G_{\rm Ic}
++ \bigl(G_{\rm IIc} - G_{\rm Ic}\bigr)\,\beta^{\eta},
+\qquad
+\beta = \frac{G_{\rm II}}{G_{\rm I}+G_{\rm II}},
+\]
+where $\eta>0$ controls the sensitivity of the toughness to the mode mixity.
+Evaluating the mode-mix parameter $\beta_{0}$ at a reference load $\sigma_{0}$
+allows the LEFM critical load to be computed from
+$G(\sigma_{\rm cr}) = G_{\rm c}(\beta_{0})$, which gives
+\[
+\sigma_{\rm cr}^{\rm (BK)}(\eta)
+= \sigma_{0}\,
+\sqrt{\frac{G_{\rm c}(\beta_{0})}{
+		G_{\rm I}(\sigma_{0}) + G_{\rm II}(\sigma_{0})}}.
+\]
+This expression provides a convenient mixed-mode benchmark for comparison with
+the cohesive predictions.
+
+
+\subsection{LEFM vs CZM mixed-mode fracture predictions}
+
+In the cohesive-zone framework, each loading inclination $\theta_1$ is analyzed
+through a two-stage procedure.
+For each prescribed trial direction $\theta_2$ of the cohesive continuation,
+a fully nonlinear equilibrium problem is solved up to the critical state.
+An outer parametric sweep over $\theta_2$ is then performed, and the preferred
+kink direction is selected according to a chosen diagnostic, either the global
+critical stress $\sigma_{\mathrm{cr}}$ or the energetic mouth functional
+$\hat{\Psi}$.
+This approach yields consistent predictions for both the kink direction and the
+associated critical load within a unified CZM setting.
+
+Figure~\ref{fig:LEFM-vs-CZM} compares the resulting kink angles and critical
+loads with classical LEFM predictions.
+LEFM results are shown for the MTS criterion, as well as for quadratic and
+Benzeggagh--Kenane (BK) mixed-mode laws with different $\eta$ parameters.
+CZM results are reported for both selection strategies, namely minimization of
+$\sigma_{\mathrm{cr}}$ and minimization of $\hat{\Psi}$.
+
+
+\begin{figure}[h!]
+	\centering
+	\begin{subfigure}[b]{0.48\linewidth}
+		\includegraphics[width=\linewidth]{Fig9aNew}
+		\caption{Kink angle $\Delta\theta$ vs. $\theta_1$}
+		\label{fig:kink-angle-subplot}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[b]{0.48\linewidth}
+		\includegraphics[width=\linewidth]{Fig9bNew}
+		\caption{Critical load $\sigma_{\rm cr}$ vs. $\theta_1$}
+		\label{fig:crit-load-subplot}
+	\end{subfigure}
+	\caption{Comparison of LEFM and CZM predictions. LEFM includes MTS, quadratic, and BK criteria. CZM results correspond to minimization of either $\sigma_{\rm cr}$ or the energetic functional $\hat{\Psi}$.}
+	\label{fig:LEFM-vs-CZM}
+\end{figure}
+
+
+\subsection*{Analysis of results}
+
+\chg{R2C9}{
+	\paragraph{Kink angle.}
+	Figure~\ref{fig:kink-angle-subplot} compares the crack deflection angles predicted by LEFM and by CZM using two different selectors.	For small loading inclinations $\theta_1$, all approaches yield very close kink angles, with differences below $0.5^\circ$, indicating that the cohesive-zone formulation correctly recovers the LEFM limit when the fracture process zone is	small and the response is predominantly mode~I. \newline
+	As $\theta_1$ increases, systematic differences emerge. The CZM prediction obtained by minimizing the critical load $\sigma_{\mathrm{cr}}$	consistently produces slightly \emph{shallower} deflection angles than LEFM, with deviations growing monotonically and reaching about $1.5^\circ$ at $\theta_1=30^\circ$. In contrast, the energetic selector based on minimizing $\hat{\Psi}$ yields systematically larger deflection magnitudes $|\Delta\theta|$ than the
+	load-based selector, with deviations approaching $3^\circ$ at the largest
+	inclination considered.\newline
+	The smooth, nearly linear evolution of all three curves confirms that the
+	outer minimization procedure is well posed.
+	The larger separation observed for the energetic selector reflects its local
+	character: by penalizing shear participation at the cohesive-zone mouth, it
+	favors crack paths that promote opening-dominated separation even when the
+	global load capacity varies weakly with direction.
+}
+
+
+\paragraph{Critical load.}
+The corresponding critical loads are shown in
+Fig.~\ref{fig:crit-load-subplot}.
+For all loading angles $\theta_1$, the CZM predicts lower critical stresses than
+LEFM, with the difference increasing as mode~II participation grows.
+At $\theta_1=2^\circ$, the reduction is below $1.5\%$, whereas at
+$\theta_1=30^\circ$ it reaches approximately $10\%$.
+
+The two CZM selectors produce virtually identical values of
+$\sigma_{\mathrm{cr}}$, with differences remaining below $0.05\%$ across the
+entire range of $\theta_1$.
+This confirms that, although the selectors may lead to different kink
+directions, the global load-carrying capacity is governed primarily by the
+overall cohesive dissipation rather than by the local directional criterion.
+
+
+\subsection*{Physical Interpretation}
+
+The parameter $\theta_1$ controls the mode mixity at the crack tip rather than the
+applied load level.
+For small $\theta_1$, the response is opening-dominated and LEFM and CZM yield
+nearly identical kink angles and critical loads, reflecting convergence of the
+cohesive formulation to the LEFM limit.
+As $\theta_1$ increases, shear participation modifies the distribution of
+tractions and separations within the fracture process zone, even though its
+overall extent remains governed primarily by material parameters and the
+attained load.
+This internal redistribution is captured by the mixed-mode cohesive law without
+invoking any notable change in process-zone length.
+The distinction between the CZM selectors reflects their different physical
+emphases: minimization of the global critical load $\sigma_{\mathrm{cr}}$
+identifies directions close to the LEFM prediction, whereas minimization of the
+energetic mouth measure $\hat{\Psi}$ emphasizes local opening at the knee of the
+cohesive continuation, leading to systematically steeper kink angles while
+leaving the critical load essentially unchanged.
+
+\subsection{Sensitivity to the auxiliary cohesive-leg length}
+
+As discussed in Section~2, the prescribed length $\delta$ of the auxiliary cohesive continuation is a numerical parameter rather than a constitutive one. Its function is to provide sufficient space for the fracture-process zone to develop along the trial leg without artificial truncation. If $\delta$ is chosen too short, the active cohesive zone may approach the artificial tip of the segment, and the resulting critical load and selected kink direction may become dependent on the assumed trial-leg length. It is therefore important to verify that the reported results are not artifacts of an arbitrary choice of $\delta$.
+
+To examine this point, we performed an additional series of calculations in which $\delta$ was not fixed a priori, but estimated adaptively from a Dugdale-type process-zone scaling. For each value of the material parameter ratio
+\[
+\eta=\frac{E}{\sigma_n^{\max}},
+\]
+and for each prescribed orientation $\theta_1$, the corresponding LEFM solution was first used to define an effective mixed-mode stress-intensity measure,
+\[
+K_{\mathrm{eff}}=\sqrt{K_I^2+K_{II}^2},
+\]
+from which a Dugdale-type estimate of the process-zone size was constructed as
+\[
+r_D=C_D\left(\frac{K_{\mathrm{eff}}}{\sigma_n^{\max}}\right)^2.
+\]
+The trial cohesive-leg length was then chosen as
+\[
+\delta=\frac{r_D}{r_\beta},
+\]
+where $r_\beta$ is the target value of $\beta/\delta$, with $\beta$ denoting the activated portion of the cohesive segment. In the present calculations, $r_\beta\approx 0.9$, so that the active zone remains sufficiently far from the segment tip while still being well resolved.
+
+This procedure gives the algorithm a predictor--corrector structure. The LEFM field provides a first estimate of the characteristic process-zone size through $r_D$, whereas the subsequent cohesive calculation checks a posteriori whether the activated portion of the trial segment occupies the intended fraction of the cohesive leg. Table~\ref{tab:eta_sweep_all} summarizes the resulting values of the normalized trial-leg length $\delta/a$, the active-zone fraction $\beta/\delta$, and the selected angle $\theta_2^\ast$ for three representative initial crack inclinations.
+
+\begin{table}[t]
+	\centering
+	\caption{Results of the $\eta$-sweep with adaptive estimation of $\delta$ for different initial angles $\theta_1$.}
+	\label{tab:eta_sweep_all}
+	\begin{tabular}{c|ccc|ccc|ccc}
+		\toprule
+		& \multicolumn{3}{c|}{$\theta_1=-30^\circ$}
+		& \multicolumn{3}{c|}{$\theta_1=-40^\circ$}
+		& \multicolumn{3}{c}{$\theta_1=-50^\circ$} \\
+		\cmidrule(lr){2-4} \cmidrule(lr){5-7} \cmidrule(lr){8-10}
+		$\eta$
+		& $\delta/a$ & $\beta/\delta$ & $\theta_2^\ast$
+		& $\delta/a$ & $\beta/\delta$ & $\theta_2^\ast$
+		& $\delta/a$ & $\beta/\delta$ & $\theta_2^\ast$ \\
+		\midrule
+		80  & 0.0307 & 0.9000 & 4.4568 & 0.0300 & 0.9125 & 4.5000 & 0.0303 & 0.9125 & 3.3304 \\
+		85  & 0.0347 & 0.9000 & 4.4568 & 0.0333 & 0.9375 & 4.5230 & 0.0342 & 0.9250 & 3.3475 \\
+		90  & 0.0389 & 0.9000 & 4.4435 & 0.0373 & 0.9375 & 4.5154 & 0.0383 & 0.9250 & 3.3887 \\
+		95  & 0.0433 & 0.9000 & 4.4435 & 0.0416 & 0.9375 & 4.5230 & 0.0427 & 0.9250 & 3.4037 \\
+		100 & 0.0480 & 0.9000 & 4.4298 & 0.0461 & 0.9375 & 4.5358 & 0.0473 & 0.9250 & 3.4487 \\
+		105 & 0.0529 & 0.9000 & 4.4298 & 0.0508 & 0.9375 & 4.5578 & 0.0522 & 0.9250 & 3.5248 \\
+		110 & 0.0580 & 0.9000 & 4.4135 & 0.0558 & 0.9375 & 4.5200 & 0.0572 & 0.9250 & 3.5267 \\
+		115 & 0.0634 & 0.9000 & 4.4135 & 0.0610 & 0.9375 & 4.5476 & 0.0626 & 0.9375 & 3.5773 \\
+		120 & 0.0691 & 0.9000 & 4.4034 & 0.0664 & 0.9375 & 4.5831 & 0.0681 & 0.9375 & 3.6285 \\
+		\bottomrule
+	\end{tabular}
+\end{table}
+
+Three observations follow directly from Table~\ref{tab:eta_sweep_all}. First, the normalized trial length $\delta/a$ increases monotonically with $\eta$ for all three initial crack orientations. This trend is consistent with the Dugdale-type scaling $\delta\propto r_D\propto K_{\mathrm{eff}}^2/(\sigma_n^{\max})^2$: since $E$ is fixed and $\sigma_n^{\max}=E/\eta$, increasing $\eta$ reduces the cohesive strength and enlarges the expected process-zone size. The adaptive procedure therefore assigns a longer auxiliary cohesive leg as $\eta$ increases.
+
+Second, although the absolute value of $\delta/a$ changes substantially across the sweep, the ratio $\beta/\delta$ remains nearly constant. For $\theta_1=-30^\circ$, it is exactly $0.9000$ throughout. For $\theta_1=-40^\circ$, it lies in the narrow interval $0.9125$--$0.9375$, and for $\theta_1=-50^\circ$ it also remains within $0.9125$--$0.9375$. This stability shows that the LEFM-based estimate of $\delta$ regularizes the finite cohesive problem in a quantitatively controlled manner: the active cohesive zone remains well contained within the trial segment over the entire investigated parameter range.
+
+Third, the selected angle $\theta_2^\ast$ exhibits only weak sensitivity to the change in $\delta$ induced by the Dugdale-based estimate. Over the full range $\eta=80$--$120$, the total variation of $\theta_2^\ast$ is about $0.053^\circ$ for $\theta_1=-30^\circ$, about $0.083^\circ$ for $\theta_1=-40^\circ$, and about $0.298^\circ$ for $\theta_1=-50^\circ$. Thus, within the tested range, varying $\eta$ primarily rescales the process-zone size, whereas the predicted propagation direction remains governed mainly by the local mixed-mode state.
+
+This point is important for interpreting the role of the cohesive parameters. The purpose of the $\eta$-sweep is not to claim that the direction is strictly independent of the cohesive law. Rather, it shows that, once the process zone is resolved in a consistent way through adaptive selection of $\delta$, the directional prediction is comparatively insensitive to moderate changes in $\eta$, while the finite cohesive length scale itself changes substantially. In this sense, the additional Dugdale-based calculations do not remove the intrinsic limitation associated with the auxiliary cohesive-leg length, but they do quantify and control it.
+
+To assess whether the trends in Table~\ref{tab:eta_sweep_all} are artifacts of the baseline discretization, the calculations were repeated on a denser mesh. The refined computations leave the main conclusions unchanged. The values of $\delta/a$ remain unchanged to the reported precision, and $\beta/\delta$ is unchanged except for one isolated shift of $0.0125$ at $\theta_1=-50^\circ$, $\eta=115$. The largest absolute changes in the predicted angle $\theta_2^\ast$ remain small: they do not exceed $0.0064^\circ$ for $\theta_1=-30^\circ$, $0.0069^\circ$ for $\theta_1=-40^\circ$, and $0.0311^\circ$ for $\theta_1=-50^\circ$. These differences are an order of magnitude smaller than the total variation of $\theta_2^\ast$ across the full $\eta$-range and do not alter any of the trends discussed above. The refined-mesh recalculation therefore supports the numerical robustness of the reported conclusions.
+
+\subsection{Limitations and range of applicability}
+
+The present formulation is intended as an incipient-kinking model in a near-LEFM regime, that is, for situations in which the fracture-process zone remains small compared with the characteristic geometric dimensions of the body and is fully contained within the prescribed cohesive continuation. In this setting, the method provides a regularized and energetically consistent way to determine the critical load and compare competing kink directions without introducing singular crack-tip fields.
+
+Accordingly, the proposed approach should not be interpreted as a general crack-propagation framework. The trial cohesive leg is introduced as an auxiliary numerical construct for direction selection, not as a physically evolved crack segment, and its length must be chosen sufficiently large so that the active cohesive zone does not reach the artificial tip. If this condition is violated, the process zone is truncated and both the critical load and the selected direction may become dependent on the chosen trial length. The method is therefore applicable only when the consistency condition $\beta < \delta$ is satisfied with adequate margin.
+
+A second limitation concerns the constitutive structure of the cohesive law. The present mixed-mode law is potential-based and was adopted because it guarantees energetic consistency and a symmetric algorithmic tangent, which are advantageous for robust Newton iterations. However, this same energetic coupling implies that the traction components are not degraded independently. As a result, small residual normal tractions may persist when the tangential mode is dominant, and vice versa. This feature is well known for potential-based mixed-mode cohesive laws and should be kept in mind when interpreting local traction fields, especially at strong mode mixity.
+
+The present study is also restricted to quasi-static loading, homogeneous isotropic elasticity, and a prescribed two-leg geometry. The conclusions regarding the close agreement between CZM and LEFM for the kink direction should therefore be understood within this scope. In particular, the recalculated parameter sweeps show that, over the investigated range, increasing the ratio $E/\sigma_n^{\max}$ mainly enlarges the cohesive-zone scale, while the predicted kink angle changes only weakly. This supports the conclusion that the deflection direction remains primarily controlled by the surrounding elastic mixed-mode field, whereas the critical load is more sensitive to the finite cohesive-zone structure. Outside this regime, for example when the process zone is not small compared with the crack length or nearby geometric features, larger deviations from LEFM should be expected.
+
+Finally, the method does not by itself resolve crack growth beyond onset. Extending the formulation to incremental propagation would require repeated updating of the crack path and local remeshing around the advancing front. The present results should therefore be viewed as validating a robust initiation-and-kinking procedure rather than as a complete simulation framework for arbitrary crack evolution.
+
+
+\section{Conclusions}
+\label{sec:conclusions}
+
+This work developed and analysed a fully implicit cohesive-zone framework for
+mixed-mode crack kinking.
+ The formulation augments a pre-existing
+crack by a short, zero-thickness cohesive extension, which enables a systematic
+and well-posed evaluation of the critical state associated with any prescribed
+trial kink orientation. Central to the approach is a potential-based mixed-mode
+traction--separation law (TSL), which guarantees energetic consistency, a
+symmetric algorithmic tangent, and robust quadratic convergence of the Newton
+iterations. By combining this constitutive structure with a channel-collapse
+meshing strategy, the framework provides a controlled numerical setting for
+assessing mixed-mode kinking without invoking enrichment techniques,
+geometry-specific assumptions, or explicit mesh surgery, and allows a direct
+comparison between cohesive and elastic predictions.
+
+\chg{R3C4}{
+	The cohesive-zone model employed in this study is not introduced as a competing
+	fracture theory nor as a material-specific law. Instead, it is used as a
+	regularized and energetically consistent framework for assessing the robustness
+	of classical LEFM-based kinking predictions in the presence of a finite but
+	small fracture process zone. Within this scope, LEFM is interpreted as the
+	asymptotic limit corresponding to vanishing cohesive-zone length, and the
+	present analysis is conducted deliberately in a near-LEFM regime that permits
+	controlled and meaningful comparison.
+}
+
+A comparison with classical LEFM-based kinking criteria leads to four main
+observations.
+
+\begin{enumerate}
+	\item \emph{Kink direction is essentially an elastic quantity.}
+	\chg{R1C5}{
+		Across all loading inclinations investigated, the predicted cohesive kink
+		angles remain within approximately one degree of the LEFM
+		maximum-tangential-stress (MTS) prediction.
+		This confirms the well-established LEFM result that the crack-deflection
+		direction is governed primarily by the elastic mixed-mode stress field.
+		The present study does not claim this as a new physical finding; rather, it
+		demonstrates that the proposed cohesive-zone framework is capable of
+		reproducing this classical behaviour in a numerically robust and energetically consistent
+		manner.
+	}
+	In this sense, the cohesive process zone and the specific shape of the TSL have
+	a negligible influence on the deflection angle, while their role is expressed
+	predominantly through the associated critical load.
+	
+	\item \emph{Critical loads carry a clear imprint of process-zone physics.}
+	Although both LEFM and the cohesive framework predict a monotonic increase of
+	the critical load with crack inclination, the cohesive model consistently
+	yields lower values. The reduction is modest (below $2\%$) near mode~I, but
+	reaches approximately $10\%$ for strongly skewed cracks. This systematic
+	difference reflects the finite size of the fracture-process zone and the
+	nonlinear separation response encoded in the TSL—effects that are absent in
+	classical LEFM.
+	
+	\item \emph{The potential-based cohesive law exhibits stronger mode interaction
+		than BK-type criteria.}
+	Comparisons with Benzeggagh--Kenane mixed-mode surfaces ($\eta=1$--$3$) show
+	that all BK predictions overestimate the effective toughness relative to the
+	present cohesive model. The cohesive critical loads lie below all BK curves,
+	indicating a stronger energetic coupling between modes, which effectively
+	corresponds to a mixed-mode exponent $\eta_{\mathrm{eff}}>3$. This highlights
+	that the potential-based TSL introduces mode interaction beyond that captured
+	by standard empirical criteria.
+	
+	\item \emph{The numerical framework shows high robustness and reproducibility.}
+	Convergence studies confirm that accurate and mesh-independent critical loads
+	are obtained once two modest conditions are met: (i) a bulk refinement level
+	$B/h_{\max}\ge40$, and (ii) at least $n_{\mathrm{coh}}\ge40$ cohesive segments
+	(or twice this value for conservative runs). Under these conditions, the
+	relative error in the critical load falls below $10^{-6}$, and reconstructed
+	bulk tractions closely match the cohesive tractions along nearly the entire
+	cohesive leg. Among the two tested selection measures, the global minimum of
+	$\sigma_{\mathrm{cr}}(\theta_2)$ is shallow and sensitive to bracketing, whereas
+	the energetic mouth criterion exhibits a much sharper minimum and is
+	numerically more robust.
+\end{enumerate}
+
+\chg{R1C5}{
+	Overall, the principal contribution of this study lies not in proposing a new
+	fracture criterion or physical crack-deflection mechanism, but in establishing
+	a cohesive-zone formulation that is energetically consistent, numerically
+	robust, and capable of assessing the robustness of classical LEFM kinking
+	predictions within a regularized, non-singular framework. The unified cohesive
+	potential, symmetric Hessian tangent, and channel-collapse meshing strategy
+	together provide a stable and reproducible tool for determining both kink
+	direction and critical load in mixed-mode cohesive-zone analyses.
+}
+
+\paragraph{Outlook: Sensitivity to TSL shape.}
+Because the predicted critical load depends on details of the
+traction--separation law—including strengthening length, pla\-teau width, and
+softening curvature—a broader parametric investigation of TSL shapes is
+warranted. Earlier mode-I studies (e.g.,~\cite{Selivanov2019ModeI}) indicate that
+the structure of the fracture process zone can be highly sensitive to these
+features even when global response quantities vary only moderately. Extending
+such analyses to fully mixed-mode kinking represents a natural next step. The
+present framework can also be extended to incremental crack growth by
+reorienting the cohesive leg as the crack advances, thereby providing a
+consistent starting point for future propagation studies.
+
+
+
+
+\printbibliography
+
+
+
+\end{document}
+
