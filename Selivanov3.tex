@@ -801,6 +801,13 @@ softening, respectively. In applications, these parameters may be chosen
 separately for the normal and tangential modes; the mode index is omitted here
 for compactness.
 
+The shape of the one-dimensional traction--separation law is not merely a
+numerical convenience. As emphasized by Shet and Chandra \cite{ShetChandra2003}, the detailed form of the traction--separation curve influences how the fracture-process zone
+develops and therefore affects the fracture response beyond the sole values of
+the peak traction and the total dissipated energy. This is the reason for
+retaining explicit control over the strengthening interval, plateau, and
+softening branch in the present formulation. 
+
 For the normal mode, compression is regularized by a linear penalty branch.
 The normalized traction \(\tau\), its derivative \(g=\tau'\), and the
 associated potential \(F\) are written in the compact form
@@ -1095,6 +1102,16 @@ not produce locking or spurious stiffening under mesh refinement; its main
 effect was to increase the number of Newton iterations. The potential-based
 formulation is helpful here because the symmetric consistent tangent reduces
 the sensitivity of the nonlinear solver to the precise value of \(a_1\).
+
+The present formulation should also be viewed relative to two established
+lines of work in cohesive-zone modeling. On the one hand, stabilized
+interface-element formulations have been developed to improve robustness when
+very stiff cohesive laws are used \cite{Ghosh2019StabilizedCZM,Ghosh2021RobustnessCZM}. On the other hand, potential-based
+mixed-mode formulations have been emphasized as a way to preserve
+thermodynamic consistency and avoid non-conservative coupling between modes \cite{Dimitri2014ConsistencyCZM}.
+The present approach aligns with the latter viewpoint: robustness is sought
+primarily through a smooth potential-based law with a symmetric Hessian
+tangent, rather than through additional stabilization terms. % add your Ghosh and Dimitri citations here
 
 \paragraph{Interpretation and limitation of the coupling.}
 The potential \(\Psi\) provides a single smooth energetic surface from which
