@@ -354,9 +354,9 @@ the findings and future directions.
 		$\sigma_n^{\max},\,\sigma_t^{\max}$ & Cohesive strengths (normal, shear) & Pa\\
 		$\bar\sigma_n,\,\bar\sigma_t$ & Normalized tractions $\sigma_\alpha/\sigma_\alpha^{\max}$ & --\\
 		$\phi_n,\,\phi_t$ & Mode~I/II fracture energies (areas under TSL branches) & J\,m$^{-2}$\\
-		$F,t,g$ & Normalized cohesive potential and its derivatives
-		($t=F'$, $g=t'$), with saturation \chg{R2C3}{$F(1)=c$} & --\\
-		\chg{R2C3}{$c$} & \chg{R2C3}{Dimensionless TSL shape parameter ($c=\int_0^1 t(\xi)\,\mathrm d\xi$)} & --\\
+		$F,\tau,g$ & Normalized cohesive potential and its derivatives
+		($\tau=F'$, $g=\tau'$), with saturation \chg{R2C3}{$F(1)=c$} & --\\
+		\chg{R2C3}{$c$} & \chg{R2C3}{Dimensionless TSL shape parameter ($c=\int_0^1 \tau(\xi)\,\mathrm d\xi$)} & --\\
 		\chg{R2C3}{$\chi_\alpha$} &
 		\chg{R2C3}{Mode-wise energetic prefactor of the cohesive law,
 		$\chi_\alpha=\sigma_\alpha^{\max} d_\alpha^{\max}
@@ -1159,7 +1159,7 @@ the \emph{top-face} nodal resultants are
 	\vb s_e=\mathcal T(\bd_e).
 		\end{equation}
 	}
-At each node $\ell\in\{i,j,k\}$ we use the pointwise traction map (see Eq.~\eqref{eq:tractions_mixed} from
+At each node $\ell\in\{i,j,k\}$ we use the pointwise traction map (see Eq.~\eqref{eq:Tcz_mixed} from
 		Section~\ref{sec:tsl}):
 		\begin{align}
 			\label{eq:seg-TSL-point}
