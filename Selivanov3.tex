@@ -158,125 +158,140 @@ loading. Even small deviations in crack trajectory can alter load-carrying
 capacity, trigger delamination, or precipitate catastrophic failure.
 Classical Linear Elastic Fracture Mechanics (LEFM) provides canonical
 predictions of the incipient kink direction, notably via the maximum
-circumferential (hoop) stress criterion and related energy-based arguments
-\cite{ErdoganSih1963}.
-Path conditions such as enforcing $K_{\rm II}=0$ at an advancing crack tip
-\cite{CotterellRice1980} provide equivalent selection principles.
-For cracks interacting with material interfaces, early analyses established
-when a crack continues along the interface or kinks into an adjacent medium,
-highlighting the dominant role of the mixed-mode elastic field in steering the
-initial deflection \cite{HeHutchinson1989}.
+circumferential-stress criterion and related energy-based arguments
+\cite{ErdoganSih1963}. Path conditions such as enforcing
+$K_{\rm II}=0$ at an advancing crack tip \cite{CotterellRice1980}
+provide equivalent selection principles. For cracks interacting with
+material interfaces, early analyses established when a crack continues
+along the interface or kinks into an adjacent medium, highlighting the
+dominant role of the mixed-mode elastic field in steering the initial
+deflection \cite{HeHutchinson1989}.
 
 Cohesive-zone formulations complement LEFM by embedding fracture processes
 directly in traction--separation relations (TSLs), thereby linking intact
 material response with complete decohesion without explicitly tracking the
-crack.
-Foundational models idealised the process zone using simple cohesive laws
-\cite{Barenblatt1962,Dugdale1960}, and subsequent finite-element
+crack. Foundational models idealised the process zone using simple cohesive
+laws \cite{Barenblatt1962,Dugdale1960}, and subsequent finite-element
 implementations showed that such laws can robustly capture initiation,
 deflection, branching, and arrest in brittle and quasi-brittle materials
-\cite{CamachoOrtiz1996}.
-Cohesive laws have also been central to interpreting and predicting resistance
-curves \cite{TvergaardHutchinson1992} and to modelling dynamic crack growth
-with intrinsic interface behaviour \cite{XuNeedleman1994}.
+\cite{CamachoOrtiz1996}. Cohesive laws have also been central to
+interpreting and predicting resistance curves
+\cite{TvergaardHutchinson1992} and to modelling dynamic crack growth with
+intrinsic interface behaviour \cite{XuNeedleman1994}.
 
 \paragraph{Mixed-mode fracture and cohesive laws.}
-A comprehensive review by \chg{R1C7}{Park and Paulino} \cite{Park2011Review}
+A comprehensive review by Park and Paulino \cite{Park2011Review}
 distinguishes two broad families of mixed-mode models:
 \emph{energy-based} criteria and \emph{traction-based} cohesive laws.
-Energy-based sche\-mes—such as the widely used Benzeggagh--Kenane (BK) criterion
-\cite{BenzeggaghKenane1996}—prescribe a mode-dependent fracture toughness but
-do not supply interface tractions and cannot be derived from a single
-potential.
-Traction-based cohesive laws, initiated by Xu and Needleman
-\cite{XuNeedleman1994}, define an explicit mixed-mode potential
-$\Psi(d_n,d_t)$ whose derivatives give the physical tractions.
+Energy-based schemes---such as the widely used Benzeggagh--Kenane (BK)
+criterion \cite{BenzeggaghKenane1996}---prescribe a mode-dependent
+fracture toughness but do not supply interface tractions and cannot be
+derived from a single potential. Traction-based cohesive laws, initiated
+by Xu and Needleman \cite{XuNeedleman1994}, define an explicit mixed-mode
+potential $\Psi(d_n,d_t)$ whose derivatives give the physical tractions.
 Subsequent extensions introduced polynomial, power-law, exponential, and
-asymmetric couplings, allowing the mode transition and shear sensitivity to be
-tuned to the material system.
-Such potential-based cohesive laws ensure thermodynamic consistency and yield
-symmetric algorithmic tangents—properties advantageous for implicit finite
-elements and essential for analysing mixed-mode initiation, kinking, and
-propagation, which is the focus of the present work.
+asymmetric couplings, allowing the mode transition and shear sensitivity
+to be tuned to the material system. Such potential-based cohesive laws
+ensure thermodynamic consistency and yield symmetric algorithmic tangents,
+which is advantageous for implicit finite-element formulations and
+particularly relevant in mixed-mode initiation and kinking problems.
 
-The importance of accurately describing the near-tip fracture process zone
-(FPZ) has motivated several recent modelling developments.
-Najmeddine, Gupta and Moini \cite{NajmeddineGuptaMoini2025} coupled a phase-field
+The importance of accurately describing the near-tip fracture-process zone
+(FPZ) has motivated several recent modelling developments. Najmeddine,
+Gupta and Moini \cite{NajmeddineGuptaMoini2025} coupled a phase-field
 description of bulk fracture with a PPR cohesive interface to capture
-deflection, penetration and toughening mechanisms in multi-material systems,
-while Shabrou and Daneshjoo \cite{ShabrouDaneshjoo2025} proposed mixed-mode
-criteria for orthotropic materials that incorporate FPZ effects and T-stress,
-improving directional predictions over classical LEFM criteria.
-Analytical progress has likewise sharpened the understanding of mixed-mode
-fields: Liu and Wei derived a closed-form stress field for finitely kinked
-cracks \cite{Liu2021KinkedStressFields} and later a semi-analytical SIF
-framework for branched cracks \cite{Liu2023BranchedSIF}, Si and Wei extended
-these ideas to kinked edge cracks in a half-space \cite{Si2024KinkedEdge}, and
-Shi and Xu obtained explicit SIFs for infinitesimal kinks in orthotropic
-solids \cite{Shi2025OrthotropicKinkSIF}.
-Parallel cohesive-zone studies have clarified how mode mixity, cohesive
-strength and interface toughness compete to determine crack deflection versus
-penetration \cite{ParmigianiThouless2006CZMDeflection,Alam2016IncidentAngleCZM,
+deflection, penetration and toughening mechanisms in multi-material
+systems, while Shabrou and Daneshjoo \cite{ShabrouDaneshjoo2025} proposed
+mixed-mode criteria for orthotropic materials that incorporate FPZ effects
+and T-stress, improving directional predictions over classical LEFM
+criteria. Analytical progress has likewise sharpened the understanding of
+mixed-mode fields: Liu and Wei derived a closed-form stress field for
+finitely kinked cracks \cite{Liu2021KinkedStressFields} and later a
+semi-analytical stress-intensity-factor framework for branched cracks
+\cite{Liu2023BranchedSIF}, Si and Wei extended these ideas to kinked edge
+cracks in a half-space \cite{Si2024KinkedEdge}, and Shi and Xu obtained
+explicit stress-intensity factors for infinitesimal kinks in orthotropic
+solids \cite{Shi2025OrthotropicKinkSIF}. Parallel cohesive-zone studies
+have clarified how mode mixity, cohesive strength and interface toughness
+compete to determine crack deflection versus penetration
+\cite{ParmigianiThouless2006CZMDeflection,Alam2016IncidentAngleCZM,
 	Tankasala2017KinkingOrthotropic,ChenDeBorst2022PFRCZM}.
 
-\paragraph{Motivating example: why cohesive models remain essential.}
+\paragraph{Motivating example: why cohesive models remain relevant even in a near-LEFM regime.}
 Even in configurations where LEFM is nominally applicable, cohesive-zone
-effects can produce measurable changes in the predicted critical load.
-For a mode-I crack of half-length $a$ in an infinite plate, LEFM predicts
+effects can produce measurable changes in the predicted critical load. For
+a mode-I crack of half-length $a$ in an infinite plate, LEFM predicts
 onset of fracture when $K_{\mathrm{I}}=\sigma\sqrt{\pi a}$ reaches the
 toughness $K_{\mathrm{Ic}}$, giving
 $\sigma_{\mathrm{cr}}^{\mathrm{LEFM}} = K_{\mathrm{Ic}}/\sqrt{\pi a}$.
 A cohesive-zone representation such as the Dugdale model replaces the
-singular elastic field by a finite process zone of length $\ell_{\mathrm{p}}$,
-and consequently yields a slightly smaller critical load.
+singular elastic field by a finite process zone of length
+$\ell_{\mathrm{p}}$ and consequently yields a slightly smaller critical
+load. Even when the process-zone size is only about $5\%$ of the crack
+half-length---a regime often treated in practice as close to the LEFM
+limit---the cohesive prediction remains $2$--$3\%$ lower than the LEFM
+estimate. This modest but systematic deviation shows that a finite process
+zone influences not only the near-tip fields but also global quantities
+such as the critical load.
 
-Even when the process-zone size is only about 5\% of the crack half-length
-—a regime that is typically regarded as safely within the domain of LEFM—
-the cohesive prediction remains 2–3\% lower than the LEFM
-estimate.  This modest but systematic deviation demonstrates that the
-presence of a finite process zone influences not just near-tip fields,
-but also global quantities such as the critical load.
-
-This example highlights a central theme of the present work:
-while the \emph{kink direction} is governed almost exclusively by the
-mixed-mode elastic field, the \emph{critical load} retains a clear
-signature of the traction–separation law and of the finite FPZ.
+This example motivates the viewpoint adopted in the present work. The
+question is not whether LEFM should be replaced in the small-process-zone
+regime, but how a regularized cohesive formulation can be used to assess,
+in a controlled way, which parts of the kinking response remain essentially
+elastic and which retain a measurable imprint of the traction--separation
+law and of the finite FPZ. In particular, the present study is conducted
+deliberately in a near-LEFM regime, so that agreement and discrepancy with
+classical predictors can both be interpreted meaningfully.
 
 \paragraph{Aim and modelling philosophy.}
 Our aim is to isolate, in the cleanest possible setting, how mode mixity,
 cohesive strength, and crack orientation conspire to determine the kink
 direction under mixed-mode loading, and how this choice manifests in the
-critical load.
-To this end, we employ a deliberately minimal plane-strain finite-element
-formulation in which the physical crack is extended by a short,
-zero-thickness cohesive continuation.
-A slender auxiliary channel is introduced solely to control mesh resolution
-and is collapsed prior to loading, ensuring that all tractions and boundary
-conditions apply directly to the true crack faces.
-For each trial orientation, we compute a \emph{critical state} dictated solely
-by the prescribed traction--separation law and examine two complementary
-selectors for the kink direction: a global load-based criterion and a local,
-cohesive-energetic criterion at the mouth.
-This philosophy avoids remeshing, enrichment, or geometry-specific heuristics
-and reveals, with high transparency, which aspects of the cohesive law
-influence the kink direction and which enter only through the evolution of the
-fracture process zone and the critical load.
+critical load. To this end, we employ a deliberately minimal plane-strain
+finite-element formulation in which the physical crack is extended by a
+short, zero-thickness cohesive continuation. A slender auxiliary channel
+is introduced solely to control mesh resolution and is collapsed prior to
+loading, ensuring that all tractions and boundary conditions apply
+directly to the true crack faces. For each trial orientation, we compute a
+critical state dictated solely by the prescribed traction--separation law
+and examine two complementary selectors for the kink direction: a global
+load-based criterion and a local cohesive-energetic criterion at the
+mouth.
 
+A second objective is to distinguish clearly between constitutive effects
+and auxiliary numerical choices. To this end, the analysis examines how the
+predicted direction depends on the finite trial cohesive length used to
+regularize the near-tip field, and identifies the range of applicability
+and the potential failure modes of the method. This point is important
+because the present framework does not evaluate a tip criterion at a
+mathematical crack tip; instead, it infers the preferred direction from a
+short cohesive continuation of finite extent. The method should therefore
+be interpreted as a finite-process-zone formulation intended for controlled
+comparison with LEFM in a small but nonzero process-zone regime.
+
+This modelling philosophy avoids remeshing, enrichment, or
+geometry-specific heuristics and reveals, with high transparency, which
+aspects of the cohesive law influence the kink direction and which enter
+primarily through the evolution of the fracture-process zone and the
+critical load. At the same time, it provides a natural setting for
+examining numerical robustness, including the sensitivity to the auxiliary
+cohesive-leg length and the conditioning of different directional
+selectors.
 
 \paragraph{Structure of the paper.}
-Section~\ref{sec:problem} introduces the problem statement, geometry and notation.
-Section~\ref{sec:governing} presents the governing equations of the elastic bulk.
-Section~\ref{sec:tsl} develops the cohesive interface formulation, mixed-mode potential,
-and consistent linearisation.
+Section~\ref{sec:problem} introduces the problem statement, geometry and
+notation. Section~\ref{sec:governing} presents the governing equations of
+the elastic bulk. Section~\ref{sec:tsl} develops the cohesive interface
+formulation, mixed-mode potential, and consistent linearisation.
 Section~\ref{sec:construction} describes interface operators and assembly.
-Section~\ref{sec:mesh} outlines mesh construction, channel collapse, and refinement.
-Section~\ref{sec:results} reports numerical results, including field plots, convergence
-studies, and kink selection.
-Section~\ref{sec:LEFM-comparison} compares cohesive predictions with LEFM benchmarks.
-Section~\ref{sec:conclusions} summarises the findings and future directions.
-
-
-
+Section~\ref{sec:mesh} outlines mesh construction, channel collapse, and
+refinement. Section~\ref{sec:results} reports numerical results, including
+field plots, convergence studies, and kink selection.
+Section~\ref{sec:LEFM-comparison} compares cohesive predictions with LEFM
+benchmarks. Section~\ref{sec:scope_limitations} examines the sensitivity
+to the auxiliary cohesive-leg length and states the range of applicability
+and limitations of the method. Section~\ref{sec:conclusions} summarises
+the findings and future directions.
 
 {\small
 	\begin{longtable}{@{}>{\raggedright\arraybackslash}p{0.22\textwidth}%
@@ -2085,7 +2100,7 @@ leaving the critical load essentially unchanged.
 \label{sec:scope_limitations}
 
 The critical state in the present formulation remains defined exactly as in
-Section~\ref{sec:construction}: for each prescribed trial orientation of
+Section~\ref{sec:results}: for each prescribed trial orientation of
 Leg~2, the nonlinear problem is solved until the mouth opening reaches the
 critical normal separation. What is examined here is a different issue,
 namely the influence of the \emph{auxiliary} cohesive-leg length~$\delta$ on
