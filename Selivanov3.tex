@@ -9,6 +9,7 @@
 
 % ---------- Math & symbols ----------
 \usepackage{amsmath,amssymb,bm,mathtools}
+\usepackage{upgreek}
 \usepackage{stmaryrd}   % \llbracket,\rrbracket
 
 % ---------- Figures & tables ----------
@@ -38,7 +39,6 @@
 
 % --- Vectors & 2nd-order tensors: bold italic ---
 \newcommand{\vb}[1]{\bm{#1}}      % generic vector-like (also 2nd-order tensors)
-\newcommand{\tens}[1]{\bm{#1}}    % alias for clarity in code
 
 % --- Keep access to arrowed vectors; make \vec bold-italic by default ---
 \let\arrowvec\vec                  % save the original arrowed \vec
@@ -60,8 +60,8 @@
 
 % --- Common fields ---
 \newcommand{\uu}{\vb{u}}
-\newcommand{\eps}{\tens{\varepsilon}}
-\newcommand{\sig}{\tens{\sigma}}
+\newcommand{\eps}{\bm{\upvarepsilon}}
+\newcommand{\sig}{\bm{\upsigma}}
 
 % --- Jumps & averages (starred version auto-sizes) ---
 \DeclarePairedDelimiter{\jump}{\llbracket}{\rrbracket}
@@ -111,7 +111,6 @@
 \renewcommand{\mm}{\QQ}
 % =================== End Notation layer ====================
 
-	\include{changes.tex}
 
 \begin{document}
 
@@ -2175,7 +2174,7 @@ Q(\theta)=\bigl(r_I\cos\theta,\ -r_I\sin\theta\bigr),
 \theta\in(0,\pi).
 \]
 Let \(\varepsilon_P\), \(\sigma_P\), and
-\(\partial \mathbf u_P/\partial x_1\) denote the strain, stress, and
+\(\partial \uu_P/\partial x_1\) denote the strain, stress, and
 directional displacement gradient at \(P(\theta)\) in local crack-tip
 coordinates \((x_1,x_2)\) aligned with the physical crack. Their
 counterparts at \(Q(\theta)\) are defined analogously. Following the
