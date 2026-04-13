@@ -1,0 +1,188 @@
+% arara: lualatex
+% arara: biber
+% arara: lualatex
+% arara: lualatex
+
+% !TeX program = lualatex
+\documentclass[12pt,a4paper]{article}
+
+% ====== Fonts / language ======
+\usepackage{fontspec}
+\usepackage{polyglossia}
+\setmainlanguage{english}
+\setmainfont{Libertinus Serif}
+\setsansfont{Libertinus Sans}
+\setmonofont{Libertinus Mono}
+\defaultfontfeatures{Ligatures=TeX}
+
+% ====== Page layout ======
+\usepackage[a4paper,margin=2.5cm]{geometry}
+\usepackage{setspace}
+\onehalfspacing
+
+% ====== Math + formatting ======
+\usepackage{amsmath,amssymb,bm,mathtools}
+\usepackage{microtype}
+\usepackage{enumitem}
+\setlist[itemize]{topsep=4pt,itemsep=2pt,parsep=0pt,leftmargin=1.6em}
+\setlist[enumerate]{topsep=4pt,itemsep=2pt,parsep=0pt,leftmargin=1.6em}
+\usepackage{xcolor}
+\definecolor{softTeal}{HTML}{E6FBFF}
+\definecolor{silver}{HTML}{F2F2F2}
+% ====== Simple boxes ======
+\usepackage[most]{tcolorbox}
+\tcbset{
+	reviewerbox/.style={
+		breakable,
+		enhanced,
+		colback=softTeal,
+		colframe=black,
+		boxrule=0.5pt,
+		arc=1mm,
+		left=6pt,
+		right=6pt,
+		top=6pt,
+		bottom=6pt
+	}
+}
+	\tcbset{
+	authorbox/.style={
+		breakable,
+		enhanced,
+		colback=silver,
+		colframe=black,
+		boxrule=0.5pt,
+		arc=1mm,
+		left=6pt,
+		right=6pt,
+		top=6pt,
+		bottom=6pt
+	}
+}
+
+\usepackage{hyperref}
+\hypersetup{
+	colorlinks=true,
+	linkcolor=blue,
+	citecolor=violet,
+	urlcolor=teal
+}
+
+\usepackage[backend=biber,style=numeric,sorting=none]{biblatex}
+\addbibresource{Selivanov.bib}
+
+\title{Response to Reviewers\\
+	\large Potential-Based Cohesive Modeling of Mixed-Mode Crack Kinking}
+\author{}
+\date{}
+
+% --- Upright bold matrices / discrete operators ---
+\newcommand{\mat}[1]{\mathbf{#1}}  % e.g., \mat{K}, \mat{M}
+
+
+\begin{document}
+	\maketitle
+
+	\section*{Reviewer 1 -- Major Comment 1}
+	
+	\begin{tcolorbox}[reviewerbox]
+		\emph{``In several instances, the response explains why the authors chose not to make a change, rather than revising the manuscript in a way that would improve clarity for the reader. In such cases, the justification provided in the response document should be reflected more explicitly in the manuscript itself.''}
+	\end{tcolorbox}
+	
+	\section*{Response}
+	
+	\begin{tcolorbox}[authorbox]
+		We thank the Reviewer for this important observation. In the revised manuscript, we have transferred the main justification and interpretation that previously appeared primarily in the response letter into the paper itself, at the locations where the corresponding modeling choices are introduced and used.
+		
+		More specifically, the Introduction has been rewritten to state explicitly that the present study is carried out in a near-LEFM, finite-process-zone setting and to explain why a cohesive regularization is used for controlled comparison with classical elastic predictors. The Problem Statement now clarifies the role of the trial cohesive-leg length \(\delta\) as an \emph{auxiliary numerical regularization length} rather than a constitutive parameter, and it distinguishes the fixed-\(\delta\) benchmark calculations from the adaptive-\(\delta\) sensitivity study introduced later in the manuscript. The cohesive-law section has been reorganized so that the fracture-energy scaling, the role of the strengthening branch, the admissibility of the mixed-mode coupling, and the limitation of the potential-based coupling are now explained directly in the manuscript rather than only in the response document. The interface-discretization and mesh-construction sections have likewise been revised so that the channel-collapse strategy, the jump operator, the assembly procedure, and the relation to alternative split-node approaches are presented as part of a coherent finite-element construction.
+		
+		In the Results section, the definition of the critical state, the meaning of the two directional selectors, and the weak conditioning of the load-based selector are now discussed explicitly in the main text. The LEFM-comparison section has been rewritten to make clear that the comparison is intended as a near-LEFM benchmark, not as a claim of universal equivalence between LEFM and CZM. Finally, a dedicated new section has been added on the sensitivity to the auxiliary cohesive-leg length, together with an explicit discussion of the range of applicability and potential failure modes of the method. The Conclusions have been revised accordingly.
+		
+		We therefore believe that the revised manuscript now presents the underlying justification and interpretation directly to the reader, rather than leaving these points in the rebuttal alone.
+	\end{tcolorbox}
+	
+	\section*{Reviewer 1 -- Major Comment 2}
+	
+	\begin{tcolorbox}[reviewerbox]
+		\emph{``Some of the new explanations remain qualitative and would benefit from clearer mathematical or physical interpretation. In a few places, the added text reads as an appendix-like clarification rather than being fully integrated into the narrative. I recommend revising these passages to improve flow and cohesion with the surrounding text.''}
+	\end{tcolorbox}
+	
+	\section*{Response}
+	
+	\begin{tcolorbox}[authorbox]
+		We thank the Reviewer for this important comment. In the revised manuscript, we have substantially reworked the explanatory parts of the paper so that the interpretation is now embedded directly in the presentation of the method and results, rather than appearing as isolated clarifications.
+		
+		In particular, the Introduction now frames the work explicitly as a near-LEFM, finite-process-zone study and explains why a cohesive regularization is used in this setting. The Problem Statement gives a more explicit physical interpretation of the auxiliary cohesive-leg length \(\delta\), distinguishes its numerical role from constitutive fracture parameters, and links the baseline fixed-\(\delta\) calculations to the later adaptive sensitivity study. The cohesive-law section has been reorganized so that the fracture-energy scaling, the role of the strengthening branch, the admissibility of the mixed-mode coupling, and the limitation of the potential-based formulation are developed as part of a continuous constitutive narrative. The interface-discretization and mesh-construction sections were likewise revised to present the operators, assembly, and channel-collapse strategy as a coherent finite-element construction rather than as a set of implementation clarifications.
+		
+		In the Results section, the definitions of the critical state and of the two directional selectors are now stated explicitly, the weak conditioning of the load-based selector is discussed in the main text, and the comparison with LEFM is presented consistently within the near-LEFM regime adopted in the study. A dedicated section has also been added on the sensitivity to the auxiliary cohesive-leg length, including quantitative \(\rho\)-sweeps, mesh-robustness checks, and an explicit discussion of the range of applicability and potential failure modes. These revisions were accompanied by a general tightening of transitions and removal of patch-like insertions so that the manuscript reads as a single integrated argument.
+		
+		We believe that these changes directly address the Reviewer’s concern by replacing previously qualitative or rebuttal-style clarifications with integrated mathematical and physical interpretation in the manuscript itself.
+	\end{tcolorbox}
+	
+	\section*{Reviewer 1 -- Major Comment 3}
+	
+	\begin{tcolorbox}[reviewerbox]
+		\emph{``While the authors have expanded the discussion in response to comments on validation and interpretation, the manuscript still lacks a sufficiently critical discussion of the limitations of the proposed approach. In particular, the range of applicability and potential failure modes of the method should be more explicitly stated.''}
+	\end{tcolorbox}
+	
+	\section*{Response}
+	
+	\begin{tcolorbox}[authorbox]
+		We thank the Reviewer for this important comment. In the revised manuscript, we have addressed this point directly by adding a dedicated section on the sensitivity to the auxiliary cohesive-leg length together with an explicit discussion of the range of applicability and potential failure modes of the method.
+		
+		More specifically, the revised manuscript now distinguishes clearly between constitutive fracture parameters and the auxiliary numerical cohesive-leg length \(\delta\). The new section introduces a calibrated adaptive estimate of \(\delta\), based on a Dugdale-type predictor, and reports dedicated \(\rho\)-sweeps together with a mesh-robustness check. This added analysis shows quantitatively that, within the near-LEFM regime considered here, the directional prediction depends only weakly on the auxiliary choice of \(\delta\), provided that the active cohesive zone remains well contained within the trial segment. At the same time, the manuscript now states explicitly that this auxiliary length is not a material parameter and that the method is intended for controlled comparison with LEFM in a small-process-zone, quasi-static mixed-mode setting.
+		
+		The revised text also identifies the main limitations and potential failure modes, including situations in which the process zone becomes comparable with the structural dimensions, situations in which the traction--separation law departs strongly from the present class of smooth potential-based laws, and situations in which insufficient interface resolution may distort the active cohesive-zone length or the directional diagnostic. In addition, the cohesive-law section now states explicitly the limitation inherent to the potential-based coupling itself, namely that complete separation in one mode does not, in general, force the complementary traction component to vanish independently. The Conclusions have been revised accordingly so that the scope of the method is stated explicitly rather than only implicitly through the examples considered.
+		
+		We believe these revisions directly address the Reviewer’s concern by replacing a previously qualitative discussion with an explicit, quantitative, and manuscript-integrated statement of applicability and limitations.
+	\end{tcolorbox}
+	
+	\section*{Reviewer 1 -- Major Comment 4}
+	
+	\begin{tcolorbox}[reviewerbox]
+		\emph{``An issue that remains unresolved is the correctness of several references. In a few cases, the cited journal does not correspond to the actual journal in which the referenced work was published. I strongly recommend that the authors carefully verify all references against the original publications (journal name, year, volume, pages).''}
+	\end{tcolorbox}
+	
+	\section*{Response}
+	
+	\begin{tcolorbox}[authorbox]
+		We thank the Reviewer for pointing this out. We have now re-checked the bibliography entry by entry against the original journal records and publisher webpages, and we have corrected the reference list accordingly. In the revised manuscript, the journal titles, publication years, volume and issue information, page ranges or article numbers, and DOI data have been verified and standardized.
+		
+		The corrections include, in particular, the following. Reference~12 was updated to the correct \emph{Archive of Applied Mechanics} metadata format. Reference~15 was corrected from \emph{Engineering Fracture Mechanics} \textbf{301} to \textbf{309}. Reference~21 was corrected from \emph{Mechanics of Advanced Materials and Structures} \textbf{10} (2003) to \textbf{11}(3) (2004). Reference~23 was corrected from an incorrect journal assignment (\emph{Composite Structures}) to the correct journal, \emph{International Journal for Computational Methods in Engineering Science and Mechanics}. Reference~24 was standardized to the verified journal metadata format. We have also made the formatting of the bibliography more consistent throughout.
+		
+		We therefore believe that the bibliographic inconsistencies noted by the Reviewer have now been fully corrected in the revised manuscript.
+	\end{tcolorbox}
+	
+	\section*{Reviewer 1 -- Minor Comment 1}
+	
+	\begin{tcolorbox}[reviewerbox]
+		\emph{``Although improved, some symbols and notations are still introduced without immediate definition, or are reused with slightly different meanings. A careful consistency check is recommended.''}
+	\end{tcolorbox}
+	
+	\section*{Response}
+	
+	\begin{tcolorbox}[authorbox]
+		We thank the Reviewer for this remark. We have carried out a global notation-consistency check throughout the manuscript. In the revised version, symbols are now introduced at or immediately after their first appearance wherever possible, and several notation conflicts have been removed.
+		
+		In particular, the notation table has been rewritten and expanded to reflect the final stable notation used in the manuscript. The physical crack and cohesive continuation boundaries \(\Gamma_{\mathrm{cr}}\) and \(\Gamma_{\mathrm{cz}}\) are now defined immediately at first appearance. The mixed-mode cohesive-law notation has been made consistent by using \(\tau\) for the normalized one-dimensional traction law, avoiding conflict with the geometric tangent vector \(\mathbf t\). In the augmented equilibrium problem, the scalar constraint has been renamed to avoid collision with the slope notation \(g=\tau'\). In the LEFM predictor subsection, the notation has been harmonized with the manuscript-wide convention by distinguishing clearly between tensors in continuum form and their in-plane Voigt representations. We also synchronized the notation table with the revised text so that the symbols used in Sections~4--9 are now represented consistently.
+		
+		We believe that this full notation sweep has resolved the remaining inconsistencies noted by the Reviewer.
+	\end{tcolorbox}
+	
+	\section*{Reviewer 1 -- Minor Comment 2}
+	
+	\begin{tcolorbox}[reviewerbox]
+		\emph{``The overall language quality has improved, but there are still occasional grammatical issues and long, dense sentences, particularly in the newly added text. A final language edit would be beneficial.''}
+	\end{tcolorbox}
+	
+	\section*{Response}
+	
+	\begin{tcolorbox}[authorbox]
+		We thank the Reviewer for this recommendation. We have performed a further language and style revision of the manuscript, with particular attention to the newly added text. Long sentences were shortened or split where possible, transitions between sections were improved, and several passages that previously read as appended clarifications were rewritten to improve their integration into the narrative flow.
+		
+		This final editing pass affected in particular the Introduction, the cohesive-law section, the interface-discretization and mesh-construction sections, the Results and LEFM-comparison sections, the new applicability/limitations section, and the Conclusions. We believe that the revised manuscript is now clearer, more concise, and more cohesive in presentation.
+	\end{tcolorbox}
+
+
+
+\end{document}

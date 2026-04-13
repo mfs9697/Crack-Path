@@ -146,8 +146,7 @@
 	zero-thickness cohesive continuation. A thin auxiliary channel is used only
 	for mesh generation and is collapsed after T6 conversion, so that the
 	analysis is carried out on the physical interface with coincident node pairs.
-	The cohesive law is potential-based, differentiable, and bounded in both the
-	normal and tangential directions; the corresponding cohesive potential yields
+	The cohesive law is potential-based, differentiable, and characterized by finite normal and tangential cohesive strengths; the corresponding cohesive potential yields
 	an energetically consistent formulation with a symmetric Hessian tangent and
 	robust Newton convergence.
 	
@@ -194,7 +193,7 @@ dominant role of the mixed-mode elastic field in steering the initial
 deflection \cite{HeHutchinson1989}.
 
 Cohesive-zone formulations complement LEFM by embedding fracture processes
-directly in traction--separation relations (TSLs), thereby linking intact
+directly in traction--separation laws (TSLs), thereby linking intact
 material response with complete decohesion without explicitly tracking the
 crack. Foundational models idealised the process zone using simple cohesive
 laws \cite{Barenblatt1962,Dugdale1960}, and subsequent finite-element
@@ -320,9 +319,9 @@ and limitations of the method. Section~\ref{sec:conclusions} summarises
 the findings and future directions.
 
 {\small
-	\begin{longtable}{@{}>{\raggedright\arraybackslash}p{0.2\textwidth}%
-			>{\raggedright\arraybackslash}p{0.64\textwidth}%
-			>{\raggedleft\arraybackslash}p{0.08\textwidth}@{}}
+	\begin{longtable}{@{}>{\raggedright\arraybackslash}p{0.18\textwidth}%
+			>{\raggedright\arraybackslash}p{0.67\textwidth}%
+			>{\raggedleft\arraybackslash}p{0.07\textwidth}@{}}
 		\caption{Notation used throughout.
 			Subscripts \(n,t\) denote normal and tangential components in the Leg~2 frame
 			\(\mat Q=[\bt^\top;\bn^\top]\).}
@@ -405,7 +404,7 @@ the findings and future directions.
 		
 		\multicolumn{3}{@{}l@{}}{\textbf{Discrete interface operators and assembly}}\\
 		\midrule
-		\(N(\xi)\) & Quadratic shape-function row on the interface segment & --\\
+		\(\bm N(\xi)\) & Quadratic shape-function row on the interface segment & --\\
 		\(\mat P_e\) & Node-order reversal matrix, \((i,j,k)\mapsto(k,j,i)\) & --\\
 		\(\vb U_e,\ \vb U_e^\pm\) & Element displacement vector and its top/bottom parts & m\\
 		\(\bd_e\) & Local opening vector at the three quadratic stations & m\\
@@ -423,7 +422,7 @@ the findings and future directions.
 		\(\vb F_{\mathrm{ext}}\) & Unit external load vector & N\\
 		\(\vb F_{\mathrm{aug}}\) & Augmented residual for the critical-state problem & mixed\\
 		\(\mat J_{\mathrm{aug}}\) & Jacobian of the augmented system & mixed\\
-		\(h(\vb u)\) & Scalar critical-state constraint function & m\\
+		\(h(\vb u)\) & Scalar critical-state constraint function, \(h(\vb u)=d_n^{\mathrm{tip}}(\vb u)-d_n^{\max}\) & m\\
 		\(d_n^{\mathrm{tip}}\) & Normal opening at the cohesive tip & m\\
 		\multicolumn{3}{@{}l@{}}{\textbf{LEFM benchmark quantities}}\\
 		\midrule
@@ -431,7 +430,7 @@ the findings and future directions.
 	\(\vb\varepsilon^{\mathrm I},\,\vb\varepsilon^{\mathrm{II}}\) & Mode-separated in-plane strain fields in Voigt notation & --\\
 	\(\vb\sigma^{\mathrm I},\,\vb\sigma^{\mathrm{II}}\) & Mode-separated in-plane stress fields in Voigt notation & Pa\\
 		\(U^{\mathrm I},\,U^{\mathrm{II}}\) & Mode-separated elastic energy densities & J\,m\(^{-3}\)\\
-		\(\vb t^{\mathrm I},\,\vb t^{\mathrm{II}}\) & Traction vectors from the separated fields & Pa\\
+		\(\vb t^{\mathrm I},\,\vb t^{\mathrm{II}}\) & Traction vectors from the mode-separated fields & Pa\\
 		\(f_{\mathrm I},\,f_{\mathrm{II}}\) & Mode-separated \(J\)-integrands & J\,m\(^{-2}\)\\
 		\(J_{\mathrm I},\,J_{\mathrm{II}}\) & Mode-separated \(J\)-integrals & J\,m\(^{-2}\)\\
 		\(K_{\mathrm I},\,K_{\mathrm{II}}\) & Mode-I and mode-II stress-intensity factors & Pa\,m\(^{1/2}\)\\
@@ -516,40 +515,8 @@ contained within the trial segment, however, $\delta$ no longer plays a
 constitutive role and the predicted response becomes insensitive to its
 precise value.
 
-For trapezoidal cohesive laws, including the piecewise-smooth law adopted in
-this work, a practical estimate of the required scale can be obtained from
-the Dugdale model, for which the process-zone length $\ell_p$ scales with the
-crack size $a$ as
-\[
-\ell_p = 2\pi a
-\left(\frac{\sigma_{\mathrm{cr}}^{\mathrm{LEFM}}}{\sigma_n^{\max}}\right)^2.
-\]
-This estimate is used here as a practical guideline for selecting the
-auxiliary cohesive length. In the baseline benchmark calculations reported in
-Sections~\ref{sec:results} and~\ref{sec:LEFM-comparison}, a representative
-fixed value $\delta/a=0.06$ is employed. In the sensitivity study of
-Section~\ref{sec:scope_limitations}, by contrast, $\delta$ is chosen
-adaptively from a calibrated LEFM-based predictor so that the active-zone
-fraction $\beta/\delta$ remains controlled as the material parameters vary.
-The role of $\delta$ should therefore be understood throughout the paper as
-that of an auxiliary regularization length, not as an intrinsic fracture
-parameter.
 
-Figure~\ref{fig:stmt:d} shows the mode-wise traction--separation laws used in
-the cohesive formulation. In each pure mode, the traction increases from zero
-to the cohesive strength and then decays smoothly to zero at complete
-decohesion. The initial rising branch is not intended to represent material
-hardening. Its purpose is to regularize the transition from the traction-free
-crack faces to the active cohesive region. Without such a strengthening
-branch, imposing a constant plateau traction immediately from $d_n=0$ would
-create a jump in stress where the cohesive zone meets the traction-free part
-of the crack, leading to an unphysical singularity at the process-zone tip.
-The rising branch therefore ensures that the cohesive traction approaches its
-maximum value smoothly, provides a finite-stress closure of the cohesive
-zone, and allows the active cohesive length to emerge as part of the
-solution rather than being prescribed in advance.
-
-\begin{figure}[h!]
+\begin{figure}[t]
 	\centering
 	% Row 1: global geometry + local frame
 	\begin{subfigure}[t]{0.32\textwidth}
@@ -584,6 +551,42 @@ solution rather than being prescribed in advance.
 	\caption{Two-leg crack. (a) Global geometry and uniform loading. (b) Leg--2 local frame and interface variables. (c) Pure mode-I cohesive geometry along Leg~2 with active length $\beta\le\delta$ and opening $d_n(s)$. (d) Normalized traction–separation law $\bar\sigma$ vs.\ $\bar d$ with thresholds $a_1,a_2$.}
 	\label{fig:statement}
 \end{figure}
+
+For trapezoidal cohesive laws, including the piecewise-smooth law adopted in
+this work, a practical estimate of the required scale can be obtained from
+the Dugdale model, for which the process-zone length $\ell_p$ scales with the
+crack size $a$ as
+\[
+\ell_p = 2\pi a
+\left(\frac{\sigma_{\mathrm{cr}}^{\mathrm{LEFM}}}{\sigma_n^{\max}}\right)^2.
+\]
+This estimate is used here as a practical guideline for selecting the
+auxiliary cohesive length. In the baseline benchmark calculations reported in
+Sections~\ref{sec:results} and~\ref{sec:LEFM-comparison}, a representative
+fixed value $\delta/a=0.06$ is employed. In the sensitivity study of
+Section~\ref{sec:scope_limitations}, by contrast, $\delta$ is chosen
+adaptively from a calibrated LEFM-based predictor so that the active-zone
+fraction $\beta/\delta$ remains controlled as the material parameters vary.
+The role of $\delta$ should therefore be understood throughout the paper as
+that of an auxiliary regularization length, not as an intrinsic fracture
+parameter.
+
+
+Figure~\ref{fig:stmt:d} shows the mode-wise traction--separation laws used in
+the cohesive formulation. In each pure mode, the traction increases from zero
+to the cohesive strength and then decays smoothly to zero at complete
+decohesion. The initial rising branch is not intended to represent material
+hardening. Its purpose is to regularize the transition from the traction-free
+crack faces to the active cohesive region. Without such a strengthening
+branch, imposing a constant plateau traction immediately from $d_n=0$ would
+create a jump in stress where the cohesive zone meets the traction-free part
+of the crack, leading to an unphysical singularity at the process-zone tip.
+The rising branch therefore ensures that the cohesive traction approaches its
+maximum value smoothly, provides a finite-stress closure of the cohesive
+zone, and allows the active cohesive length to emerge as part of the
+solution rather than being prescribed in advance.
+
+
 
 The objective of the analysis is to determine the preferred direction of
 incipient crack advance, or equivalently the kink angle, by evaluating
@@ -795,7 +798,7 @@ for compactness.
 
 The shape of the one-dimensional traction--separation law is not merely a
 numerical convenience: as emphasized by Shet and Chandra
-\cite{ShetChandra2003}, the detailed form of the traction--separation curve
+\cite{ShetChandra2004}, the detailed form of the traction--separation curve
 influences how the fracture-process zone develops and therefore affects the
 fracture response beyond the sole values of the peak traction and the total
 dissipated energy.
@@ -1089,9 +1092,7 @@ used so that the shape of the law is clearly visible. In the actual kinking
 calculations, however, \(a_1\) should be chosen as small as practicable.
 Otherwise the apparent opening range of the strengthening branch becomes
 artificially extended and the fracture-process zone is correspondingly
-over-regularized. In the computations reported later, reducing \(a_1\) did
-not produce locking or spurious stiffening under mesh refinement; its main
-effect was to increase the number of Newton iterations. The potential-based
+over-regularized. In the computations reported later, decreasing \(a_1\) did not produce locking or spurious stiffening under mesh refinement; its main numerical effect was an increase in the number of Newton iterations. Therefore, \(a_1\) is chosen as the smallest value that does not lead to a substantial increase in iteration count. The potential-based
 formulation is helpful here because the symmetric consistent tangent reduces
 the sensitivity of the nonlinear solver to the precise value of \(a_1\).
 
@@ -1179,14 +1180,14 @@ of the lower bulk element:
 
 Let
 \[
-N=
+\mat N=
 \begin{bmatrix}
-	N(\xi_i)\\
-	N(\xi_j)\\
-	N(\xi_k)
+	\bm N(\xi_i)\\
+	\bm N(\xi_j)\\
+	\bm N(\xi_k)
 \end{bmatrix},
 \qquad
-N(\xi_\ell)=
+\bm N(\xi_\ell)=
 \big[
 N_i(\xi_\ell)\ \ N_j(\xi_\ell)\ \ N_k(\xi_\ell)
 \big],
@@ -1234,11 +1235,11 @@ where
 \begin{equation}
 	\mat B_e^{+}
 	=
-	(\mat I_3\otimes\QQ)\,(N\otimes\mat I_2),
+	(\mat I_3\otimes\QQ)\,(\mat N\otimes\mat I_2),
 	\qquad
 	\mat B_e^{-}
 	=
-	-(\mat I_3\otimes\QQ)\,\big((N\mat P_e)\otimes\mat I_2\big).
+	-(\mat I_3\otimes\QQ)\,\big((\mat N\mat P_e)\otimes\mat I_2\big).
 	\label{eq:seg-Be-pm}
 \end{equation}
 Thus, \(\mat B_e\) first forms the displacement jump between the top and
@@ -1260,7 +1261,7 @@ be written as
 \end{bmatrix}.
 \]
 In the implementation, the quadratic cohesive segment is evaluated at the
-Lobatto nodes, so that \(N=\mat I_3\). In that case the jump operator
+Lobatto nodes, so that \(\mat N=\mat I_3\). In that case the jump operator
 reduces to the nodal form
 \[
 \mat B_e=
@@ -1280,7 +1281,7 @@ quadratic segment is
 \begin{equation}
 	\mat R
 	=
-	l_e\int_0^1 N(\xi)^\top N(\xi)\,\mathrm d\xi
+	l_e\int_0^1 \bm N(\xi)^\top \bm N(\xi)\,\mathrm d\xi
 	=
 	\frac{l_e}{30}
 	\begin{bmatrix}
@@ -1405,7 +1406,7 @@ where
 	\!\left(
 	\mat{K}_{\mathrm{loc},i},
 	\mat{K}_{\mathrm{loc},j},
-	\\mat{K}_{\mathrm{loc},k}
+	\mat{K}_{\mathrm{loc},k}
 	\right)
 	\in\mathbb R^{6\times 6}.
 	\label{eq:seg-Kloc}
@@ -1563,7 +1564,7 @@ After T3 generation, all bulk triangles are upgraded to T6. The narrow
 channel is then collapsed to the polyline midline so that the two faces
 along Leg~2 coincide geometrically while remaining kinematically distinct
 through coincident top/bottom node pairs. Interface segments use quadratic
-elements with Lobatto nodal evaluation (\(N=\mat I_3\)), matching the
+elements with Lobatto nodal evaluation (\(\mat N=\mat I_3\)), matching the
 operators of Section~\ref{sec:construction} so that
 \[
 \bd_e=\mat B_e\vb U_e
@@ -2212,7 +2213,7 @@ Let \(\bm{\upvarepsilon}_{P^{+}}\), \(\bm{\upsigma}_{P^{+}}\), and
 \(\partial\vb u_{P^{+}}/\partial x_1\) denote the strain tensor, stress tensor,
 and directional displacement gradient at \(\vb P^{+}(\theta)\). The
 corresponding quantities at \(\vb P^{-}(\theta)\) are defined analogously.
-Following the mirror-point formulation of Ishikawa, Kitagawa, and Okamura,
+Following the mirror-point formulation of Ishikawa, Kitagawa, and Okamura (see Kuna~\cite{Kuna2013}),
 the symmetric and antisymmetric parts of the fields are used to extract the
 mode-I and mode-II contributions.
 
@@ -2606,7 +2607,7 @@ segment. The role of the study below is therefore not merely parametric. It is
 to verify that this normalization remains effective as the stiffness-to-strength
 ratio changes.
 
-A further algorithmic distinction should be emphasized. In Section~7, the kink
+A further algorithmic distinction should be emphasized. In Section~\ref{sec:results}, the kink
 angle is presented through coarse and fine angular sweeps in order to
 illustrate directly the shallow minimum of $\sigma_{cr}(\theta_2)$ and the
 sharper minimum of the energetic selector. In the present parametric study,
@@ -2814,14 +2815,18 @@ also provide a natural foundation for future work on incremental
 crack-path computation, in which the cohesive continuation would be updated
 step by step as the crack advances.
 
-\paragraph{Outlook.}
-Two extensions appear particularly natural. The first is a broader
-sensitivity study with respect to the detailed shape of the
-traction--separation law, including the strengthening interval, plateau, and
-softening branch. The second is extension to incremental crack growth, for
-which the present automated angle-selection procedure and channel-based mesh
-construction already provide the essential directional and geometrical
-building blocks.
+\paragraph{Outlook: Sensitivity to TSL shape.}
+Because the predicted critical load depends on details of the
+traction--separation law, including the strengthening length, plateau width,
+and softening curvature, a broader parametric investigation of TSL shapes is
+warranted. Earlier mode-I studies, including
+\cite{Selivanov2019ModeI}, indicate that the structure of the fracture
+process zone can be highly sensitive to these features even when global
+response quantities vary only moderately. Extending such analyses to fully
+mixed-mode kinking therefore represents a natural next step. The present
+framework can also be extended to incremental crack growth by reorienting
+the cohesive leg as the crack advances, thereby providing a consistent
+starting point for future propagation studies.
 
 
 
